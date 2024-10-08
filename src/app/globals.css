@@ -2,26 +2,96 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* globals.css */
+html,
+body {
+  height: 100%;
+  margin: 0;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+main {
+  flex: 1;
+}
+
+.text-color-logo {
+  color: #192333;
+}
+
+.text-color-corp {
+  color: #6d9ce3;
+}
+
+.text-footer {
+  color: #252d39;
+}
+
+.border-corp {
+  border-color: #6d9ce3;
+}
+
+.text-header-selected {
+  color: #737f8f;
+}
+
+.btn-area-cliente {
+  background-color: #192333;
+  color: white;
+}
+
+.btn-area-cliente:hover {
+  background-color: #4f545a;
+}
+
+.btn-cadastre-se {
+  background-color: white;
+  color: #192333;
+  border: 2px solid;
+  border-color: #192333;
+}
+
+.bg-connect {
+  background-color: #e36d6d;
+}
+
+.border-connect {
+  border: 3px solid;
+  border-color: #737e8e;
+}
+
+.bg-gestao {
+  background-color: #6d9ce3;
+}
+
+.bg-pacotes {
+  background-color: #e3c76d;
+}
+
+.bg-footer {
+  background-color: #192333;
+}
+
+.bg-footer-email {
+  background-color: #252d39;
+}
+
+.bg-sobre {
+  background-color: #ebebeb;
+}
+
+.color-puzzle-1 {
+  color: #e36d6d;
+}
+
+.color-puzzle-2 {
+  color: #e3c76d;
+}
+
+.rounded-br-3xl {
+  border-bottom-right-radius: 1.5rem;
 }

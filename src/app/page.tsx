@@ -1,101 +1,149 @@
-import Image from "next/image";
+import { HeaderInicial } from "@/components/HeaderInicial";
+import { cairo, inter } from "@/utils/fonts";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <section>
+      <HeaderInicial />
+      <div className="max-w-screen-xl mx-auto mt-28 grid grid-cols-2">
+        <div className="flex flex-col justify-center">
+          <div className="flex flex-row w-full items-center">
+            <img src="./logo.png" alt="Icone do Sistema Íris" className="w-2/4" />
+            <h1 className={`text-9xl ml-4 text-color-logo dark:text-color-logo ${cairo.className}`}>
+              ÍRIS
+            </h1>
+          </div>
+          <p className={`text-3xl mt-2 text-header-selected dark:text-header-selected ${cairo.className}`}>
+            &nbsp;&nbsp;
+            S&nbsp;&nbsp;
+            I&nbsp;&nbsp;
+            S&nbsp;&nbsp;
+            T&nbsp;&nbsp;
+            E&nbsp;&nbsp;
+            M&nbsp;&nbsp;
+            A&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            G&nbsp;&nbsp;
+            E&nbsp;&nbsp;
+            S&nbsp;&nbsp;
+            T&nbsp;&nbsp;
+            O&nbsp;&nbsp;
+            R&nbsp;&nbsp;
+          </p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+        <div className="flex justify-center items-center">
+          <img src="./Image_hero.png" alt="Imagem ilutrando mãos segurando um quebra cabeça" className="object-contain" />
+        </div>
+      </div>
+      <div className="max-w-screen-xl mx-auto mt-28 grid grid-cols-2 mb-36">
+        <div className="flex flex-col justify-center">
+          <div className="flex flex-row w-full items-center">
+            <p className={`text-5xl text-color-logo ${inter.className}`}>
+              POR QUE ESCOLHER O&nbsp;
+              <span className={`text-5xl font-bold text-color-logo ${inter.className}`}>
+                SISTEMA GESTOR?
+              </span>
+            </p>
+          </div>
+          <div className="flex flex-row w-full mt-8 items-center">
+            <span className={`text-2xl font-bold text-color-logo ${inter.className}`}>
+              Mundo das Emoções: &nbsp;
+              <span className={`text-2xl font-normal text-color-logo ${inter.className}`}>
+                Espaço onde a imaginação e o aprendizado se encontram, ajudando as crianças anavegar em suas emoções com confiança e alegria!
+              </span>
+            </span>
+          </div>
+          <div className="flex flex-row w-full mt-8 items-center">
+            <img src="./icon_check.png" alt="Icone de Check" className="w-10 me-4" />
+            <span className={`text-2xl text-header-selected ${inter.className}`}>
+              Facilidade de Uso
+            </span>
+          </div>
+          <div className="flex flex-row w-full mt-6 items-center">
+            <img src="./icon_check.png" alt="Icone de Check" className="w-10 me-4" />
+            <span className={`text-2xl text-header-selected ${inter.className}`}>
+              Acesso Rápido
+            </span>
+          </div>
+          <div className="flex flex-row w-full mt-6 items-center">
+            <img src="./icon_check.png" alt="Icone de Check" className="w-10 me-4" />
+            <span className={`text-2xl text-header-selected ${inter.className}`}>
+              Segurança de Dados
+            </span>
+          </div>
+          <div className="flex flex-row w-full mt-6 items-center">
+            <img src="./icon_check.png" alt="Icone de Check" className="w-10 me-4" />
+            <span className={`text-2xl text-header-selected ${inter.className}`}>
+              Suporte ao Usuário
+            </span>
+          </div>
+          <div className="flex flex-row w-full mt-6 items-center">
+            <img src="./icon_check.png" alt="Icone de Check" className="w-10 me-4" />
+            <span className={`text-2xl text-header-selected ${inter.className}`}>
+              Ferramenta de Gestão
+            </span>
+          </div>
+          <div className="flex flex-row w-full mt-6 items-center">
+            <img src="./icon_check.png" alt="Icone de Check" className="w-10 me-4" />
+            <span className={`text-2xl text-header-selected ${inter.className}`}>
+              Organização de Recursos Humanos
+            </span>
+          </div>
+          <div className="flex flex-row w-full mt-6 items-center">
+            <img src="./icon_check.png" alt="Icone de Check" className="w-10 me-4" />
+            <span className={`text-2xl text-header-selected ${inter.className}`}>
+              Geração de Relatórios
+            </span>
+          </div>
+          <div className="flex flex-row w-full mt-6 items-center">
+            <img src="./icon_check.png" alt="Icone de Check" className="w-10 me-4" />
+            <span className={`text-2xl text-header-selected ${inter.className}`}>
+              Aprendizado Interativo
+            </span>
+          </div>
+        </div>
+        <div className="flex flex-col justify-center">
+          <div className="flex flex-row w-full h-52 mb-10 border-connect bg-white rounded-3xl overflow-hidden">
+            <div className="w-1/10 bg-connect flex items-center justify-center">
+              <img src="./icon_connect.png" alt="teste" width={60} height={60} className="object-cover mx-3" />
+            </div>
+            <div className="w-11/12 bg-white">
+              <h1 className={`text font-bold text-4xl mt-4 ms-3 ${inter.className}`}>
+                CONNECT
+              </h1>
+              <p className={`text font-normal text-xl mt-3 ms-3`}>
+                Mostre seu talento para o mercado! Demonstre suas habilidades e experiências profissionais através do seu currículo. As clínicas buscam profissionais qualificados e experientes para compor suas equipes.
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-row w-full h-52 mb-10 border-connect bg-white rounded-3xl overflow-hidden">
+            <div className="w-1/10 bg-gestao flex items-center justify-center">
+              <img src="./icon_gestao.png" alt="teste" width={60} height={60} className="object-cover mx-3" />
+            </div>
+            <div className="w-11/12 bg-white">
+              <h1 className={`text font-bold text-4xl mt-4 ms-3 ${inter.className}`}>
+                GESTÃO
+              </h1>
+              <p className={`text font-normal text-xl mt-3 ms-3`}>
+                Sua clínica, mais organizada. Com o sistema Íris, gerencie seus pacientes, funcionários e agende consultas de forma simples e intuitiva. Tenha mais tempo para cuidar do que realmente importa: a saúde dos seus pacientes.
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-row w-full h-52 mb-10 border-connect bg-white rounded-3xl overflow-hidden">
+            <div className="w-1/10 bg-pacotes flex items-center justify-center">
+              <img src="./icon_pacotes.png" alt="teste" width={60} height={60} className="object-cover mx-3" />
+            </div>
+            <div className="w-11/12 bg-white">
+              <h1 className={`text font-bold text-4xl mt-4 ms-3 ${inter.className}`}>
+                PACOTES
+              </h1>
+              <p className={`text font-normal text-xl mt-3 ms-3`}>
+                Investir no futuro é investir em Íris. Ofereça o melhor ambiente de aprendizado e desenvolvimento, e aos responsáveis um acompanhamento completo. Adquira agora o sistema Íris e transforme a sua clínica
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section >
   );
 }
