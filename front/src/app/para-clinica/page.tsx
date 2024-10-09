@@ -10,7 +10,7 @@ export default function ParaClinica() {
                     Pacotes Íris
                 </h1>
                 <div className="flex justify-center items-center mt-8">
-                    <div className="max-w-sm mt-9 mb-10 border bg-white rounded-s-3xl shadow flex flex-col items-center h-auto">
+                    <div className="max-w-sm mt-9 mb-10 border border-gray-400 bg-white rounded-s-3xl shadow flex flex-col items-center h-auto">
                         <img className="rounded-t-3xl h-60 w-60 mt-14 mb-7" src="/pacote_essencial.png" alt="" />
                         <div className="p-5">
                             <h5 className={`mb-2 text-3xl text-center font-bold tracking-tight text-color-logo ${cairo.className}`}>
@@ -104,7 +104,7 @@ export default function ParaClinica() {
             </div>
             <div className="max-w-screen-xl mx-auto my-20">
                 <div className="flex justify-center items-center mt-8">
-                    <div className="max-w-sm mt-9 mb-10 border bg-white rounded-s-3xl shadow flex flex-col items-center h-auto">
+                    <div className="max-w-sm mt-9 mb-10 border border-gray-400 bg-white rounded-s-3xl shadow flex flex-col items-center h-auto">
                         <img className="rounded-t-3xl h-60 w-60 mt-14" src="/connect_mensal.png" alt="" />
                         <div className="p-5">
                             <h5 className={`text-3xl text-center font-bold tracking-tight text-color-logo ${cairo.className}`}>
@@ -162,7 +162,7 @@ export default function ParaClinica() {
                             </div>
                         </div>
                     </div>
-                    <div className="max-w-sm mt-9 mb-10 border bg-white rounded-e-3xl shadow flex flex-col items-center h-auto">
+                    <div className="max-w-sm mt-9 mb-10 border border-gray-400 bg-white rounded-e-3xl shadow flex flex-col items-center h-auto">
                         <img className="rounded-t-3xl h-60 w-60 mt-14" src="/connect_anual.png" alt="" />
                         <div className="p-5">
                             <h5 className={`text-3xl text-center font-bold tracking-tight text-color-logo ${cairo.className}`}>
