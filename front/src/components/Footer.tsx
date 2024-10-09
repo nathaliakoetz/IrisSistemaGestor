@@ -43,7 +43,7 @@ export function Footer() {
                                 <input
                                     type="text"
                                     id="email-address-icon"
-                                    className="bg-footer-email rounded-md text-gray-900 text-sm block w-full ps-10 pe-11 p-2.5 dark:bg-footer-email dark:placeholder-gray-400 dark:text-white"
+                                    className="bg-footer-email rounded-md text-white text-sm block w-full ps-10 pe-11 p-2.5 dark:bg-footer-email dark:placeholder-gray-400 dark:text-white"
                                     placeholder="E-mail"
                                 />
                                 <button
