@@ -5,9 +5,9 @@ import Link from "next/link";
 export function Footer() {
 
     return (
-        <section className="bg-footer h-full">
-            <div className="grid grid-cols-2 gap-10 mt-10 max-w-screen-xl mx-auto">
-                <div className="flex flex-col">
+        <section className="bg-footer">
+            <div className="grid grid-cols-2 max-w-screen-xl mx-auto">
+                <div className="flex flex-col mt-10">
                     <div className="flex flex-row">
                         <h1 className={`text text-xl font-bold text-white ${cairo.className}`}>
                             ÍRIS, SISTEMA GESTOR
@@ -61,7 +61,7 @@ export function Footer() {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-4 gap-7">
+                <div className="grid grid-cols-4 gap-4 mt-10">
                     <div>
                         <h2 className={`text-white text-lg font-bold ${inter.className}`}>Empresa</h2>
                         <ul className="mt-3">
