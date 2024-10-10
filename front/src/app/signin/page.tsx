@@ -48,10 +48,12 @@ export default function SignIn() {
                             <p className={`text-center mt-3 mb-3 ${inter.className}`}>&nbsp;&nbsp;&nbsp;ou&nbsp;&nbsp;&nbsp;</p>
                             <img src="/line.png" alt="linha" className="w-24" />
                         </div>
-                        <button type="submit" className={`text-black border border-gray-400 min-h-10 mb-5 bg-form rounded-2xl px-3 text-sm w-full text-center flex justify-center items-center ${inter.className}`}>
-                            <img src="/icon_google.png" alt="Logar com Google" className="h-5 me-3" />
-                            Continuar com Google
-                        </button>
+                        <Link href="/">
+                            <button type="button" className={`text-black border border-gray-400 min-h-10 mb-5 bg-form rounded-2xl px-3 text-sm w-full text-center flex justify-center items-center ${inter.className}`}>
+                                <img src="/icon_google.png" alt="Logar com Google" className="h-5 me-3" />
+                                Continuar com Google
+                            </button>
+                        </Link>
                     </form>
                     <p className={`text-sm text-color-logo mb-14 ${inter.className}`}>
                         Não é usuário,&nbsp;
