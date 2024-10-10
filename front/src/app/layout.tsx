@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Footer } from "@/components/Footer";
+import { Toaster } from 'sonner'
 
 export const metadata: Metadata = {
   title: "Íris - Sistema Gestor",
@@ -18,6 +18,7 @@ export default function RootLayout({
       <body>
         {children}
       </body>
+      <Toaster position="top-right" richColors />
     </html>
   );
 }

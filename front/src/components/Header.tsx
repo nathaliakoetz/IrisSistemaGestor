@@ -45,7 +45,7 @@ export function Header({ activeLink }: HeaderProps) {
                             </span>
                         </button>
                     </Link>
-                    <Link href="/">
+                    <Link href="/signup">
                         <button type="button" className="flex btn-cadastre-se focus:outline-none font-medium rounded-full text-sm ps-5 pe-6 py-1 text-center h-8 me-2 mb-2 dark:btn-cadastre-se">
                             <span className={`font-bold ${inter.className}`}>
                                 Cadastre-se
