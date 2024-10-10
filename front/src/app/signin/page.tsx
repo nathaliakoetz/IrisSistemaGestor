@@ -20,7 +20,7 @@ export default function SignIn() {
                                 type="email"
                                 id="email"
                                 className={`bg-form border-user text-gray-900 placeholder:text-header-selected text-sm rounded-2xl block w-80 p-2.5 ${inter.className}`}
-                                placeholder="E-mail"
+                                placeholder="Nome de usuário ou E-mail"
                                 required
                             />
                         </div>
