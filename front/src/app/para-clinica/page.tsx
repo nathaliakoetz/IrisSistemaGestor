@@ -1,5 +1,6 @@
 import { Header } from "@/components/Header"
 import { cairo, inter } from "@/utils/fonts";
+import Link from "next/link";
 
 export default function ParaClinica() {
     return (
@@ -28,9 +29,9 @@ export default function ParaClinica() {
                                 <li className={`text-sm text-black mt-5 mb-5 ${inter.className}`}>&bull;&nbsp;&nbsp;Acompanhamento gratuito para os pais, sem custos adicionais.</li>
                             </ul>
                             <div className="flex justify-center">
-                                <a href="#" className="inline-flex items-center px-20 py-3 text-sm font-medium text-center text-white bg-footer-email rounded-3xl hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
+                                <Link href="#" className="inline-flex items-center px-20 py-3 text-sm font-medium text-center text-white bg-footer-email rounded-3xl hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
                                     Assinar Agora
-                                </a>
+                                </Link>
                             </div>
                         </div>
                     </div>
@@ -56,9 +57,9 @@ export default function ParaClinica() {
                                     <li className={`text-sm text-black mt-5 mb-5 ${inter.className}`}>&bull;&nbsp;&nbsp;Suporte técnico prioritário e atendimento exclusivo.</li>
                                 </ul>
                                 <div className="flex justify-center">
-                                    <a href="#" className="inline-flex items-center px-20 py-3 text-sm font-medium text-center text-white bg-footer-email rounded-3xl hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
+                                    <Link href="#" className="inline-flex items-center px-20 py-3 text-sm font-medium text-center text-white bg-footer-email rounded-3xl hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
                                         Assinar Agora
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -123,9 +124,9 @@ export default function ParaClinica() {
                                 </span>
                             </p>
                             <div className="flex justify-center">
-                                <a href="#" className="inline-flex items-center px-20 py-3 text-sm font-medium text-center text-white bg-footer-email rounded-3xl hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
+                                <Link href="#" className="inline-flex items-center px-20 py-3 text-sm font-medium text-center text-white bg-footer-email rounded-3xl hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
                                     Assinar Agora
-                                </a>
+                                </Link>
                             </div>
                         </div>
                     </div>
@@ -155,9 +156,9 @@ export default function ParaClinica() {
                                     R$ 198,00 ao Total
                                 </p>
                                 <div className="flex justify-center">
-                                    <a href="#" className="inline-flex items-center px-20 py-3 text-sm font-medium text-center text-white bg-footer-email rounded-3xl hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
+                                    <Link href="#" className="inline-flex items-center px-20 py-3 text-sm font-medium text-center text-white bg-footer-email rounded-3xl hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
                                         Assinar Agora
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                         </div>
@@ -184,9 +185,9 @@ export default function ParaClinica() {
                                 R$ 300,00 ao Total
                             </p>
                             <div className="flex justify-center">
-                                <a href="#" className="inline-flex items-center px-20 py-3 text-sm font-medium text-center text-white bg-footer-email rounded-3xl hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
+                                <Link href="#" className="inline-flex items-center px-20 py-3 text-sm font-medium text-center text-white bg-footer-email rounded-3xl hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
                                     Assinar Agora
-                                </a>
+                                </Link>
                             </div>
                         </div>
                     </div>
