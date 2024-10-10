@@ -1,3 +1,4 @@
+import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header"
 import { cairo, inter } from "@/utils/fonts";
 import Link from "next/link";
@@ -66,7 +67,7 @@ export default function ParaClinica() {
                     </div>
                 </div>
             </div>
-            <div className="max-w-screen-xl mx-auto mt-20 mb-20">
+            <div id="pacotes-connect" className="max-w-screen-xl mx-auto mt-20 mb-20">
                 <h1 className={`text-5xl font-bold ${cairo.className}`}>
                     Pacotes Connect
                 </h1>
@@ -193,6 +194,7 @@ export default function ParaClinica() {
                     </div>
                 </div>
             </div>
+            <Footer />
         </section>
     )
 }

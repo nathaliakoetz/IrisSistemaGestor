@@ -1,3 +1,4 @@
+import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { inter } from "@/utils/fonts";
 
@@ -5,7 +6,7 @@ export default function Sobre() {
     return (
         <section>
             <div className="bg-[url('/bg_sobre.jpg')] bg-cover bg-no-repeat bg-bottom h-auto">
-                <Header activeLink="sobre"/>
+                <Header activeLink="sobre" />
                 <div className="max-w-screen-xl mx-auto pt-24 pb-32">
                     <h1 className={`text-5xl text-color-logo dark:text-color-logo font-bold mb-5 text-center ${inter.className}`}>
                         SOBRE&nbsp;&nbsp;ÍRIS
@@ -77,6 +78,7 @@ export default function Sobre() {
                     </div>
                 </div>
             </div>
+            <Footer />
         </section>
     )
 }

@@ -1,11 +1,12 @@
 'use client'
 
+import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header"
 import { cairo, inter } from "@/utils/fonts";
 import Link from "next/link";
 import { useEffect } from "react";
 
-export default function ParaClinica() {
+export default function ParaVoce() {
 
     useEffect(() => {
         const element = document.getElementById('pacotes-connect');
@@ -204,6 +205,7 @@ export default function ParaClinica() {
                     </div>
                 </div>
             </div>
+            <Footer />
         </section>
     )
 }

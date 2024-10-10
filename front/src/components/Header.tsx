@@ -34,7 +34,7 @@ export function Header({ activeLink }: HeaderProps) {
                     </Link>
                 </div>
                 <div className="flex items-center space-x-6 rtl:space-x-reverse mt-2">
-                    <Link href="/">
+                    <Link href="/signin">
                         <button type="button" className="flex btn-area-cliente focus:outline-none font-medium rounded-full text-sm ps-5 pe-6 py-1.5 text-center h-8 me-2 mb-2 dark:btn-area-cliente">
                             <img src="icon_btn.png" className="h-4 mt-0.5" alt="Icone do Botão de Area do Cliente" />
                             &nbsp;&nbsp;
