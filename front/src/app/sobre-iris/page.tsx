@@ -35,7 +35,7 @@ export default function Sobre() {
                 <h1 className="text-2xl color-puzzle-1">
                     -&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;
                 </h1>
-                <img src="/icon_puzzle.png" alt="Imagem de uma peça de quebra cabeça" className="ms-8 me-10 h-10" />
+                <img src="/puzzle_1.png" alt="Imagem de uma peça de quebra cabeça" className="ms-8 me-10 h-10" />
                 <h1 className="text-2xl color-puzzle-1">
                     -&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;
                 </h1>
@@ -58,7 +58,7 @@ export default function Sobre() {
                 <h1 className="text-2xl color-puzzle-2">
                     -&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;
                 </h1>
-                <img src="/icon_puzzle.png" alt="Imagem de uma peça de quebra cabeça" className="ms-8 me-10 h-10" />
+                <img src="/puzzle_2.png" alt="Imagem de uma peça de quebra cabeça" className="ms-8 me-10 h-10" />
                 <h1 className="text-2xl color-puzzle-2">
                     -&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;
                 </h1>
