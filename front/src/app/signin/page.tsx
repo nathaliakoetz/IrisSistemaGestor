@@ -3,8 +3,8 @@ import Link from "next/link";
 
 export default function SignIn() {
     return (
-        <section className="bg-[url('/bg_login.jpeg')] bg-cover bg-no-repeat h-full flex justify-center items-center">
-            <div className="flex justify-center items-center">
+        <section className="bg-[url('/bg_login.jpeg')] bg-cover bg-no-repeat flex justify-center items-center h-auto">
+            <div className="flex justify-center items-center mt-32 mb-32">
                 <div className="max-w-lg border border-gray-400 bg-white rounded-3xl shadow flex flex-col items-center h-auto overflow-hidden">
                     <div className="flex flex-row w-card-login items-center justify-center mt-14">
                         <Link href="/" className="flex">
@@ -57,7 +57,7 @@ export default function SignIn() {
                     </form>
                     <p className={`text-sm text-color-logo mb-14 ${inter.className}`}>
                         Não é usuário,&nbsp;
-                        <Link href="/">
+                        <Link href="/signup">
                             <span className="font-bold text-color-logo hover:underline">
                                 Cadastre-se
                             </span>
