@@ -6,7 +6,7 @@ export function Footer() {
 
     return (
         <section className="bg-footer">
-            <div className="grid grid-cols-2 max-w-screen-xl mx-auto">
+            <div className="grid grid-cols-[450px,1fr,1fr,1fr,1fr] max-w-screen-xl mx-auto">
                 <div className="flex flex-col mt-10">
                     <div className="flex flex-row">
                         <h1 className={`text text-xl font-bold text-white ${cairo.className}`}>
@@ -61,8 +61,8 @@ export function Footer() {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-4 gap-4 mt-10">
-                    <div>
+                {/* <div className="grid grid-cols-4 gap-4 mt-10"> */}
+                    <div className="mt-10">
                         <h2 className={`text-white text-lg font-bold ${inter.className}`}>Empresa</h2>
                         <ul className="mt-3">
                             <li><Link href="/" className={`text-white text-sm hover:underline ${inter.className}`}>Sobre</Link></li>
@@ -70,7 +70,7 @@ export function Footer() {
                             <li className="mt-2"><Link href="/" className={`text-white text-sm hover:underline ${inter.className}`}>Suporte</Link></li>
                         </ul>
                     </div>
-                    <div>
+                    <div className="mt-10">
                         <h2 className={`text-white text-lg font-bold ${inter.className}`}>Acesso Rápido</h2>
                         <ul className="mt-3">
                             <li><Link href="/" className={`text-white text-sm hover:underline ${inter.className}`}>Página Inicial</Link></li>
@@ -79,14 +79,14 @@ export function Footer() {
                             <li className="mt-2"><Link href="/" className={`text-white text-sm hover:underline ${inter.className}`}>Adiquira o Íris</Link></li>
                         </ul>
                     </div>
-                    <div>
+                    <div className="mt-10">
                         <h2 className={`text-white text-lg font-bold ${inter.className}`}>Legal</h2>
                         <ul className="mt-3">
                             <li><Link href="/" className={`text-white text-sm hover:underline ${inter.className}`}>Termos e Condições</Link></li>
                             <li className="mt-2"><Link href="/" className={`text-white text-sm hover:underline ${inter.className}`}>Políticas de Privacidade</Link></li>
                         </ul>
                     </div>
-                    <div>
+                    <div className="mt-10">
                         <h2 className={`text-white text-lg font-bold ${inter.className}`}>Contato</h2>
                         <ul className="mt-3">
                             <li><p className={`text-white text-sm font-bold ${inter.className}`}>Vendas</p></li>
@@ -95,7 +95,7 @@ export function Footer() {
                             <li><p className={`text-white text-sm ${inter.className}`}>+55 (53) 99900-0000</p></li>
                         </ul>
                     </div>
-                </div>
+                {/* </div> */}
             </div>
         </section>
     )
