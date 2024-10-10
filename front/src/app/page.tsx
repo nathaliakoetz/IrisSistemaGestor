@@ -1,11 +1,11 @@
 import { Footer } from "@/components/Footer";
-import { HeaderInicial } from "@/components/HeaderInicial";
+import { Header } from "@/components/Header";
 import { cairo, inter } from "@/utils/fonts";
 
 export default function Home() {
   return (
     <section>
-      <HeaderInicial />
+      <Header activeLink="inicio" />
       <div className="max-w-screen-xl mx-auto mt-28 grid grid-cols-2">
         <div className="flex flex-col justify-center">
           <div className="flex flex-row w-full items-center">
