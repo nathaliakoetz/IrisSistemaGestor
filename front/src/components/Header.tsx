@@ -31,7 +31,7 @@ export function Header({ activeLink }: HeaderProps) {
                     <Link href="/para-voce" className={`flex font-bold ${activeLink === "voce" ? "text-header-selected dark:text-header-selected" : "text-color-logo dark:text-color-logo"} hover:underline ${cairo.className}`}>
                         Para Você
                     </Link>
-                    <Link href="/" className={`flex font-bold ${activeLink === "contato" ? "text-header-selected dark:text-header-selected" : "text-color-logo dark:text-color-logo"} hover:underline ${cairo.className}`}>
+                    <Link href="#" className={`flex font-bold ${activeLink === "contato" ? "text-header-selected dark:text-header-selected" : "text-color-logo dark:text-color-logo"} hover:underline ${cairo.className}`}>
                         Contato
                     </Link>
                 </div>

@@ -19,13 +19,13 @@ export function Footer() {
                         </p>
                     </div>
                     <div className="flex flex-row">
-                        <Link href="/">
+                        <Link href="#">
                             <img src="./media_facebook.png" alt="Ícone do Facebook" className="h-12 w-12" />
                         </Link>
-                        <Link href="/">
+                        <Link href="#">
                             <img src="./media_whats.png" alt="Ícone do WhatsApp" className="h-12 w-12" />
                         </Link>
-                        <Link href="/">
+                        <Link href="#">
                             <img src="./media_insta.png" alt="Ícone do Instagram" className="h-12 w-12" />
                         </Link>
                     </div>
@@ -61,41 +61,39 @@ export function Footer() {
                     </div>
                 </div>
 
-                {/* <div className="grid grid-cols-4 gap-4 mt-10"> */}
-                    <div className="mt-10">
-                        <h2 className={`text-white text-lg font-bold ${inter.className}`}>Empresa</h2>
-                        <ul className="mt-3">
-                            <li><Link href="/" className={`text-white text-sm hover:underline ${inter.className}`}>Sobre</Link></li>
-                            <li className="mt-2"><Link href="/" className={`text-white text-sm hover:underline ${inter.className}`}>Fale Conosco</Link></li>
-                            <li className="mt-2"><Link href="/" className={`text-white text-sm hover:underline ${inter.className}`}>Suporte</Link></li>
-                        </ul>
-                    </div>
-                    <div className="mt-10">
-                        <h2 className={`text-white text-lg font-bold ${inter.className}`}>Acesso Rápido</h2>
-                        <ul className="mt-3">
-                            <li><Link href="/" className={`text-white text-sm hover:underline ${inter.className}`}>Página Inicial</Link></li>
-                            <li className="mt-2"><Link href="/" className={`text-white text-sm hover:underline ${inter.className}`}>Login</Link></li>
-                            <li className="mt-2"><Link href="/" className={`text-white text-sm hover:underline ${inter.className}`}>Connect</Link></li>
-                            <li className="mt-2"><Link href="/" className={`text-white text-sm hover:underline ${inter.className}`}>Adiquira o Íris</Link></li>
-                        </ul>
-                    </div>
-                    <div className="mt-10">
-                        <h2 className={`text-white text-lg font-bold ${inter.className}`}>Legal</h2>
-                        <ul className="mt-3">
-                            <li><Link href="/" className={`text-white text-sm hover:underline ${inter.className}`}>Termos e Condições</Link></li>
-                            <li className="mt-2"><Link href="/" className={`text-white text-sm hover:underline ${inter.className}`}>Políticas de Privacidade</Link></li>
-                        </ul>
-                    </div>
-                    <div className="mt-10">
-                        <h2 className={`text-white text-lg font-bold ${inter.className}`}>Contato</h2>
-                        <ul className="mt-3">
-                            <li><p className={`text-white text-sm font-bold ${inter.className}`}>Vendas</p></li>
-                            <li><p className={`text-white text-sm ${inter.className}`}>+55 (53) 99900-0000</p></li>
-                            <li className="mt-2"><p className={`text-white text-sm font-bold ${inter.className}`}>Suporte</p></li>
-                            <li><p className={`text-white text-sm ${inter.className}`}>+55 (53) 99900-0000</p></li>
-                        </ul>
-                    </div>
-                {/* </div> */}
+                <div className="mt-10">
+                    <h2 className={`text-white text-lg font-bold ${inter.className}`}>Empresa</h2>
+                    <ul className="mt-3">
+                        <li><Link href="/sobre-iris" className={`text-white text-sm hover:underline ${inter.className}`}>Sobre</Link></li>
+                        <li className="mt-2"><Link href="#" className={`text-white text-sm hover:underline ${inter.className}`}>Fale Conosco</Link></li>
+                        <li className="mt-2"><Link href="#" className={`text-white text-sm hover:underline ${inter.className}`}>Suporte</Link></li>
+                    </ul>
+                </div>
+                <div className="mt-10">
+                    <h2 className={`text-white text-lg font-bold ${inter.className}`}>Acesso Rápido</h2>
+                    <ul className="mt-3">
+                        <li><Link href="/" className={`text-white text-sm hover:underline ${inter.className}`}>Página Inicial</Link></li>
+                        <li className="mt-2"><Link href="/signin" className={`text-white text-sm hover:underline ${inter.className}`}>Login</Link></li>
+                        <li className="mt-2"><Link href="/para-clinica" className={`text-white text-sm hover:underline ${inter.className}`}>Adiquira o Íris</Link></li>
+                        <li className="mt-2"><Link href="/para-voce" className={`text-white text-sm hover:underline ${inter.className}`}>Connect</Link></li>
+                    </ul>
+                </div>
+                <div className="mt-10">
+                    <h2 className={`text-white text-lg font-bold ${inter.className}`}>Legal</h2>
+                    <ul className="mt-3">
+                        <li><Link href="#" className={`text-white text-sm hover:underline ${inter.className}`}>Termos e Condições</Link></li>
+                        <li className="mt-2"><Link href="#" className={`text-white text-sm hover:underline ${inter.className}`}>Políticas de Privacidade</Link></li>
+                    </ul>
+                </div>
+                <div className="mt-10">
+                    <h2 className={`text-white text-lg font-bold ${inter.className}`}>Contato</h2>
+                    <ul className="mt-3">
+                        <li><p className={`text-white text-sm font-bold ${inter.className}`}>Vendas</p></li>
+                        <li><p className={`text-white text-sm ${inter.className}`}>+55 (53) 99900-0000</p></li>
+                        <li className="mt-2"><p className={`text-white text-sm font-bold ${inter.className}`}>Suporte</p></li>
+                        <li><p className={`text-white text-sm ${inter.className}`}>+55 (53) 99900-0000</p></li>
+                    </ul>
+                </div>
             </div>
         </section>
     )
