@@ -14,10 +14,10 @@ export default function AreaCliente() {
                     <img className="w-5 h-5" src="https://via.placeholder.com/20x20" />
                     <div className={`text-[#192333] text-[15px] font-normal ${inter.className}`}>Visão Geral</div>
                 </div>
-                <div className="pl-11 py-2 justify-start items-center gap-3 inline-flex">
+                <Link href="/" className="pl-11 py-2 justify-start items-center gap-3 inline-flex">
                     <img className="w-5 h-5" src="https://via.placeholder.com/20x20" />
                     <div className={`w-16 text-[#798391] text-[15px] font-normal ${inter.className}`}>Agenda</div>
-                </div>
+                </Link>
                 <div className="pl-11 py-2 justify-start items-center gap-3 inline-flex">
                     <img className="w-5 h-5" src="https://via.placeholder.com/20x20" />
                     <div className={`text-[#737f8f] text-[15px] font-normal ${inter.className}`}>Relatórios</div>
