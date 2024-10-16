@@ -1,7 +1,18 @@
+'use client'
+
 import { cairo, inter } from "@/utils/fonts";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
 
 export default function SignIn() {
+    const router = useRouter();
+    const { handleSubmit } = useForm();
+
+    function redireciona() {
+        router.push("/area-cliente")
+    }
+
     return (
         <section className="bg-[url('/bg_login.jpeg')] bg-cover bg-no-repeat flex justify-center items-center h-auto">
             <div className="flex justify-center items-center mt-32 mb-32">
@@ -14,7 +25,7 @@ export default function SignIn() {
                             </h1>
                         </Link>
                     </div>
-                    <form className="max-w-lg mx-auto mt-10">
+                    <form className="max-w-lg mx-auto mt-10" onSubmit={handleSubmit(redireciona)}>
                         <div className="mb-5">
                             <input
                                 type="email"
