@@ -112,3 +112,15 @@ main {
 .w-card-login {
   width: 35rem;
 }
+
+.bg-prox-atendimento-1 {
+  background-color: #68C9F2;
+}
+
+.bg-prox-atendimento-2 {
+  background-color: #ECC867;
+}
+
+.bg-prox-atendimento-3 {
+  background-color: #F26868;
+}
