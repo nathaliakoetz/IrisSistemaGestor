@@ -112,3 +112,36 @@ main {
 .w-card-login {
   width: 35rem;
 }
+
+.bg-prox-atendimento-1 {
+  background-color: #68C9F2;
+}
+
+.bg-prox-atendimento-2 {
+  background-color: #ECC867;
+}
+
+.bg-prox-atendimento-3 {
+  background-color: #F26868;
+}
+
+/* Remove o destaque do dia atual */
+.remove-today-highlight {
+  background-color: transparent !important;
+  color: inherit !important;
+}
+
+/* Destaque o dia selecionado */
+.highlight-selected {
+  background-color: blue !important;
+  color: white !important;
+}
+
+/* Estiliza o hover nos dias do calendário, exceto o dia selecionado */
+.react-calendar__tile:not(.highlight-selected):hover {
+  background-color: lightblue !important;
+  color: black !important;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
