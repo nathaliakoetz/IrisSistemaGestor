@@ -15,14 +15,16 @@ export default function AreaCliente() {
         if (view === 'month') {
             const isSelected = selectedDate && date.toDateString() === selectedDate.toDateString();
             const isToday = date.toDateString() === currentDate.toDateString();
-            
-            console.log(selectedDate)
 
             return isSelected ? 'highlight-selected' : (isToday ? 'remove-today-highlight' : '');
         }
         return '';
     };
 
+    const tileDisabled = ({ date }: { date: Date }) => {
+        const day = date.getDay();
+        return day === 0 || day === 6; // 0 = Domingo, 6 = Sábado
+    };
 
     return (
         <div className="flex">
@@ -96,6 +98,8 @@ export default function AreaCliente() {
                                     onChange={(value) => setSelectedDate(value as Date)}
                                     value={selectedDate || currentDate}
                                     tileClassName={tileClassName}
+                                    tileDisabled={tileDisabled}
+                                    locale="pt-BR"
                                 />
                             </div>
                             <div className="flex flex-col gap-4 mt-6">
