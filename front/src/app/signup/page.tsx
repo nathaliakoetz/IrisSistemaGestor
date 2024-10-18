@@ -66,7 +66,7 @@ export default function SignUp() {
     };
 
     return (
-        <section className="bg-[url('/bg_login.jpeg')] bg-cover bg-no-repeat flex justify-center items-center h-auto">
+        <section className="bg-[url('/bg_login.jpeg')] bg-cover bg-no-repeat flex justify-center items-center h-[1080px]">
             <div className="flex justify-center items-center mt-32 mb-32">
                 <div className="max-w-lg border border-gray-400 bg-white rounded-3xl shadow flex flex-col items-center h-auto overflow-hidden">
                     <div className="flex flex-row w-card-login items-center justify-center mt-14">
