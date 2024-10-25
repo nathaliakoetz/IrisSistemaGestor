@@ -225,7 +225,7 @@ export default function AreaCliente() {
                                             onClick={handleModalOpening}
                                             className="bg-[#F2F2F2] border-2 border-gray-300 text-black rounded-lg py-2 w-[115px]"
                                         >
-                                            Sair
+                                            Voltar
                                         </button>
                                         <button
                                             type="submit"
