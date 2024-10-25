@@ -1,4 +1,5 @@
 import { inter, cairo } from "@/utils/fonts";
+import Link from "next/link";
 
 export function TopBar() {
     return (
@@ -18,7 +19,9 @@ export function TopBar() {
                         <div className="w-5 h-5 relative" />
                     </div>
                 </div>
-                <img className="w-6 h-6" src="/icon_signout.png" />
+                <Link href="/">
+                    <img className="w-6 h-6" src="/icon_signout.png" />
+                </Link>
             </div>
         </div>
     )

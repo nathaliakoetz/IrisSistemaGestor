@@ -46,7 +46,7 @@ export default function AreaCliente() {
 
     return (
         <div className="flex">
-            <SideBar />
+            <SideBar activeLink="geral"/>
             <div className="flex flex-col flex-1">
                 <TopBar />
                 <div className="flex-1 p-4 bg-[#f2f2f2]">

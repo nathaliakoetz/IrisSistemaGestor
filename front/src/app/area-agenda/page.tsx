@@ -2,7 +2,7 @@
 
 import { SideBar } from "@/components/SideBar";
 import { TopBar } from "@/components/TopBar";
-import { cairo } from "@/utils/fonts";
+import { cairo, inter } from "@/utils/fonts";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css'; // Importando o CSS padrão do react-calendar
 import { useState, useEffect } from 'react';
@@ -28,7 +28,7 @@ export default function AreaAgenda() {
 
     return (
         <div className="flex">
-            <SideBar />
+            <SideBar activeLink="agenda" />
             <div className="flex flex-col flex-1">
                 <TopBar />
             </div>
