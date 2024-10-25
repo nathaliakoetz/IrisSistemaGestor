@@ -55,16 +55,16 @@ export default function AreaCliente() {
                             Bem vindo de volta, Clinica Alfa
                         </div>
                         <div className="flex justify-between gap-10 me-10">
-                            <div className="px-4 py-1 bg-[#252d39] rounded-lg justify-start items-center gap-1  inline-flex">
-                                <div className={`text-white text-xl font-semibold ${cairo.className}`}>
-                                    Semanal
-                                </div>
-                            </div>
-                            <div className="px-4 bg-white rounded-lg border border-gray-400 justify-start items-center gap-7 inline-flex">
-                                <div className={`text-black text-xl font-semibold ${cairo.className}`}>
-                                    Filtrar por Profissionais
-                                </div>
-                            </div>
+                            <select className={`bg-[#252d39] text-white font-bold rounded-lg px-2 ${cairo.className}`}>
+                                <option value="Semanal">Semanal</option>
+                                <option value="Mensal">Mensal</option>
+                            </select>
+                            <select className={`bg-white border border-gray-300 font-bold text-black rounded-lg px-2 ${cairo.className}`}>
+                                <option value="">Filtrar por Profissionais</option>
+                                <option value="Terapeuta 1">Terapeuta 1</option>
+                                <option value="Terapeuta 2">Terapeuta 2</option>
+                                <option value="Terapeuta 3">Terapeuta 3</option>
+                            </select>
                         </div>
                     </div>
                     <div className="mt-5 flex items-center justify-center gap-60">
@@ -198,7 +198,7 @@ export default function AreaCliente() {
                                     <select className="border-2 border-gray-300 bg-blue-100 rounded-lg p-2 w-full mb-4">
                                         <option value="">Selecione o Terapeuta</option>
                                         <option value="Terapeuta 1">Terapeuta 1</option>
-                                        <option value="Terapeuta  2">Terapeuta 2</option>
+                                        <option value="Terapeuta 2">Terapeuta 2</option>
                                         <option value="Terapeuta 3">Terapeuta 3</option>
                                     </select>
                                     <input
