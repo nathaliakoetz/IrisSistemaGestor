@@ -1,0 +1,185 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id                String           @id @default(uuid()) @db.VarChar(36)
+  nome              String
+  email             String           @unique
+  senha             String
+  codigoRecuperacao Int?
+  cpfCnpj           String
+  telefone1         String
+  telefone2         String?
+  foto              String
+  tipo              TipoUsuario      @relation(fields: [tipoUsuarioId], references: [id])
+  tipoUsuarioId     Int
+  ContratoAtivo     ContratoAtivo?
+  LogContratacao    LogContratacao[]
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  deletedAt         DateTime?
+
+  @@map("usuarios")
+}
+
+model TipoUsuario {
+  id           Int            @id @default(autoincrement())
+  nome         String
+  Usuario      Usuario[]
+  Clinica      Clinica[]
+  Profissional Profissional[]
+
+  @@map("tipoUsuarios")
+}
+
+model Clinica {
+  tipo          TipoUsuario @relation(fields: [tipoUsuarioId], references: [id])
+  tipoUsuarioId Int
+  Terapeuta     Terapeuta[]
+  Consulta      Consulta[]
+  Legenda       Legenda[]
+
+  @@id([tipoUsuarioId])
+  @@map("clinicas")
+}
+
+model Profissional {
+  tipo          TipoUsuario @relation(fields: [tipoUsuarioId], references: [id])
+  tipoUsuarioId Int
+  Terapeuta     Terapeuta[]
+  Consulta      Consulta[]
+
+  @@id([tipoUsuarioId])
+  @@map("profissionais")
+}
+
+model Terapeuta {
+  clinica   Clinica @relation(fields: [clinicaId], references: [tipoUsuarioId])
+  clinicaId Int
+
+  terapeuta   Profissional @relation(fields: [terapeutaId], references: [tipoUsuarioId])
+  terapeutaId Int
+
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+
+  @@id([clinicaId, terapeutaId])
+  @@map("terapeutas")
+}
+
+model Legenda {
+  id        Int     @id @default(autoincrement())
+  descricao String
+  cor       String
+  clinica   Clinica @relation(fields: [clinicaId], references: [tipoUsuarioId])
+  clinicaId Int
+
+  @@map("legendas")
+}
+
+model Plano {
+  id             Int              @id @default(autoincrement())
+  nome           String
+  valor          Decimal          @db.Decimal(6, 2)
+  ContratoAtivo  ContratoAtivo[]
+  LogContratacao LogContratacao[]
+  deletedAt      DateTime?
+
+  @@map("planos")
+}
+
+model ContratoAtivo {
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId String  @unique @db.VarChar(36)
+
+  plano   Plano @relation(fields: [planoId], references: [id])
+  planoId Int   @unique
+
+  dataContratacao DateTime @default(now())
+  dataExpiracao   DateTime
+
+  @@id([usuarioId, planoId])
+  @@map("contratosAtivos")
+}
+
+model LogContratacao {
+  id              Int      @id @default(autoincrement())
+  usuario         Usuario  @relation(fields: [usuarioId], references: [id])
+  usuarioId       String   @db.VarChar(36)
+  plano           Plano    @relation(fields: [planoId], references: [id])
+  planoId         Int
+  dataContratacao DateTime
+  dataExpiracao   DateTime
+  createdAt       DateTime @default(now())
+
+  @@map("logContratacoes")
+}
+
+model Paciente {
+  id         String     @id @default(uuid()) @db.VarChar(36)
+  nome       String
+  email      String
+  cpf        String
+  telefone1  String
+  telefone2  String?
+  endereco   Endereco   @relation(fields: [enderecoId], references: [id])
+  enderecoId Int
+  Consulta   Consulta[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  deletedAt  DateTime?
+
+  @@map("pacientes")
+}
+
+model Endereco {
+  id         Int        @id @default(autoincrement())
+  logradouro String
+  numero     String
+  bairro     String
+  cidade     String
+  estado     String
+  cep        String
+  Paciente   Paciente[]
+
+  @@map("enderecos")
+}
+
+model Consulta {
+  id                Int                 @id @default(autoincrement())
+  Clinica           Clinica?            @relation(fields: [clinicaId], references: [tipoUsuarioId])
+  clinicaId         Int?
+  terapeuta         Profissional        @relation(fields: [terapeutaId], references: [tipoUsuarioId])
+  terapeutaId       Int
+  paciente          Paciente            @relation(fields: [pacienteId], references: [id])
+  pacienteId        String
+  dataInicio        DateTime
+  dataFim           DateTime
+  historicoConsulta historicoConsulta[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  @@map("consultas")
+}
+
+model historicoConsulta {
+  id         Int      @id @default(autoincrement())
+  consulta   Consulta @relation(fields: [consultaId], references: [id])
+  consultaId Int
+  detalhes   String
+  createdAt  DateTime @default(now())
+
+  @@map("historicoConsultas")
+}
