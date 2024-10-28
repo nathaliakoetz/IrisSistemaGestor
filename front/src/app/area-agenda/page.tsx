@@ -210,26 +210,24 @@ export default function AreaAgenda() {
                                 </button>
                             </div>
                         </div>
-
-                        {/* Conteúdo principal */}
                         <div className="flex-1 overflow-auto">
                             <table className="min-w-full border-collapse border-l-2 border-t-2 border-gray-300 table-fixed w-full h-full">
                                 <thead>
                                     <tr>
                                         <th className="border border-gray-300 w-[50px]" />
                                         {['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'].map((dia) => (
-                                            <th key={dia} className={`border border-gray-300 w-auto ${cairo.className}`}>{dia}</th>
+                                            <th key={dia} className={`border-2 border-gray-300 w-auto ${cairo.className}`}>{dia}</th>
                                         ))}
                                     </tr>
                                 </thead>
                                 <tbody className="h-full">
                                     {Array.from({ length: 12 }, (_, i) => i + 8).map((hora) => (
                                         <tr key={hora}>
-                                            <td className={`border border-gray-300 text-center w-auto ${cairo.className}`}>{`${hora.toString().padStart(2, '0')}:00`}</td>
+                                            <td className={`border-2 border-gray-300 text-center w-auto ${cairo.className}`}>{`${hora.toString().padStart(2, '0')}:00`}</td>
                                             {Array(7).fill(null).map((_, index) => {
                                                 if (hora === 8 && index === 1) {
                                                     return (
-                                                        <td key={index} className={`border bg-[#F2F2F2] border-gray-300 ${cairo.className}`}>
+                                                        <td key={index} className={`border-2 bg-[#F2F2F2] border-gray-300 ${cairo.className}`}>
                                                             <div className="flex flex-col">
                                                                 <div
                                                                     className="flex justify-between items-center bg-blue-400 border-l-[6px] border-blue-600 mb-1 cursor-pointer"
@@ -262,7 +260,7 @@ export default function AreaAgenda() {
                                                     );
                                                 }
                                                 return (
-                                                    <td key={index} className={`border bg-[#F2F2F2] border-gray-300 ${cairo.className}`}></td>
+                                                    <td key={index} className={`border-2 bg-[#F2F2F2] border-gray-300 ${cairo.className}`}></td>
                                                 );
                                             })}
                                         </tr>
