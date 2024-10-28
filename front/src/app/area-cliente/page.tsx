@@ -6,6 +6,7 @@ import { cairo, inter } from "@/utils/fonts";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css'; // Importando o CSS padrão do react-calendar
 import { useState, useEffect } from 'react';
+import { toast } from "sonner";
 
 export default function AreaCliente() {
     const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
