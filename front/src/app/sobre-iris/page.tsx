@@ -7,7 +7,7 @@ export default function Sobre() {
         <section>
             <div className="h-auto">
                 <Header activeLink="sobre" />
-                <div className="max-w-screen-xl mx-auto pt-24 pb-32">
+                <div className="max-w-screen-xl mx-auto pt-24 pb-24">
                     <h1 className={`text-5xl text-color-logo dark:text-color-logo font-bold mb-5 text-center ${inter.className}`}>
                         SOBRE&nbsp;&nbsp;ÍRIS
                     </h1>
@@ -16,7 +16,7 @@ export default function Sobre() {
                     </p>
                 </div>
             </div>
-            <div className="flex my-10 justify-center items-center">
+            <div className="flex mb-10 justify-center items-center">
                 <h1 className="text-2xl text-[#68C9F2]">
                     -&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;
                 </h1>
