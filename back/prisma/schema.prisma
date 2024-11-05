@@ -13,67 +13,61 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Usuario {
-  id                String           @id @default(uuid()) @db.VarChar(36)
+model DadosUsuario {
+  id                Int           @id @default(autoincrement())
   nome              String
-  email             String           @unique
+  email             String        @unique
   senha             String
   codigoRecuperacao Int?
   cpfCnpj           String
   telefone1         String
   telefone2         String?
   foto              String
-  tipo              TipoUsuario      @relation(fields: [tipoUsuarioId], references: [id])
-  tipoUsuarioId     Int
-  ContratoAtivo     ContratoAtivo?
-  LogContratacao    LogContratacao[]
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
+  LogContrato       LogContrato[]
+  clinica           Clinica?
+  profissional      Profissional?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
   deletedAt         DateTime?
 
-  @@map("usuarios")
-}
-
-model TipoUsuario {
-  id           Int            @id @default(autoincrement())
-  nome         String
-  Usuario      Usuario[]
-  Clinica      Clinica[]
-  Profissional Profissional[]
-
-  @@map("tipoUsuarios")
+  @@map("dadosUsuarios")
 }
 
 model Clinica {
-  tipo          TipoUsuario @relation(fields: [tipoUsuarioId], references: [id])
-  tipoUsuarioId Int
-  Terapeuta     Terapeuta[]
-  Consulta      Consulta[]
-  Legenda       Legenda[]
+  id             String       @id @default(uuid()) @db.VarChar(36)
+  dadosUsuario   DadosUsuario @relation(references: [id], fields: [dadosUsuarioId])
+  dadosUsuarioId Int          @unique
+  Terapeuta      Terapeuta[]
+  Consulta       Consulta[]
+  Legenda        Legenda[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  deletedAt      DateTime?
 
-  @@id([tipoUsuarioId])
   @@map("clinicas")
 }
 
 model Profissional {
-  tipo          TipoUsuario @relation(fields: [tipoUsuarioId], references: [id])
-  tipoUsuarioId Int
-  Terapeuta     Terapeuta[]
-  Consulta      Consulta[]
+  id             String       @id @default(uuid()) @db.VarChar(36)
+  dadosUsuario   DadosUsuario @relation(references: [id], fields: [dadosUsuarioId])
+  dadosUsuarioId Int          @unique
+  Terapeuta      Terapeuta[]
+  Consulta       Consulta[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  deletedAt      DateTime?
 
-  @@id([tipoUsuarioId])
   @@map("profissionais")
 }
 
 model Terapeuta {
-  clinica   Clinica @relation(fields: [clinicaId], references: [tipoUsuarioId])
-  clinicaId Int
+  clinica   Clinica @relation(fields: [clinicaId], references: [id])
+  clinicaId String
 
-  terapeuta   Profissional @relation(fields: [terapeutaId], references: [tipoUsuarioId])
-  terapeutaId Int
+  terapeuta   Profissional @relation(fields: [terapeutaId], references: [id])
+  terapeutaId String
 
-  createdAt DateTime  @default(now())
-  deletedAt DateTime?
+  createdAt DateTime @default(now())
 
   @@id([clinicaId, terapeutaId])
   @@map("terapeutas")
@@ -83,103 +77,105 @@ model Legenda {
   id        Int     @id @default(autoincrement())
   descricao String
   cor       String
-  clinica   Clinica @relation(fields: [clinicaId], references: [tipoUsuarioId])
-  clinicaId Int
+  fixed     Boolean
+  clinica   Clinica @relation(fields: [clinicaId], references: [id])
+  clinicaId String
 
   @@map("legendas")
 }
 
 model Plano {
-  id             Int              @id @default(autoincrement())
-  nome           String
-  valor          Decimal          @db.Decimal(6, 2)
-  ContratoAtivo  ContratoAtivo[]
-  LogContratacao LogContratacao[]
-  deletedAt      DateTime?
+  id          Int           @id @default(autoincrement())
+  nome        String
+  valor       Decimal       @db.Decimal(6, 2)
+  LogContrato LogContrato[]
+  deletedAt   DateTime?
 
   @@map("planos")
 }
 
-model ContratoAtivo {
-  usuario   Usuario @relation(fields: [usuarioId], references: [id])
-  usuarioId String  @unique @db.VarChar(36)
-
-  plano   Plano @relation(fields: [planoId], references: [id])
-  planoId Int   @unique
-
-  dataContratacao DateTime @default(now())
-  dataExpiracao   DateTime
-
-  @@id([usuarioId, planoId])
-  @@map("contratosAtivos")
-}
-
-model LogContratacao {
-  id              Int      @id @default(autoincrement())
-  usuario         Usuario  @relation(fields: [usuarioId], references: [id])
-  usuarioId       String   @db.VarChar(36)
-  plano           Plano    @relation(fields: [planoId], references: [id])
+model LogContrato {
+  id              Int          @id @default(autoincrement())
+  usuario         DadosUsuario @relation(fields: [usuarioId], references: [id])
+  usuarioId       Int
+  plano           Plano        @relation(fields: [planoId], references: [id])
   planoId         Int
   dataContratacao DateTime
   dataExpiracao   DateTime
-  createdAt       DateTime @default(now())
+  createdAt       DateTime     @default(now())
 
-  @@map("logContratacoes")
-}
-
-model Paciente {
-  id         String     @id @default(uuid()) @db.VarChar(36)
-  nome       String
-  email      String
-  cpf        String
-  telefone1  String
-  telefone2  String?
-  endereco   Endereco   @relation(fields: [enderecoId], references: [id])
-  enderecoId Int
-  Consulta   Consulta[]
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  deletedAt  DateTime?
-
-  @@map("pacientes")
+  @@map("logContratos")
 }
 
 model Endereco {
-  id         Int        @id @default(autoincrement())
-  logradouro String
-  numero     String
-  bairro     String
-  cidade     String
-  estado     String
-  cep        String
-  Paciente   Paciente[]
+  id          Int          @id @default(autoincrement())
+  logradouro  String
+  numero      String
+  bairro      String
+  cidade      String
+  estado      String
+  cep         String
+  Responsavel Responsavel?
 
   @@map("enderecos")
 }
 
-model Consulta {
-  id                Int                 @id @default(autoincrement())
-  Clinica           Clinica?            @relation(fields: [clinicaId], references: [tipoUsuarioId])
-  clinicaId         Int?
-  terapeuta         Profissional        @relation(fields: [terapeutaId], references: [tipoUsuarioId])
-  terapeutaId       Int
-  paciente          Paciente            @relation(fields: [pacienteId], references: [id])
-  pacienteId        String
-  dataInicio        DateTime
-  dataFim           DateTime
-  historicoConsulta historicoConsulta[]
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
+model Responsavel {
+  id                    String                  @id @default(uuid()) @db.VarChar(36)
+  nome                  String
+  email                 String
+  cpf                   String
+  telefone1             String
+  telefone2             String?
+  endereco              Endereco                @relation(fields: [enderecoId], references: [id])
+  enderecoId            Int                     @unique
+  ResponsavelDependente ResponsavelDependente[]
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+  deletedAt             DateTime?
 
-  @@map("consultas")
+  @@map("responsaveis")
 }
 
-model historicoConsulta {
-  id         Int      @id @default(autoincrement())
-  consulta   Consulta @relation(fields: [consultaId], references: [id])
-  consultaId Int
-  detalhes   String
-  createdAt  DateTime @default(now())
+model Dependente {
+  id                    String                  @id @default(uuid()) @db.VarChar(36)
+  nome                  String
+  email                 String
+  cpf                   String
+  telefone1             String
+  telefone2             String?
+  ResponsavelDependente ResponsavelDependente[]
+  Consulta              Consulta[]
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+  deletedAt             DateTime?
 
-  @@map("historicoConsultas")
+  @@map("pacientes")
+}
+
+model ResponsavelDependente {
+  responsavel   Responsavel @relation(fields: [responsavelId], references: [id])
+  responsavelId String
+  dependente    Dependente  @relation(fields: [dependenteId], references: [id])
+  dependenteId  String
+
+  @@id([responsavelId, dependenteId])
+  @@map("responsaveisDependentes")
+}
+
+model Consulta {
+  id          Int          @id @default(autoincrement())
+  Clinica     Clinica      @relation(fields: [clinicaId], references: [id])
+  clinicaId   String
+  terapeuta   Profissional @relation(fields: [terapeutaId], references: [id])
+  terapeutaId String
+  paciente    Dependente?  @relation(fields: [pacienteId], references: [id])
+  pacienteId  String?
+  dataInicio  DateTime
+  dataFim     DateTime?
+  detalhes    String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("consultas")
 }
