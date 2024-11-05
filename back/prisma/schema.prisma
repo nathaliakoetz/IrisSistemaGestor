@@ -19,18 +19,17 @@ model DadosUsuario {
   email             String        @unique
   senha             String
   codigoRecuperacao Int?
-  cpfCnpj           String
+  cpfCnpj           String        @unique
   telefone1         String
   telefone2         String?
-  foto              String
+  foto              String?
   LogContrato       LogContrato[]
   clinica           Clinica?
   profissional      Profissional?
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
-  deletedAt         DateTime?
 
-  @@map("dadosUsuarios")
+  @@map("dados_usuarios")
 }
 
 model Clinica {
@@ -104,7 +103,7 @@ model LogContrato {
   dataExpiracao   DateTime
   createdAt       DateTime     @default(now())
 
-  @@map("logContratos")
+  @@map("log_contratos")
 }
 
 model Endereco {
@@ -160,7 +159,7 @@ model ResponsavelDependente {
   dependenteId  String
 
   @@id([responsavelId, dependenteId])
-  @@map("responsaveisDependentes")
+  @@map("responsaveis_dependentes")
 }
 
 model Consulta {
