@@ -180,13 +180,13 @@ export default function SignUp() {
                                 onChange={(e) => setIsChecked(e.target.checked)}
                             />
                             <label htmlFor="link-checkbox" className={`ms-2 text-sm text-color-logo ${inter.className}`}>Você concorda com nossos&nbsp;
-                                <Link href="/" className="text-color-logo font-bold hover:underline">
+                                <Link href="#" className="text-color-logo font-bold hover:underline">
                                     Termos
                                 </Link>,&nbsp;
-                                <Link href="/" className="text-color-logo font-bold hover:underline">
+                                <Link href="#" className="text-color-logo font-bold hover:underline">
                                     Política<br />de Privacidade
                                 </Link>&nbsp;e&nbsp;
-                                <Link href="/" className="text-color-logo font-bold hover:underline">
+                                <Link href="#" className="text-color-logo font-bold hover:underline">
                                     Política de Cookies
                                 </Link>.
                             </label>

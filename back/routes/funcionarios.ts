@@ -8,24 +8,28 @@ const router = Router()
 
 router.get("/", async (req, res) => {
     try {
-        const clinicas = await prisma.clinica.findMany({
+        const funcionarios = await prisma.funcionario.findMany({
             include: {
-                dadosUsuario: {
+                Terapeuta: {
                     select: {
-                        nome: true,
-                        email: true,
-                        senha: true,
-                        codigoRecuperacao: true,
-                        cpfCnpj: true,
-                        telefone1: true,
-                        telefone2: true,
-                        foto: true,
-                        LogContrato: true
+                        clinica: {
+                            select: {
+                                dadosUsuario: {
+                                    select: {
+                                        nome: true,
+                                        email: true,
+                                        cpfCnpj: true,
+                                        telefone1: true,
+                                        telefone2: true
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
         })
-        res.status(200).json(clinicas)
+        res.status(200).json(funcionarios)
     } catch (error) {
         res.status(400).json(error)
     }
@@ -35,7 +39,6 @@ function validaSenha(senha: string) {
 
     const mensa: string[] = []
 
-    // .length: retorna o tamanho da string (da senha)
     if (senha.length < 8) {
         mensa.push("Erro... senha deve possuir, no mínimo, 8 caracteres")
     }
@@ -90,7 +93,7 @@ router.post("/", async (req, res) => {
     const hash = bcrypt.hashSync(senha, salt)
 
     try {
-        const dados = await prisma.dadosUsuario.create({
+        const funcionario = await prisma.funcionario.create({
             data: {
                 nome,
                 email,
@@ -101,13 +104,7 @@ router.post("/", async (req, res) => {
             }
         })
 
-        const clinica = await prisma.clinica.create({
-            data: {
-                dadosUsuarioId: dados.id
-            }
-        })
-
-        res.status(201).json(clinica)
+        res.status(201).json(funcionario)
     } catch (error) {
         res.status(400).json(error)
     }
@@ -118,22 +115,11 @@ router.delete("/:id", async (req, res) => {
 
     try {
 
-        const updated = await prisma.clinica.findUnique({
-            where: { id },
-            select: {
-                updatedAt: true
-            }
+        const funcionario = await prisma.funcionario.delete({
+            where: { id }
         })
 
-        const clinica = await prisma.clinica.update({
-            where: { id },
-            data: {
-                deletedAt: new Date(),
-                updatedAt: updated?.updatedAt
-            }
-        })
-
-        res.status(200).json(clinica)
+        res.status(200).json(funcionario)
     } catch (error) {
         res.status(400).json(error)
     }
@@ -152,105 +138,49 @@ router.patch("/:id", async (req, res) => {
     if (telefone2) updateData.telefone2 = telefone2
 
     try {
-        const clinica = await prisma.clinica.update({
+        const funcionario = await prisma.funcionario.update({
             where: { id },
-            data: {
-                dadosUsuario: {
-                    update: updateData
-                }
-            }
+            data: updateData
         })
 
-        res.status(200).json(clinica)
-    } catch (error) {
-        res.status(400).json(error)
-    }
-})
-
-router.patch("/reativar/:id", async (req, res) => {
-    const { id } = req.params
-
-    try {
-
-        const updated = await prisma.clinica.findUnique({
-            where: { id },
-            select: {
-                updatedAt: true
-            }
-        })
-
-        const clinica = await prisma.clinica.update({
-            where: { id },
-            data: {
-                deletedAt: null,
-                updatedAt: updated?.updatedAt
-            }
-        })
-
-        res.status(200).json(clinica)
-    } catch (error) {
-        res.status(400).json(error)
-    }
-})
-
-router.get("/ativas", async (req, res) => {
-    try {
-        const clinicas = await prisma.clinica.findMany({
-            where: {
-                deletedAt: null
-            },
-            include: {
-                dadosUsuario: {
-                    select: {
-                        nome: true,
-                        email: true,
-                        senha: true,
-                        codigoRecuperacao: true,
-                        cpfCnpj: true,
-                        telefone1: true,
-                        telefone2: true,
-                        foto: true,
-                    }
-                }
-            }
-        })
-        res.status(200).json(clinicas)
+        res.status(200).json(funcionario)
     } catch (error) {
         res.status(400).json(error)
     }
 })
 
 router.post("/login", async (req, res) => {
-    const { email, senha } = req.body
+    const { clinicaId, email, senha } = req.body
 
     const mensaPadrao = "Login ou senha incorretos"
 
-    if (!email || !senha) {
+    if (!clinicaId || !email || !senha) {
         res.status(400).json({ erro: mensaPadrao })
         return
     }
 
     try {
-        const dadosUsuario = await prisma.dadosUsuario.findUnique({
-            where: { email },
-            include: { clinica: true }
+        const funcionario = await prisma.funcionario.findFirst({
+            where: {
+                email,
+                Terapeuta: {
+                    some: {
+                        clinicaId
+                    }
+                }
+            }
         })
 
-        if (!dadosUsuario) {
+        if (!funcionario) {
             res.status(400).json({ erro: mensaPadrao })
             return
         }
 
-        if (dadosUsuario.clinica && dadosUsuario.clinica.deletedAt) {
-            res.status(400).json({ erro: "Conta desativada" })
-            return
-        }
-
-        if (bcrypt.compareSync(senha, dadosUsuario.senha)) {
+        if (bcrypt.compareSync(senha, funcionario.senha)) {
             res.status(200).json({
-                clinicaId: dadosUsuario.clinica ? dadosUsuario.clinica.id : null,
-                nome: dadosUsuario.nome,
-                email: dadosUsuario.email
+                id: funcionario.id,
+                nome: funcionario.nome,
+                email: funcionario.email
             })
         } else {
             res.status(400).json({ erro: mensaPadrao })
@@ -287,17 +217,17 @@ async function enviaEmail(nome: string, email: string, codigo: number) {
 //     const { email } = req.body;
 
 //     try {
-//         const clinica = await prisma.clinica.findUnique({ where: { email } });
+//         const funcionario = await prisma.funcionario.findUnique({ where: { email } });
 
-//         if (!clinica) {
+//         if (!funcionario) {
 //             res.status(404).json({ erro: "E-mail não encontrado" });
 //             return;
 //         }
 
 //         const codigo = Math.floor(100000 + Math.random() * 900000);
-//         enviaEmail(clinica.nome, clinica.email, codigo);
+//         enviaEmail(funcionario.nome, funcionario.email, codigo);
 
-//         await prisma.clinica.update({
+//         await prisma.funcionario.update({
 
 //             where: { email },
 
@@ -315,14 +245,14 @@ async function enviaEmail(nome: string, email: string, codigo: number) {
 //     const { email, codigo } = req.body;
 
 //     try {
-//         const clinica = await prisma.clinica.findUnique({ where: { email } });
+//         const funcionario = await prisma.funcionario.findUnique({ where: { email } });
 
-//         if (!clinica) {
+//         if (!funcionario) {
 //             res.status(404).json({ erro: "E-mail não encontrado" });
 //             return;
 //         }
 
-//         if (Number(codigo) !== clinica.codigo) {
+//         if (Number(codigo) !== funcionario.codigo) {
 //             res.status(400).json({ erro: "Código incorreto" });
 //             return;
 //         }
@@ -343,14 +273,14 @@ async function enviaEmail(nome: string, email: string, codigo: number) {
 //     }
 
 //     try {
-//         const clinica = await prisma.clinica.findUnique({ where: { email } });
+//         const funcionario = await prisma.funcionario.findUnique({ where: { email } });
 
-//         if (!clinica) {
+//         if (!funcionario) {
 //             res.status(404).json({ erro: "E-mail não encontrado" });
 //             return;
 //         }
 
-//         const senhaAntiga = clinica.senha;
+//         const senhaAntiga = funcionario.senha;
 
 //         if (bcrypt.compareSync(novaSenha, senhaAntiga)) {
 //             res.status(400).json({ erro: "A nova senha não pode ser igual à senha antiga" });
@@ -360,7 +290,7 @@ async function enviaEmail(nome: string, email: string, codigo: number) {
 //         const salt = bcrypt.genSaltSync(12);
 //         const hash = bcrypt.hashSync(novaSenha, salt);
 
-//         await prisma.clinica.update({
+//         await prisma.funcionario.update({
 //             where: { email },
 //             data: {
 //                 senha: hash

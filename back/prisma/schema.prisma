@@ -36,9 +36,8 @@ model Clinica {
   id             String       @id @default(uuid()) @db.VarChar(36)
   dadosUsuario   DadosUsuario @relation(references: [id], fields: [dadosUsuarioId])
   dadosUsuarioId Int          @unique
-  Terapeuta      Terapeuta[]
-  Consulta       Consulta[]
   Legenda        Legenda[]
+  Terapeuta      Terapeuta[]
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
   deletedAt      DateTime?
@@ -50,8 +49,6 @@ model Profissional {
   id             String       @id @default(uuid()) @db.VarChar(36)
   dadosUsuario   DadosUsuario @relation(references: [id], fields: [dadosUsuarioId])
   dadosUsuarioId Int          @unique
-  Terapeuta      Terapeuta[]
-  Consulta       Consulta[]
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
   deletedAt      DateTime?
@@ -59,12 +56,30 @@ model Profissional {
   @@map("profissionais")
 }
 
+model Funcionario {
+  id                String      @id @default(uuid()) @db.VarChar(36)
+  nome              String
+  email             String
+  senha             String
+  codigoRecuperacao Int?
+  cpfCnpj           String
+  telefone1         String
+  telefone2         String?
+  Terapeuta         Terapeuta[]
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  @@map("funcionarios")
+}
+
 model Terapeuta {
   clinica   Clinica @relation(fields: [clinicaId], references: [id])
   clinicaId String
 
-  terapeuta   Profissional @relation(fields: [terapeutaId], references: [id])
+  terapeuta   Funcionario @relation(fields: [terapeutaId], references: [id])
   terapeutaId String
+
+  Consulta Consulta[]
 
   createdAt DateTime @default(now())
 
@@ -76,7 +91,7 @@ model Legenda {
   id        Int     @id @default(autoincrement())
   descricao String
   cor       String
-  fixed     Boolean
+  isFixed   Boolean
   clinica   Clinica @relation(fields: [clinicaId], references: [id])
   clinicaId String
 
@@ -163,18 +178,17 @@ model ResponsavelDependente {
 }
 
 model Consulta {
-  id          Int          @id @default(autoincrement())
-  Clinica     Clinica      @relation(fields: [clinicaId], references: [id])
+  id          Int         @id @default(autoincrement())
+  terapeuta   Terapeuta   @relation(fields: [clinicaId, terapeutaId], references: [clinicaId, terapeutaId])
   clinicaId   String
-  terapeuta   Profissional @relation(fields: [terapeutaId], references: [id])
   terapeutaId String
-  paciente    Dependente?  @relation(fields: [pacienteId], references: [id])
+  paciente    Dependente? @relation(fields: [pacienteId], references: [id])
   pacienteId  String?
   dataInicio  DateTime
   dataFim     DateTime?
   detalhes    String?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
   @@map("consultas")
 }
