@@ -66,7 +66,7 @@ export default function ParaClinica({ activeLink }: ParaClinicaProps) {
                                     </span>
                                 </p>
                                 <ul>
-                                    <li className={`text-sm text-black ${inter.className}`}>&bull;&nbsp;&nbsp;Pacote <span className={`text-sm text-color-logo font-bold ${inter.className}`}>Essencial Íris</span></li>
+                                    <li className={`text-sm text-black ${inter.className}`}>&bull;&nbsp;&nbsp;Todos os benefícios do Pacote <span className={`text-sm text-color-logo font-bold ${inter.className}`}>Essencial Íris</span></li>
                                     <li className={`text-sm text-black mt-10 ${inter.className}`}>&bull;&nbsp;&nbsp;Maior capacidade de armazenamento e relatórios detalhados.</li>
                                     <li className={`text-sm text-black mt-5 mb-5 ${inter.className}`}>&bull;&nbsp;&nbsp;Suporte técnico prioritário e atendimento exclusivo.</li>
                                 </ul>
