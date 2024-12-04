@@ -13,7 +13,7 @@ export default function SignIn() {
                 <div className="max-w-lg border border-gray-400 bg-white rounded-3xl shadow flex flex-col items-center h-auto overflow-hidden">
                     <div className="flex flex-row w-card-login items-center justify-center mt-14">
                         <Link href="/" className="flex">
-                            <img src="./logo.png" alt="Icone do Sistema Íris" className="w-32" />
+                            <img src="./../logo.png" alt="Icone do Sistema Íris" className="w-32" />
                             <h1 className={`text-7xl ms-1 text-color-logo ${cairo.className}`}>
                                 ÍRIS
                             </h1>
@@ -21,14 +21,14 @@ export default function SignIn() {
                     </div>
                     <div className="max-w-lg mx-auto mt-10 mb-10 min-w-64">
                         <h1 className={`text-center font-bold text-color-logo mb-5 ${inter.className}`}>Logar como:</h1>
-                        <Link href="/signin/iris">
+                        <Link href="/signin/iris/clinica">
                             <button type="button" className={`text-white mb-5 font-bold bg-footer-email rounded-2xl text-sm w-full min-h-10 text-center ${inter.className}`}>
-                                Plano Íris
+                                Clínica
                             </button>
                         </Link>
-                        <Link href="/signin/connect">
+                        <Link href="/signin/iris/funcionario">
                             <button type="button" className={`text-white font-bold bg-footer-email rounded-2xl text-sm w-full min-h-10 text-center ${inter.className}`}>
-                                Plano Connect
+                                Funcionário
                             </button>
                         </Link>
                     </div>
