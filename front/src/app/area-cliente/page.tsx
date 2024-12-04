@@ -6,16 +6,24 @@ import { cairo, inter } from "@/utils/fonts";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css'; // Importando o CSS padrão do react-calendar
 import { useState, useEffect } from 'react';
-import { toast } from "sonner";
+import Cookies from 'js-cookie'
+import { useRouter } from "next/navigation";
 
 export default function AreaCliente() {
     const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
     const [currentDate, setCurrentDate] = useState(new Date());
     const [isAddConsultaOpen, setisAddConsultaOpen] = useState(false);
+    const router = useRouter();
 
     const handleAddConsultaOpening = () => {
         setisAddConsultaOpen(!isAddConsultaOpen);
     };
+
+    useEffect(() => {
+        if (!Cookies.get("clinica_logado_id")) {
+            router.push("/signin")
+        }
+    }, [])
 
     const tileClassName = ({ date, view }: { date: Date, view: string }) => {
         if (view === 'month') {
@@ -42,7 +50,7 @@ export default function AreaCliente() {
 
     return (
         <div className="flex">
-            <SideBar activeLink="geral"/>
+            <SideBar activeLink="geral" />
             <div className="flex flex-col flex-1">
                 <TopBar />
                 <div className="flex-1 p-4 bg-[#f2f2f2]">

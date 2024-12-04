@@ -1,3 +1,5 @@
+'use client'
+
 import Link from "next/link";
 import { inter } from "@/utils/fonts";
 
@@ -6,6 +8,7 @@ interface SideBarProps {
 }
 
 export function SideBar({ activeLink }: SideBarProps) {
+
     return (
         <div className="h-auto w-60 pb-52 bg-[#f2f2f2] border-r border-[#252d39]">
             <Link href="/" className="flex justify-center items-center mt-5">

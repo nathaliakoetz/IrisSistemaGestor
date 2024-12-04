@@ -9,8 +9,12 @@ export default function SignIn() {
     const router = useRouter();
     const { handleSubmit } = useForm();
 
-    function redireciona() {
-        router.push("/area-cliente")
+    function sleep(ms: number) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function redireciona() {
+        router.push("/signin/carregando");
     }
 
     return (

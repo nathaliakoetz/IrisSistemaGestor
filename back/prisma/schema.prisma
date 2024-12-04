@@ -56,19 +56,6 @@ model Profissional {
   @@map("profissionais")
 }
 
-model Funcionario {
-  id                String  @id @default(uuid()) @db.VarChar(36)
-  nome              String
-  email             String
-  senha             String
-  codigoRecuperacao Int?
-  cpfCnpj           String
-  telefone1         String
-  telefone2         String?
-
-  @@map("funcionarios")
-}
-
 model Terapeuta {
   id                String  @default(uuid()) @db.VarChar(36)
   nome              String

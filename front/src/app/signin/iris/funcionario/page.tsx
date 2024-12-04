@@ -10,7 +10,7 @@ export default function SignIn() {
     const { handleSubmit } = useForm();
 
     function redireciona() {
-        router.push("/area-cliente")
+        router.push("/signin/carregando")
     }
 
     return (

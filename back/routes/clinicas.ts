@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client"
 import { Router } from "express"
 import bcrypt from 'bcrypt'
 import nodemailer from "nodemailer"
+import jwt from "jsonwebtoken"
 
 const prisma = new PrismaClient()
 const router = Router()
@@ -254,16 +255,29 @@ router.post("/login", async (req, res) => {
         }
 
         if (bcrypt.compareSync(senha, dadosUsuario.senha)) {
-            res.status(200).json({
-                clinicaId: dadosUsuario.clinica ? dadosUsuario.clinica.id : null,
-                nome: dadosUsuario.nome,
-                email: dadosUsuario.email
-            })
+            console.log(dadosUsuario) // print 1
+
+            const token = jwt.sign({
+                admin_logado_id: dadosUsuario.clinica?.id,
+                admin_logado_nome: dadosUsuario.nome
+            },
+                process.env.JWT_KEY as string,
+                { expiresIn: "1h" }
+            )
+
+            console.log(dadosUsuario) // print 2
+
+            console.log(dadosUsuario?.clinica?.id)
+            console.log(dadosUsuario?.nome)
+            console.log(token)
+
+            res.status(200).json({ clinicaId: dadosUsuario.clinica?.id, clinicaNome: dadosUsuario.nome, token })
         } else {
             res.status(400).json({ erro: mensaPadrao })
         }
     } catch (error) {
-        res.status(400).json(error)
+        console.error("Erro ao tentar autenticar o usuário:", error)
+        res.status(500).json({ erro: "Erro interno do servidor" })
     }
 })
 

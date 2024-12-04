@@ -4,13 +4,42 @@ import { cairo, inter } from "@/utils/fonts";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { useEffect } from "react"
+import { toast } from 'sonner'
+
+import Cookies from 'js-cookie'
+
+type Inputs = {
+    email: string
+    senha: string
+}
 
 export default function SignIn() {
+    const { register, handleSubmit, setFocus } = useForm<Inputs>()
     const router = useRouter();
-    const { handleSubmit } = useForm();
 
-    function redireciona() {
-        router.push("/area-cliente")
+    useEffect(() => {
+        setFocus("email")
+    }, [])
+
+    async function verificaLogin(data: Inputs) {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/clinicas/login`, {
+            method: "POST",
+            headers: { "Content-type": "Application/json" },
+            body: JSON.stringify({ email: data.email, senha: data.senha })
+        })
+
+        if (response.status == 200) {
+            const clinica = await response.json()
+
+            Cookies.set("clinica_logado_id", clinica.clinicaId)
+            Cookies.set("clinica_logado_nome", clinica.clinicaNome)
+            Cookies.set("clinica_logado_token", clinica.token)
+
+            router.push("/area-cliente")
+        } else if (response.status == 400) {
+            toast.error("Erro... Login ou senha incorretos")
+        }
     }
 
     return (
@@ -25,13 +54,14 @@ export default function SignIn() {
                             </h1>
                         </Link>
                     </div>
-                    <form className="max-w-lg mx-auto mt-10" onSubmit={handleSubmit(redireciona)}>
+                    <form className="max-w-lg mx-auto mt-10" onSubmit={handleSubmit(verificaLogin)}>
                         <div className="mb-5">
                             <input
                                 type="email"
                                 id="email"
                                 className={`bg-form border-user text-gray-900 placeholder:text-header-selected text-sm rounded-2xl block w-80 p-2.5 ${inter.className}`}
                                 placeholder="E-mail"
+                                {...register("email")}
                                 required
                             />
                         </div>
@@ -41,6 +71,7 @@ export default function SignIn() {
                                 id="password"
                                 className={`bg-form border-user border-gray-700 text-gray-900 placeholder:text-header-selected text-sm rounded-2xl block w-full p-2.5 ${inter.className}`}
                                 placeholder="Senha"
+                                {...register("senha")}
                                 required
                             />
                         </div>
