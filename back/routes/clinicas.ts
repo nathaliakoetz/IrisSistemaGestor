@@ -22,7 +22,8 @@ router.get("/", async (req, res) => {
                         foto: true,
                         LogContrato: true
                     }
-                }
+                },
+                Terapeuta: true
             }
         })
         res.status(200).json(clinicas)
