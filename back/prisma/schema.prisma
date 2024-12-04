@@ -36,7 +36,7 @@ model Clinica {
   id             String       @id @default(uuid()) @db.VarChar(36)
   dadosUsuario   DadosUsuario @relation(references: [id], fields: [dadosUsuarioId])
   dadosUsuarioId Int          @unique
-  Legenda        Legenda[]
+  Legendas       Legenda[]
   Terapeuta      Terapeuta[]
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
@@ -79,8 +79,8 @@ model Terapeuta {
   telefone1         String
   telefone2         String?
 
-  clinica           Clinica @relation(fields: [clinicaId], references: [id])
-  clinicaId         String
+  clinica   Clinica @relation(fields: [clinicaId], references: [id])
+  clinicaId String
 
   Consulta Consulta[]
 

@@ -26,7 +26,6 @@ router.get("/", async (req, res) => {
 })
 
 router.post("/", async (req, res) => {
-  console.log(req.body)
   const { descricao, cor, clinicaId, isFixed } = req.body
 
   if (!descricao || !cor || !clinicaId || isFixed === undefined) {
@@ -36,12 +35,21 @@ router.post("/", async (req, res) => {
 
   try {
 
-    const legendaExiste = await prisma.legenda.findFirst({
+    const corExiste = await prisma.legenda.findFirst({
       where: { cor, clinicaId }
     })
 
-    if (legendaExiste) {
+    if (corExiste) {
       res.status(400).json({ "erro": "Cor já cadastrada para esta Clínica" })
+      return
+    }
+
+    const descricaoExiste = await prisma.legenda.findFirst({
+      where: { descricao: descricao.trim(), clinicaId }
+    })
+
+    if (descricaoExiste) {
+      res.status(400).json({ "erro": "Descrição já cadastrada para esta Clínica" })
       return
     }
 
@@ -51,6 +59,42 @@ router.post("/", async (req, res) => {
     res.status(201).json(legenda)
   } catch (error) {
     res.status(400).json(error)
+  }
+})
+
+router.patch("/:id", async (req, res) => {
+  const { id } = req.params
+  const { descricao } = req.body
+
+  if (!descricao) {
+    res.status(400).json({ "erro": "Informe descricao" })
+    return
+  }
+
+  const legenda = await prisma.legenda.findFirst({
+    where: { id: Number(id) }
+  })
+
+  if (legenda?.descricao === descricao.trim()) {
+    res.status(400).json({ "erro": "Descrição já cadastrada" })
+    return
+  }
+
+  const updateData: any = {}
+
+  if (descricao) updateData.descricao = descricao
+
+  try {
+      const legenda = await prisma.legenda.update({
+          where: {
+              id: Number(id)
+          },
+          data: updateData
+      })
+
+      res.status(200).json(legenda)
+  } catch (error) {
+      res.status(400).json(error)
   }
 })
 

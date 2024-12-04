@@ -23,7 +23,8 @@ router.get("/", async (req, res) => {
                         LogContrato: true
                     }
                 },
-                Terapeuta: true
+                Terapeuta: true,
+                Legendas: true,
             }
         })
         res.status(200).json(clinicas)
@@ -143,6 +144,11 @@ router.delete("/:id", async (req, res) => {
 router.patch("/:id", async (req, res) => {
     const { id } = req.params
     const { nome, email, cpfCnpj, telefone1, telefone2 } = req.body
+
+    if (!nome && !email && !cpfCnpj && !telefone1 && !telefone2) {
+        res.status(400).json({ erro: "Informe pelo menos 1 dos dados: nome, email, cpfCnpj, telefone1, telefone2" })
+        return
+    }
 
     const updateData: any = {}
 

@@ -111,6 +111,11 @@ router.patch("/:id/:clinicaId", async (req, res) => {
     const { id, clinicaId } = req.params
     const { nome, email, cpfCnpj, telefone1, telefone2 } = req.body
 
+    if (!nome && !email && !cpfCnpj && !telefone1) {
+        res.status(400).json({ "erro": "Informe pelo menos 1 dos dados: nome, email, cpfCnpj, telefone1, telefone2" })
+        return
+    }
+
     const updateData: any = {}
 
     if (nome) updateData.nome = nome
