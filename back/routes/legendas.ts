@@ -9,12 +9,8 @@ router.get("/", async (req, res) => {
     const legendas = await prisma.legenda.findMany({
       include: {
         clinica: {
-          select: {
-            dadosUsuario: {
-              select: {
-                nome: true
-              }
-            }
+          include: {
+            dadosUsuario: true
           }
         }
       }

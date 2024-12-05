@@ -5,25 +5,16 @@ import { TopBar } from "@/components/TopBar";
 import { cairo, inter } from "@/utils/fonts";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css'; // Importando o CSS padrão do react-calendar
-import { useState, useEffect } from 'react';
-import Cookies from 'js-cookie'
-import { useRouter } from "next/navigation";
+import { useState } from 'react';
 
 export default function AreaCliente() {
     const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
     const [currentDate, setCurrentDate] = useState(new Date());
     const [isAddConsultaOpen, setisAddConsultaOpen] = useState(false);
-    const router = useRouter();
 
     const handleAddConsultaOpening = () => {
         setisAddConsultaOpen(!isAddConsultaOpen);
     };
-
-    useEffect(() => {
-        if (!Cookies.get("clinica_logado_id")) {
-            router.push("/signin")
-        }
-    }, [])
 
     const tileClassName = ({ date, view }: { date: Date, view: string }) => {
         if (view === 'month') {

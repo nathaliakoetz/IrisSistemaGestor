@@ -1,12 +1,11 @@
 'use client'
 
 import { cairo, inter } from "@/utils/fonts";
+import { pause } from "@/utils/functions/pause";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from 'react';
-import Cookies from 'js-cookie'
-import { toast } from 'sonner'
-import { pause } from "@/utils/functions/pause";
+
 
 export default function SignIn() {
     const router = useRouter();
@@ -16,13 +15,8 @@ export default function SignIn() {
         if (effectExecuted) return;
 
         async function redireciona() {
-            if (!Cookies.get("clinica_logado_id")) {
-                toast.error("Erro... Login ou senha incorretos")
-                await pause(2)
-                router.push("/signin")
-            } else {
-                router.push("/area-cliente")
-            }
+            await pause(2)
+            router.push("/signin")
         }
         redireciona()
         setEffectExecuted(true);
@@ -43,7 +37,7 @@ export default function SignIn() {
                     </div>
                     <div className="flex justify-center items-center mt-10 mb-10">
                         <p className={`text-2xl text-color-logo ${cairo.className}`}>
-                            Verificando Informações... Aguarde.
+                            Erro ao carregar os dados da Clínica... Redirecionando para a página de login.
                         </p>
                     </div>
                 </div>

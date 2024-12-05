@@ -11,16 +11,8 @@ router.get("/", async (req, res) => {
         const terapeutas = await prisma.terapeuta.findMany({
             include: {
                 clinica: {
-                    select: {
-                        dadosUsuario: {
-                            select: {
-                                nome: true,
-                                email: true,
-                                cpfCnpj: true,
-                                telefone1: true,
-                                telefone2: true
-                            }
-                        }
+                    include: {
+                        dadosUsuario: true
                     }
                 }
             }

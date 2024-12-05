@@ -10,19 +10,7 @@ router.get("/", async (req, res) => {
     try {
         const profissionais = await prisma.profissional.findMany({
             include: {
-                dadosUsuario: {
-                    select: {
-                        nome: true,
-                        email: true,
-                        senha: true,
-                        codigoRecuperacao: true,
-                        cpfCnpj: true,
-                        telefone1: true,
-                        telefone2: true,
-                        foto: true,
-                        LogContrato: true
-                    }
-                }
+                dadosUsuario: true
             }
         })
         res.status(200).json(profissionais)
@@ -205,19 +193,7 @@ router.get("/ativos", async (req, res) => {
                 deletedAt: null
             },
             include: {
-                dadosUsuario: {
-                    select: {
-                        nome: true,
-                        email: true,
-                        senha: true,
-                        codigoRecuperacao: true,
-                        cpfCnpj: true,
-                        telefone1: true,
-                        telefone2: true,
-                        foto: true,
-                        LogContrato: true
-                    }
-                }
+                dadosUsuario: true
             }
         })
         res.status(200).json(profissionais)

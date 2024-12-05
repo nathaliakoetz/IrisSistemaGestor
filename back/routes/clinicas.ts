@@ -11,19 +11,7 @@ router.get("/", async (req, res) => {
     try {
         const clinicas = await prisma.clinica.findMany({
             include: {
-                dadosUsuario: {
-                    select: {
-                        nome: true,
-                        email: true,
-                        senha: true,
-                        codigoRecuperacao: true,
-                        cpfCnpj: true,
-                        telefone1: true,
-                        telefone2: true,
-                        foto: true,
-                        LogContrato: true
-                    }
-                },
+                dadosUsuario: true,
                 Terapeuta: true,
                 Legendas: true,
             }
@@ -144,10 +132,10 @@ router.delete("/:id", async (req, res) => {
 
 router.patch("/:id", async (req, res) => {
     const { id } = req.params
-    const { nome, email, cpfCnpj, telefone1, telefone2 } = req.body
+    const { nome, email, cpfCnpj, telefone1, telefone2, foto } = req.body
 
-    if (!nome && !email && !cpfCnpj && !telefone1 && !telefone2) {
-        res.status(400).json({ erro: "Informe pelo menos 1 dos dados: nome, email, cpfCnpj, telefone1, telefone2" })
+    if (!nome && !email && !cpfCnpj && !telefone1 && !telefone2 && !foto) {
+        res.status(400).json({ erro: "Informe pelo menos 1 dos dados: nome, email, cpfCnpj, telefone1, telefone2, foto" })
         return
     }
 
@@ -158,6 +146,7 @@ router.patch("/:id", async (req, res) => {
     if (cpfCnpj) updateData.cpfCnpj = cpfCnpj
     if (telefone1) updateData.telefone1 = telefone1
     if (telefone2) updateData.telefone2 = telefone2
+    if (foto) updateData.foto = foto
 
     try {
         const clinica = await prisma.clinica.update({
@@ -166,6 +155,9 @@ router.patch("/:id", async (req, res) => {
                 dadosUsuario: {
                     update: updateData
                 }
+            },
+            include: {
+                dadosUsuario: true
             }
         })
 
@@ -208,18 +200,25 @@ router.get("/ativas", async (req, res) => {
                 deletedAt: null
             },
             include: {
-                dadosUsuario: {
-                    select: {
-                        nome: true,
-                        email: true,
-                        senha: true,
-                        codigoRecuperacao: true,
-                        cpfCnpj: true,
-                        telefone1: true,
-                        telefone2: true,
-                        foto: true,
-                    }
-                }
+                dadosUsuario: true
+            }
+        })
+        res.status(200).json(clinicas)
+    } catch (error) {
+        res.status(400).json(error)
+    }
+})
+
+router.get("/:id", async (req, res) => {
+    const { id } = req.params
+
+    try {
+        const clinicas = await prisma.clinica.findUnique({
+            where: { id },
+            include: {
+                dadosUsuario: true,
+                Terapeuta: true,
+                Legendas: true,
             }
         })
         res.status(200).json(clinicas)
