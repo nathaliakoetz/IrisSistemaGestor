@@ -5,15 +5,41 @@ import { TopBar } from "@/components/TopBar";
 import { cairo, inter } from "@/utils/fonts";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css'; // Importando o CSS padrão do react-calendar
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useClinicaStore } from "@/context/clinica";
-import Link from "next/link";
+import { ClinicaI } from "@/utils/types/clinicas";
+import Cookies from "js-cookie";
 
 export default function AreaCliente() {
     const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
     const [currentDate, setCurrentDate] = useState(new Date());
     const [isAddConsultaOpen, setisAddConsultaOpen] = useState(false);
     const { clinica } = useClinicaStore();
+    const [dadosClinica, setDadosClinica] = useState<ClinicaI>();
+
+    useEffect(() => {
+        async function buscaClinica(id: string) {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/clinicas/${id}`, {
+                method: "GET"
+            })
+
+            if (response.status == 200) {
+                const dados = await response.json()
+                setDadosClinica(dados)
+            } else if (response.status == 400) {
+                window.location.href = "/area-cliente/error"
+            }
+        }
+
+        if (!clinica.id && !Cookies.get("authID")) {
+            window.location.href = "/area-cliente/error"
+        } else if (Cookies.get("authID")) {
+            const authID = Cookies.get("authID") as string
+            buscaClinica(authID)
+        } else {
+            buscaClinica(clinica.id)
+        }
+    }, []);
 
     const handleAddConsultaOpening = () => {
         setisAddConsultaOpen(!isAddConsultaOpen);
@@ -43,7 +69,6 @@ export default function AreaCliente() {
     ];
 
     return (
-        clinica.id?
         <div className="flex">
             <SideBar activeLink="geral" />
             <div className="flex flex-col flex-1">
@@ -240,25 +265,5 @@ export default function AreaCliente() {
                 </div>
             </div>
         </div>
-        :
-        <section className="bg-[url('/bg_login.jpeg')] bg-cover bg-no-repeat flex justify-center items-center h-[1080px]">
-            <div className="flex justify-center items-center mt-32 mb-32">
-                <div className="max-w-lg border border-gray-400 bg-white rounded-3xl shadow flex flex-col items-center h-auto overflow-hidden">
-                    <div className="flex flex-row w-card-login items-center justify-center mt-14">
-                        <Link href="/" className="flex">
-                            <img src="./../logo.png" alt="Icone do Sistema Íris" className="w-32" />
-                            <h1 className={`text-7xl ms-1 text-color-logo ${cairo.className}`}>
-                                ÍRIS
-                            </h1>
-                        </Link>
-                    </div>
-                    <div className="flex justify-center items-center mt-10 mb-10">
-                        <p className={`text-2xl text-color-logo ${cairo.className}`}>
-                            404 - Página não encontrada
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
     )
 }

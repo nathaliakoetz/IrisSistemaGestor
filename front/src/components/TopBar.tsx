@@ -4,33 +4,49 @@ import { useState, useEffect } from 'react';
 import { useClinicaStore } from "@/context/clinica";
 import { ClinicaI } from "@/utils/types/clinicas";
 import { pause } from "@/utils/functions/pause";
+import Cookies from "js-cookie";
 
 export function TopBar() {
     const { clinica, deslogaClinica } = useClinicaStore();
     const [currentDate, setCurrentDate] = useState('');
     const [currentDay, setCurrentDay] = useState('');
-    const [dadosClinica, setDadosClinica ] = useState<ClinicaI>();
-
-    async function buscaClinica(id: string) {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/clinicas/${id}`, {
-            method: "GET"
-        })
-
-        if (response.status == 200) {
-            const dados = await response.json()
-            return dados
-        } else if (response.status == 400) {
-            window.location.href = "/area-cliente/error"
-        }
-    }
+    const [dadosClinica, setDadosClinica] = useState<ClinicaI>();
+    const [logged, setLogged] = useState<boolean>(false);
 
     useEffect(() => {
 
-        if (!clinica.id) {
-            window.location.href = "/area-cliente/error"
-        } else {
-            buscaClinica(clinica.id).then(dados => setDadosClinica(dados));
+        async function buscaClinica(id: string) {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/clinicas/${id}`, {
+                method: "GET"
+            })
 
+            if (response.status == 200) {
+                const dados = await response.json()
+                setDadosClinica(dados)
+            } else if (response.status == 400) {
+                window.location.href = "/area-cliente/error"
+            }
+        }
+
+        if (Cookies.get("logged")) {
+            setLogged(true)
+        }
+
+        if (!clinica.id && !Cookies.get("authID")) {
+            window.location.href = "/area-cliente/error"
+        } else if (Cookies.get("authID")) {
+            const authID = Cookies.get("authID") as string
+            buscaClinica(authID)
+
+            const date = new Date();
+            const dateOptions: Intl.DateTimeFormatOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
+            const dayOptions: Intl.DateTimeFormatOptions = { weekday: 'long' };
+            const formattedDate = date.toLocaleDateString('pt-BR', dateOptions);
+            const formattedDay = date.toLocaleDateString('pt-BR', dayOptions);
+            setCurrentDate(formattedDate);
+            setCurrentDay(formattedDay.charAt(0).toUpperCase() + formattedDay.slice(1));
+        } else {
+            buscaClinica(clinica.id)
             const date = new Date();
             const dateOptions: Intl.DateTimeFormatOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
             const dayOptions: Intl.DateTimeFormatOptions = { weekday: 'long' };
@@ -42,6 +58,8 @@ export function TopBar() {
     }, []);
 
     async function sairClinica() {
+        Cookies.remove("authID")
+        Cookies.remove("logged")
         window.location.href = "/signin"
         await pause(1)
         deslogaClinica()
@@ -65,7 +83,7 @@ export function TopBar() {
                     </div>
                 </div>
                 <Link href="/">
-                    <img className="w-6 h-6" src="/icon_signout.png" onClick={sairClinica}/>
+                    <img className="w-6 h-6" src="/icon_signout.png" onClick={sairClinica} />
                 </Link>
             </div>
         </div>

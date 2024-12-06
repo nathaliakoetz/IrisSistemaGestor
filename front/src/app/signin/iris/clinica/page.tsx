@@ -4,8 +4,9 @@ import { cairo, inter } from "@/utils/fonts";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { toast } from 'sonner'
+import Cookies from "js-cookie";
 
 import { useClinicaStore } from "@/context/clinica";
 
@@ -18,6 +19,7 @@ export default function SignIn() {
     const { register, handleSubmit, setFocus } = useForm<Inputs>()
     const router = useRouter();
     const { logaClinica } = useClinicaStore()
+    const [rememberMe, setRememberMe] = useState<boolean>(false)
 
     useEffect(() => {
         setFocus("email")
@@ -33,6 +35,11 @@ export default function SignIn() {
         if (response.status == 200) {
             const clinica = await response.json()
             logaClinica(clinica)
+            Cookies.set("logged", "true")
+
+            if (rememberMe) {
+                Cookies.set("authID", clinica.id)
+            }
 
             router.push("/signin/carregando")
         } else if (response.status == 400) {
@@ -73,7 +80,18 @@ export default function SignIn() {
                                 required
                             />
                         </div>
-                        <div className="flex items-start mb-5">
+                        <div className="flex justify-between items-center mb-8">
+                            <div className="flex items-center">
+                                <input
+                                    type="checkbox"
+                                    id="rememberMe"
+                                    className="mr-2"
+                                    onChange={(e) => setRememberMe(e.target.checked)}
+                                />
+                                <label htmlFor="rememberMe" className={`text-sm text-color-logo ${inter.className}`}>
+                                    Lembrar de mim
+                                </label>
+                            </div>
                             <Link href="/" className="hover:underline">
                                 <p className={`text-sm text-color-logo ${inter.className}`}>
                                     Esqueceu a senha?

@@ -8,11 +8,6 @@ import { useEffect } from "react";
 
 export default function SignIn() {
     const router = useRouter();
-    const { clinica } = useClinicaStore()
-
-    useEffect(() => {
-        console.log(clinica)
-    }, [])
 
     return (
         <section className="bg-[url('/bg_login.jpeg')] bg-cover bg-no-repeat flex justify-center items-center h-[1080px]">

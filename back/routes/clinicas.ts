@@ -261,7 +261,7 @@ router.post("/login", async (req, res) => {
                 admin_logado_nome: dadosUsuario.nome
             },
                 process.env.JWT_KEY as string,
-                { expiresIn: "1h" }
+                { expiresIn: "12h" }
             )
 
             console.log(dadosUsuario) // print 2
