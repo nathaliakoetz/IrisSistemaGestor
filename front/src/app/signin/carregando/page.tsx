@@ -4,19 +4,20 @@ import { cairo, inter } from "@/utils/fonts";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from 'react';
-import Cookies from 'js-cookie'
 import { toast } from 'sonner'
 import { pause } from "@/utils/functions/pause";
+import { useClinicaStore } from "@/context/clinica";
 
 export default function SignIn() {
     const router = useRouter();
     const [effectExecuted, setEffectExecuted] = useState(false);
+    const { clinica } = useClinicaStore()
 
     useEffect(() => {
         if (effectExecuted) return;
 
         async function redireciona() {
-            if (!Cookies.get("clinica_logado_id")) {
+            if (!clinica.id) {
                 toast.error("Erro... Login ou senha incorretos")
                 await pause(2)
                 router.push("/signin")

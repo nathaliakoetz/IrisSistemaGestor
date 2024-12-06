@@ -9,3 +9,10 @@ export interface ClinicaI {
     Legendas: LegendaI[],
     Terapeuta: TerapeutaI[]
 }
+
+export interface ClinicaZustandI {
+    id: string,
+    nome: string,
+    token: string
+}
+

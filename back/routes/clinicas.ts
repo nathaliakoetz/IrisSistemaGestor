@@ -270,7 +270,7 @@ router.post("/login", async (req, res) => {
             console.log(dadosUsuario?.nome)
             console.log(token)
 
-            res.status(200).json({ clinicaId: dadosUsuario.clinica?.id, clinicaNome: dadosUsuario.nome, token })
+            res.status(200).json({ id: dadosUsuario.clinica?.id, nome: dadosUsuario.nome, token })
         } else {
             res.status(400).json({ erro: mensaPadrao })
         }

@@ -6,6 +6,8 @@ import { cairo, inter } from "@/utils/fonts";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css'; // Importando o CSS padrão do react-calendar
 import { useState } from 'react';
+import { useClinicaStore } from "@/context/clinica";
+import Link from "next/link";
 
 function getRandomColor() {
     const letters = '0123456789ABCDEF';
@@ -38,6 +40,7 @@ export default function AreaAgenda() {
     const [tooltipText, setTooltipText] = useState<string | null>(null);
     const [tooltipPosition, setTooltipPosition] = useState<{ x: number; y: number } | null>(null);
     const [isAddConsultaOpen, setisAddConsultaOpen] = useState(false);
+    const { clinica } = useClinicaStore();
 
     const handleAddConsultaOpening = () => {
         setisAddConsultaOpen(!isAddConsultaOpen);
@@ -127,6 +130,7 @@ export default function AreaAgenda() {
     };
 
     return (
+        clinica.id ?
         <div className="flex">
             <SideBar activeLink="agenda" />
             <div className="flex flex-col flex-1">
@@ -414,5 +418,25 @@ export default function AreaAgenda() {
                 </div>
             )}
         </div >
+        :
+        <section className="bg-[url('/bg_login.jpeg')] bg-cover bg-no-repeat flex justify-center items-center h-[1080px]">
+            <div className="flex justify-center items-center mt-32 mb-32">
+                <div className="max-w-lg border border-gray-400 bg-white rounded-3xl shadow flex flex-col items-center h-auto overflow-hidden">
+                    <div className="flex flex-row w-card-login items-center justify-center mt-14">
+                        <Link href="/" className="flex">
+                            <img src="./../logo.png" alt="Icone do Sistema Íris" className="w-32" />
+                            <h1 className={`text-7xl ms-1 text-color-logo ${cairo.className}`}>
+                                ÍRIS
+                            </h1>
+                        </Link>
+                    </div>
+                    <div className="flex justify-center items-center mt-10 mb-10">
+                        <p className={`text-2xl text-color-logo ${cairo.className}`}>
+                            404 - Página não encontrada
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
     );
 }

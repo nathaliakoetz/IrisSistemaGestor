@@ -37,11 +37,11 @@ export default function SignIn() {
                     </div>
                     <div className="flex justify-center items-center mt-10 mb-10">
                         <p className={`text-2xl text-color-logo ${cairo.className}`}>
-                            Erro ao carregar os dados da Clínica... Redirecionando para a página de login.
+                        Erro ao carregar os dados da Clínica...<br/>Redirecionando para a página de login.
                         </p>
                     </div>
                 </div>
             </div>
-        </section >
+        </section>
     )
 }

@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { useEffect } from "react"
 import { toast } from 'sonner'
 
-import Cookies from 'js-cookie'
+import { useClinicaStore } from "@/context/clinica";
 
 type Inputs = {
     email: string
@@ -17,6 +17,7 @@ type Inputs = {
 export default function SignIn() {
     const { register, handleSubmit, setFocus } = useForm<Inputs>()
     const router = useRouter();
+    const { logaClinica } = useClinicaStore()
 
     useEffect(() => {
         setFocus("email")
@@ -31,12 +32,9 @@ export default function SignIn() {
 
         if (response.status == 200) {
             const clinica = await response.json()
+            logaClinica(clinica)
 
-            Cookies.set("clinica_logado_id", clinica.clinicaId)
-            Cookies.set("clinica_logado_nome", clinica.clinicaNome)
-            Cookies.set("clinica_logado_token", clinica.token)
-
-            router.push("/area-cliente")
+            router.push("/signin/carregando")
         } else if (response.status == 400) {
             toast.error("Erro... Login ou senha incorretos")
         }
