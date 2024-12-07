@@ -20,7 +20,7 @@ export default function SignIn() {
                         </Link>
                     </div>
                     <div className="max-w-lg mx-auto mt-10 mb-10 min-w-64">
-                        <h1 className={`text-center font-bold text-color-logo mb-5 ${inter.className}`}>Logar como:</h1>
+                        <h1 className={`text-center font-bold text-color-logo mb-5 ${inter.className}`}>Logar como Usuário:</h1>
                         <Link href="/signin/iris/clinica">
                             <button type="button" className={`text-white mb-5 font-bold bg-footer-email rounded-2xl text-sm w-full min-h-10 text-center ${inter.className}`}>
                                 Clínica

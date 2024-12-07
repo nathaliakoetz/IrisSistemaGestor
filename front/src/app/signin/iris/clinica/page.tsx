@@ -35,7 +35,7 @@ export default function SignIn() {
         if (response.status == 200) {
             const clinica = await response.json()
             logaClinica(clinica)
-            Cookies.set("logged", "true")
+            sessionStorage.setItem("logged", "true")
 
             if (rememberMe) {
                 Cookies.set("authID", clinica.id)

@@ -16,7 +16,7 @@ export default function SignIn() {
 
         async function redireciona() {
             await pause(2)
-            router.push("/signin")
+            router.push("/signin/iris/clinica")
         }
         redireciona()
         setEffectExecuted(true);
