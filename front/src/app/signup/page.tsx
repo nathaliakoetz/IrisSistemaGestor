@@ -6,6 +6,8 @@ import { cairo, inter } from "@/utils/fonts";
 import Link from "next/link";
 import { toast } from "sonner"
 import { ChangeEvent, FormEvent } from "react";
+import { pause } from "@/utils/functions/pause";
+import { useRouter } from "next/navigation";
 
 type Inputs = {
     nome: string;
@@ -23,6 +25,7 @@ export default function SignUp() {
     const { register, handleSubmit } = useForm<Inputs>()
     const [tipoUsuario, setTipoUsuario] = useState("clinica");
     const [isChecked, setIsChecked] = useState<boolean>(false);
+    const router = useRouter();
 
     const formatarCPF = (cpf: string) => {
         return cpf
@@ -114,6 +117,8 @@ export default function SignUp() {
 
                     if (response.status === 201) {
                         toast.success("Cadastro de Clínica realizado com sucesso.");
+                        await pause(2)
+                        router.push("/signin/iris/clinica");
                     } else {
                         toast.error("Erro ao cadastrar clínica.");
                     }

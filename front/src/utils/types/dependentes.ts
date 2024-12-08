@@ -1,4 +1,5 @@
 import { ConsultaI } from "./consultas"
+import { DependenteClinicaI } from "./dependenteClinicas"
 import { ResponsavelDependenteI } from "./reponsavelDependentes"
 
 export interface DependenteI {
@@ -7,4 +8,5 @@ export interface DependenteI {
     cpf: string
     ResponsavelDependente: ResponsavelDependenteI[],
     Consulta: ConsultaI[]
+    DependenteClinica: DependenteClinicaI[]
 }

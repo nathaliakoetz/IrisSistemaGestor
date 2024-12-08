@@ -25,6 +25,15 @@ router.get("/", async (req, res) => {
                             }
                         }
                     }
+                },
+                DependenteClinica: {
+                    include: {
+                        clinica: {
+                            include: {
+                                dadosUsuario: true
+                            }
+                        }
+                    }
                 }
             }
         })
@@ -35,7 +44,7 @@ router.get("/", async (req, res) => {
 })
 
 router.post("/", async (req, res) => {
-    const { nome, cpf, responsavelId } = req.body
+    const { nome, cpf, responsavelId, clinicaId } = req.body
 
     if (!nome || !cpf || !responsavelId) {
         res.status(400).json({ erro: "Informe nome, cpf, responsavelId" })
@@ -51,7 +60,7 @@ router.post("/", async (req, res) => {
             }
         })
 
-        const responsavelDependente = await prisma.responsavelDependente.create({
+        await prisma.responsavelDependente.create({
             data: {
                 responsavelId,
                 dependenteId: dependente.id
@@ -63,7 +72,41 @@ router.post("/", async (req, res) => {
             }
         })
 
-        res.status(201).json(responsavelDependente)
+        await prisma.dependenteClinica.create({
+            data: {
+                clinicaId,
+                dependenteId: dependente.id
+            },
+            include: {
+                dependente: true,
+                clinica: true
+                
+            }
+        })
+
+        const dependenteCriado = await prisma.dependente.findUnique({
+            where: {
+                id: dependente.id
+            },
+            include: {
+                ResponsavelDependente: {
+                    include: {
+                        dependente: true
+                    }
+                },
+                DependenteClinica: {
+                    include: {
+                        clinica: {
+                            include: {
+                                dadosUsuario: true
+                            }
+                        }
+                    }
+                }
+            }
+        })
+
+        res.status(201).json(dependenteCriado)
     } catch (error) {
         res.status(400).json(error)
     }

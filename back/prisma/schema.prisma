@@ -38,6 +38,7 @@ model Clinica {
   dadosUsuarioId Int          @unique
   Legendas       Legenda[]
   Terapeuta      Terapeuta[]
+  DependenteClinica DependenteClinica[]
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
   deletedAt      DateTime?
@@ -121,6 +122,9 @@ model Endereco {
   estado      String
   cep         String
   Responsavel Responsavel?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  deletedAt   DateTime?
 
   @@map("enderecos")
 }
@@ -148,6 +152,7 @@ model Dependente {
   cpf                   String
   ResponsavelDependente ResponsavelDependente[]
   Consulta              Consulta[]
+  DependenteClinica     DependenteClinica[]
   createdAt             DateTime                @default(now())
   updatedAt             DateTime                @updatedAt
   deletedAt             DateTime?
@@ -180,4 +185,17 @@ model Consulta {
   deletedAt   DateTime?
 
   @@map("consultas")
+}
+
+model DependenteClinica {
+  clinica     Clinica     @relation(fields: [clinicaId], references: [id])
+  clinicaId   String
+  dependente  Dependente  @relation(fields: [dependenteId], references: [id])
+  dependenteId String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  deletedAt   DateTime?
+
+  @@id([clinicaId, dependenteId])
+  @@map("dependentes_clinicas")
 }

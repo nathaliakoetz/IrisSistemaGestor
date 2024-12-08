@@ -11,14 +11,16 @@ import { ClinicaI } from "@/utils/types/clinicas";
 import Cookies from "js-cookie";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { DependenteClinicaI } from "@/utils/types/dependenteClinicas";
 
 
 export default function AreaCliente() {
     const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
-    const [currentDate, setCurrentDate] = useState(new Date());
+    const currentDate = new Date();
     const [isAddConsultaOpen, setisAddConsultaOpen] = useState(false);
     const { clinica } = useClinicaStore();
     const [dadosClinica, setDadosClinica] = useState<ClinicaI>();
+    const [dependentes, setDependentes] = useState<DependenteClinicaI>();
     const router = useRouter();
 
     useEffect(() => {
@@ -37,7 +39,19 @@ export default function AreaCliente() {
             }
         }
 
-        if (!clinica.id && !Cookies.get("authID")) {
+        async function buscaDependentes(id: string) {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/dependentesClinicas/${id}`, {
+                method: "GET"
+            })
+
+            if (response.status == 200) {
+                const dados = await response.json()
+                setDependentes(dados)
+            }
+
+        }
+
+        if (!clinica.id && !Cookies.get("authID")) {buscaClinica
             sessionStorage.removeItem("logged")
         } else if (Cookies.get("authID")) {
             const authID = Cookies.get("authID") as string
@@ -113,10 +127,10 @@ export default function AreaCliente() {
                                     <option value="Mensal">Mensal</option>
                                 </select>
                                 <select className={`bg-white border border-gray-300 font-bold text-black rounded-lg px-2 ${cairo.className}`}>
-                                    <option value="">Filtrar por Profissionais</option>
-                                    <option value="Terapeuta 1">Terapeuta 1</option>
-                                    <option value="Terapeuta 2">Terapeuta 2</option>
-                                    <option value="Terapeuta 3">Terapeuta 3</option>
+                                    <option value="">Filtrar por Terapeutas</option>
+                                    {dadosClinica?.Terapeuta.map((terapeuta) => (
+                                        <option key={terapeuta.id} value={terapeuta.id}>{terapeuta.nome}</option>
+                                    ))}
                                 </select>
                             </div>
                         </div>
@@ -249,9 +263,9 @@ export default function AreaCliente() {
                                         </select>
                                         <select className="border-2 border-gray-300 bg-blue-100 rounded-lg p-2 w-full mb-4" required>
                                             <option value="">Selecione o Terapeuta</option>
-                                            <option value="Terapeuta 1">Terapeuta 1</option>
-                                            <option value="Terapeuta 2">Terapeuta 2</option>
-                                            <option value="Terapeuta 3">Terapeuta 3</option>
+                                            {dadosClinica?.Terapeuta.map((terapeuta) => (
+                                                <option key={terapeuta.id} value={terapeuta.id}>{terapeuta.nome}</option>
+                                            ))}
                                         </select>
                                         <input
                                             type="date"

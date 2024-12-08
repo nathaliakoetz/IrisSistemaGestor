@@ -12,7 +12,8 @@ router.get("/", async (req, res) => {
                     include: {
                         dependente: true
                     }
-                }
+                },
+                endereco: true
             }
         })
         res.status(200).json(responsaveis)

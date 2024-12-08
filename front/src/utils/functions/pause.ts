@@ -1,3 +1,3 @@
-export function pause(s: number) {
-    return new Promise(resolve => setTimeout(resolve, s * 1000));
+export function pause(seconds: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, seconds * 1000));
 }

@@ -14,6 +14,19 @@ router.get("/", async (req, res) => {
                 dadosUsuario: true,
                 Terapeuta: true,
                 Legendas: true,
+                DependenteClinica: {
+                    include: {
+                        dependente: {
+                            include: {
+                                ResponsavelDependente: {
+                                    include: {
+                                        responsavel: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         })
         res.status(200).json(clinicas)
