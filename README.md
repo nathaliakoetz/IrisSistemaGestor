@@ -1,7 +1,7 @@
 
 # **Sistema Gestor Íris**
 
-![Sistema Gestor Íris](https://via.placeholder.com/800x400.png?text=Banner+do+Sistema+Gestor+Íris)  
+![Sistema Gestor Íris] 
 > **Projeto desenvolvido para a unidade de Gestão Ágil de Projetos, com o Prof. Pablo De Chiaro, UniSenac Pelotas/RS.**  
 
 ## **Descrição do Projeto**  
