@@ -309,6 +309,75 @@ async function enviaEmail(nome: string, email: string, codigo: number) {
     console.log("Message sent: %s", info.messageId);
 }
 
+router.get("/horarios/:id", async (req, res) => {
+    const { id } = req.params
+
+    try {
+        const horarios = await prisma.horario.findMany({
+            where: {
+                clinicaId: id
+            },
+            include: {
+                clinica: {
+                    include: {
+                        dadosUsuario: true
+                    }
+                }
+            }
+        })
+        res.status(200).json(horarios)
+    } catch (error) {
+        res.status(400).json(error)
+    }
+})
+
+router.post("/horario", async (req, res) => {
+    const { clinicaId, data, horario } = req.body
+
+    if (!clinicaId || !data || !horario) {
+        res.status(400).json({ erro: "Informe clinicaId, data, horario" })
+        return
+    }
+
+    try {
+        const horarioExistente = await prisma.horario.findUnique({
+            where: {
+                clinicaId_data: {
+                    clinicaId,
+                    data: new Date(data)
+                }
+            }
+        })
+
+        if (horarioExistente) {
+            const horariosAtualizados = [...horarioExistente.horarios, horario].sort()
+            const horarios = await prisma.horario.update({
+                where: {
+                    clinicaId_data: {
+                        clinicaId,
+                        data: new Date(data)
+                    }
+                },
+                data: {
+                    horarios: horariosAtualizados
+                }
+            })
+            res.status(201).json(horarios)
+        } else {
+            const horarios = await prisma.horario.create({
+                data: {
+                    clinicaId,
+                    data: new Date(data),
+                    horarios: [horario]
+                }
+            })
+            res.status(201).json(horarios)
+        }
+    } catch (error) {
+        res.status(400).json(error)
+    }
+})
+
 // router.post("/gera-codigo", async (req, res) => {
 //     const { email } = req.body;
 

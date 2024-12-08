@@ -12,6 +12,7 @@ import Cookies from "js-cookie";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { DependenteClinicaI } from "@/utils/types/dependenteClinicas";
+import { HorarioI } from "@/utils/types/horarios";
 
 
 export default function AreaCliente() {
@@ -20,7 +21,8 @@ export default function AreaCliente() {
     const [isAddConsultaOpen, setisAddConsultaOpen] = useState(false);
     const { clinica } = useClinicaStore();
     const [dadosClinica, setDadosClinica] = useState<ClinicaI>();
-    const [dependentes, setDependentes] = useState<DependenteClinicaI>();
+    const [dependentes, setDependentes] = useState<DependenteClinicaI[]>([]);
+    const [horarios, setHorarios] = useState<HorarioI[]>([]);
     const router = useRouter();
 
     useEffect(() => {
@@ -48,16 +50,18 @@ export default function AreaCliente() {
                 const dados = await response.json()
                 setDependentes(dados)
             }
-
         }
 
-        if (!clinica.id && !Cookies.get("authID")) {buscaClinica
+        if (!clinica.id && !Cookies.get("authID")) {
+            buscaClinica
             sessionStorage.removeItem("logged")
         } else if (Cookies.get("authID")) {
             const authID = Cookies.get("authID") as string
             buscaClinica(authID)
+            buscaDependentes(authID)
         } else {
             buscaClinica(clinica.id)
+            buscaDependentes(clinica.id)
         }
     }, []);
 
@@ -122,10 +126,6 @@ export default function AreaCliente() {
                                 Bem vindo de volta, Clinica Alfa
                             </div>
                             <div className="flex justify-between gap-10 me-10">
-                                <select className={`bg-[#252d39] text-white font-bold rounded-lg px-2 ${cairo.className}`}>
-                                    <option value="Semanal">Semanal</option>
-                                    <option value="Mensal">Mensal</option>
-                                </select>
                                 <select className={`bg-white border border-gray-300 font-bold text-black rounded-lg px-2 ${cairo.className}`}>
                                     <option value="">Filtrar por Terapeutas</option>
                                     {dadosClinica?.Terapeuta.map((terapeuta) => (
@@ -257,9 +257,9 @@ export default function AreaCliente() {
                                     <form className="mx-16" onSubmit={handleAddConsultaOpening}>
                                         <select className="border-2 border-gray-300 bg-blue-100 rounded-lg p-2 w-full mb-4" required>
                                             <option value="">Selecione o Paciente</option>
-                                            <option value="Paciente 1">Paciente 1</option>
-                                            <option value="Paciente 2">Paciente 2</option>
-                                            <option value="Paciente 3">Paciente 3</option>
+                                            {dependentes?.map((dependente: DependenteClinicaI) => (
+                                                <option key={dependente.dependente.id} value={dependente.dependente.id}>{dependente.dependente.nome}</option>
+                                            ))}
                                         </select>
                                         <select className="border-2 border-gray-300 bg-blue-100 rounded-lg p-2 w-full mb-4" required>
                                             <option value="">Selecione o Terapeuta</option>
