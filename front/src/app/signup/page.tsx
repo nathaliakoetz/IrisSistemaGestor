@@ -42,8 +42,10 @@ export default function SignUp() {
         e.preventDefault();
         if (!isChecked) {
             toast.error("Você precisa concordar com os Termos, Política de Privacidade e Política de Cookies para continuar.");
+        } else if (tipoUsuario === 'profissional') {
+            toast.info("Cadastro de Profissional em desenvolvimento.");
         } else {
-            toast.success("Formulário enviado com sucesso!");
+            toast.success("Cadastro de Clínica realizado com sucesso!");
         }
     };
 
