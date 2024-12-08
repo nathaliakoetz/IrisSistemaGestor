@@ -45,7 +45,7 @@ export default function SignUp() {
         } else if (tipoUsuario === 'profissional') {
             toast.info("Cadastro de Profissional em desenvolvimento.");
         } else {
-            toast.success("Cadastro de Clínica realizado com sucesso!");
+            toast.success("Cadastro de Clínica realizado com sucesso.");
         }
     };
 
