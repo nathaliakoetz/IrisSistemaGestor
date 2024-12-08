@@ -350,6 +350,11 @@ router.post("/horario", async (req, res) => {
         })
 
         if (horarioExistente) {
+            if (horarioExistente.horarios.includes(horario)) {
+                res.status(400).json({ erro: "Horário já existe para esta data" })
+                return
+            }
+
             const horariosAtualizados = [...horarioExistente.horarios, horario].sort()
             const horarios = await prisma.horario.update({
                 where: {

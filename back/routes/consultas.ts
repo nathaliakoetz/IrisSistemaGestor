@@ -41,10 +41,17 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
     const { clinicaId, terapeutaId, pacienteId, dataInicio, dataFim, detalhes } = req.body
 
+    console.log('####################')
+    console.log('teste')
+    console.log(clinicaId, terapeutaId, pacienteId, dataInicio, dataFim, detalhes)
+    console.log('####################')
+
     if (!clinicaId || !terapeutaId || !dataInicio) {
         res.status(400).json({ erro: "Informe clinicaId, terapeutaId, pacienteId" })
         return
     }
+
+    console.log(clinicaId, terapeutaId, pacienteId, dataInicio, dataFim, detalhes)
 
     try {
 
@@ -53,7 +60,7 @@ router.post("/", async (req, res) => {
                 clinicaId,
                 terapeutaId,
                 pacienteId: pacienteId ? pacienteId : null,
-                dataInicio,
+                dataInicio: dataInicio,
                 dataFim: dataFim ? dataFim : null,
                 detalhes: detalhes ? detalhes : null
             }
@@ -85,6 +92,45 @@ router.delete("/:id", async (req, res) => {
         })
 
         res.status(200).json(consulta)
+    } catch (error) {
+        res.status(400).json(error)
+    }
+})
+
+router.get("/:id", async (req, res) => {
+    const { id } = req.params
+
+    try {
+        const consultas = await prisma.consulta.findMany({
+            where: {
+                clinicaId: id
+            },
+            include: {
+                terapeuta: {
+                    include: {
+                        clinica: {
+                            include: {
+                                dadosUsuario: true
+                            }
+                        }
+                    }
+                },
+                paciente: {
+                    include: {
+                        ResponsavelDependente: {
+                            include: {
+                                responsavel: {
+                                    include: {
+                                        endereco: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        })
+        res.status(200).json(consultas)
     } catch (error) {
         res.status(400).json(error)
     }

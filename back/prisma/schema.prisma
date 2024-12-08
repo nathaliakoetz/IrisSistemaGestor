@@ -178,8 +178,8 @@ model Consulta {
   terapeutaId String
   paciente    Dependente? @relation(fields: [pacienteId], references: [id])
   pacienteId  String?
-  dataInicio  DateTime
-  dataFim     DateTime?
+  dataInicio  String
+  dataFim     String?
   detalhes    String?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt

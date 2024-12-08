@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "consultas" ALTER COLUMN "dataInicio" SET DATA TYPE TEXT,
+ALTER COLUMN "dataFim" SET DATA TYPE TEXT;

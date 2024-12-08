@@ -13,17 +13,55 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { DependenteClinicaI } from "@/utils/types/dependenteClinicas";
 import { HorarioI } from "@/utils/types/horarios";
+import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { ConsultaI } from "@/utils/types/consultas";
 
+type InputsAddConsulta = {
+    terapeutaId: string,
+    pacienteId: string,
+    hora: string
+}
 
 export default function AreaCliente() {
-    const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
     const currentDate = new Date();
+    const [selectedDate, setSelectedDate] = useState<Date | null>(currentDate);
+    const [horariosPorData, setHorariosPorData] = useState<string[]>([]);
     const [isAddConsultaOpen, setisAddConsultaOpen] = useState(false);
     const { clinica } = useClinicaStore();
     const [dadosClinica, setDadosClinica] = useState<ClinicaI>();
     const [dependentes, setDependentes] = useState<DependenteClinicaI[]>([]);
-    const [horarios, setHorarios] = useState<HorarioI[]>([]);
+    const [consultas, setConsultas] = useState<ConsultaI[]>([]);
+    const [horarios, setHorarios] = useState<{ [key: string]: string[] }>({});
     const router = useRouter();
+    const { register, handleSubmit, reset } = useForm<InputsAddConsulta>()
+
+    async function buscaConsultas(id: string) {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/consultas/${id}`, {
+            method: "GET"
+        })
+
+        if (response.status == 200) {
+            const dados = await response.json()
+            setConsultas(dados)
+        }
+    }
+
+    async function buscaHorarios(id: string) {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/clinicas/horarios/${id}`, {
+            method: "GET"
+        })
+
+        if (response.status == 200) {
+            const dados = await response.json()
+            const horariosMap = dados.reduce((acc: { [key: string]: string[] }, horario: HorarioI) => {
+                const dateKey = new Date(horario.data).toISOString().split('T')[0]
+                acc[dateKey] = horario.horarios
+                return acc
+            }, {})
+            setHorarios(horariosMap)
+        }
+    }
 
     useEffect(() => {
         async function buscaClinica(id: string) {
@@ -53,24 +91,78 @@ export default function AreaCliente() {
         }
 
         if (!clinica.id && !Cookies.get("authID")) {
-            buscaClinica
-            sessionStorage.removeItem("logged")
+            sessionStorage.removeItem("logged");
         } else if (Cookies.get("authID")) {
-            const authID = Cookies.get("authID") as string
-            buscaClinica(authID)
-            buscaDependentes(authID)
+            const authID = Cookies.get("authID") as string;
+            buscaClinica(authID);
+            buscaDependentes(authID);
+            buscaConsultas(authID);
+            buscaHorarios(authID);
         } else {
-            buscaClinica(clinica.id)
-            buscaDependentes(clinica.id)
+            buscaClinica(clinica.id);
+            buscaDependentes(clinica.id);
+            buscaConsultas(clinica.id);
+            buscaHorarios(clinica.id);
         }
+
     }, []);
+
+    useEffect(() => {
+        if (selectedDate) {
+            console.log(consultas)
+            const formattedSelectedDate = selectedDate ? new Date(selectedDate).toISOString().split('T')[0] : '';
+            if (horarios[formattedSelectedDate]) {
+                if (consultas.length > 0) {
+                    const horariosOcupados = consultas
+                        .filter(consulta => consulta.dataInicio.includes(formattedSelectedDate))
+                        .map(consulta => consulta.dataInicio.split(' ')[1].slice(0, 5))
+                    const horariosDisponiveis = horarios[formattedSelectedDate].filter(horario => !horariosOcupados.includes(horario))
+                    setHorariosPorData(horariosDisponiveis);
+                } else {
+                    setHorariosPorData(horarios[formattedSelectedDate]);
+                }
+            } else {
+                setHorariosPorData([]);
+            }
+        }
+    }, [selectedDate, horarios]);
 
     const handleAddConsultaOpening = () => {
         setisAddConsultaOpen(!isAddConsultaOpen);
     };
 
+    async function addConsulta(data: InputsAddConsulta) {
+        setisAddConsultaOpen(!isAddConsultaOpen);
+
+        const formattedSelectedDate = selectedDate ? new Date(selectedDate).toISOString().split('T')[0] : '';
+        const dataHora = String(formattedSelectedDate) + " " + String(data.hora);
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/consultas`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                clinicaId: dadosClinica?.id,
+                terapeutaId: data.terapeutaId,
+                pacienteId: data.pacienteId,
+                dataInicio: dataHora
+            })
+        })
+
+        if (response.status == 201) {
+            toast.success("Consulta adicionada com sucesso!")
+            await buscaConsultas(dadosClinica!.id);
+            await buscaHorarios(dadosClinica!.id);
+            reset()
+        } else {
+            toast.error("Erro ao adicionar consulta")
+        }
+    };
+
     const tileClassName = ({ date, view }: { date: Date, view: string }) => {
         if (view === 'month') {
+
             const isSelected = selectedDate && date.toDateString() === selectedDate.toDateString();
             const isToday = date.toDateString() === currentDate.toDateString();
 
@@ -134,7 +226,8 @@ export default function AreaCliente() {
                                 </select>
                             </div>
                         </div>
-                        <div className="mt-5 flex items-center justify-center gap-60">
+                        <div className="mt-5 flex items-cen                                                <option key={index}>{horario}</option>
+                                            ))}ter justify-center gap-60">
                             <div className="w-2/5 bg-white rounded-lg shadow-lg p-3">
                                 <div className="text-lg text-center font-bold text-[#252d39] pb-3">
                                     Próximos Atendimentos
@@ -254,37 +347,36 @@ export default function AreaCliente() {
                                         </svg>
                                         Adicionar Consulta
                                     </h2>
-                                    <form className="mx-16" onSubmit={handleAddConsultaOpening}>
-                                        <select className="border-2 border-gray-300 bg-blue-100 rounded-lg p-2 w-full mb-4" required>
+                                    <form className="mx-16" onSubmit={handleSubmit(addConsulta)}>
+                                        <select
+                                            className="border-2 border-gray-300 bg-blue-100 rounded-lg p-2 w-full mb-4"
+                                            required
+                                            {...register("pacienteId")}
+                                        >
                                             <option value="">Selecione o Paciente</option>
                                             {dependentes?.map((dependente: DependenteClinicaI) => (
                                                 <option key={dependente.dependente.id} value={dependente.dependente.id}>{dependente.dependente.nome}</option>
                                             ))}
                                         </select>
-                                        <select className="border-2 border-gray-300 bg-blue-100 rounded-lg p-2 w-full mb-4" required>
+                                        <select
+                                            className="border-2 border-gray-300 bg-blue-100 rounded-lg p-2 w-full mb-4"
+                                            required
+                                            {...register("terapeutaId")}
+                                        >
                                             <option value="">Selecione o Terapeuta</option>
                                             {dadosClinica?.Terapeuta.map((terapeuta) => (
                                                 <option key={terapeuta.id} value={terapeuta.id}>{terapeuta.nome}</option>
                                             ))}
                                         </select>
-                                        <input
-                                            type="date"
-                                            className="border-2 border-gray-300 bg-blue-100 rounded-lg p-2 w-full mb-4"
+                                        <select
+                                            className="border-2 border-gray-300 bg-blue-100 rounded-lg p-2 w-full mb-8"
                                             required
-                                        />
-                                        <select className="border-2 border-gray-300 bg-blue-100 rounded-lg p-2 w-full mb-8" required>
+                                            {...register("hora")}
+                                        >
                                             <option value="">Selecione o Horário</option>
-                                            <option value="08:00">08:00</option>
-                                            <option value="09:00">09:00</option>
-                                            <option value="10:00">10:00</option>
-                                            <option value="11:00">11:00</option>
-                                            <option value="12:00">12:00</option>
-                                            <option value="13:00">13:00</option>
-                                            <option value="14:00">14:00</option>
-                                            <option value="15:00">15:00</option>
-                                            <option value="16:00">16:00</option>
-                                            <option value="17:00">17:00</option>
-                                            <option value="18:00">18:00</option>
+                                            {horariosPorData.map((horario, index) => (
+                                                <option key={index}>{horario}</option>
+                                            ))}
                                         </select>
                                         <div className="flex items-center justify-between mb-8">
                                             <button

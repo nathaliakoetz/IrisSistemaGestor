@@ -8,7 +8,7 @@ export interface ConsultaI {
     terapeutaId: string,
     paciente: DependenteI | null,
     pacienteId: string | null,
-    dataInicio: Date,
-    dataFim: Date | null,
+    dataInicio: string,
+    dataFim: string | null,
     detalhes: string | null
 }
