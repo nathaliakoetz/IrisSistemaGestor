@@ -1,15 +1,28 @@
 'use client'
 
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { cairo, inter } from "@/utils/fonts";
 import Link from "next/link";
 import { toast } from "sonner"
 import { ChangeEvent, FormEvent } from "react";
 
+type Inputs = {
+    nome: string;
+    razaoSocial: string;
+    cpfCnpj: string;
+    email: string;
+    telefone1: string;
+    telefone2: string | null;
+    senha: string;
+    confirmaSenha: string;
+}
+
 export default function SignUp() {
 
+    const { register, handleSubmit } = useForm<Inputs>()
     const [tipoUsuario, setTipoUsuario] = useState("clinica");
-    const [isChecked, setIsChecked] = useState(false);
+    const [isChecked, setIsChecked] = useState<boolean>(false);
 
     const formatarCPF = (cpf: string) => {
         return cpf
@@ -38,32 +51,93 @@ export default function SignUp() {
             .trim(); // Remove espaços em branco
     };
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
-        e.preventDefault();
+    function validaSenha(senha: string, senha2: string) {
+
+        if (senha.length < 8) {
+            toast.error("Erro... senha deve possuir, no mínimo, 8 caracteres")
+            return false
+        }
+
+        let pequenas = 0
+        let grandes = 0
+        let numeros = 0
+        let simbolos = 0
+
+        for (const letra of senha) {
+            if ((/[a-z]/).test(letra)) {
+                pequenas++
+            }
+            else if ((/[A-Z]/).test(letra)) {
+                grandes++
+            }
+            else if ((/[0-9]/).test(letra)) {
+                numeros++
+            } else {
+                simbolos++
+            }
+        }
+
+        if (pequenas == 0 || grandes == 0 || numeros == 0 || simbolos == 0) {
+            toast.error("Erro... senha deve possuir letras minúsculas, maiúsculas, números e símbolos")
+            return false
+        }
+
+        if (senha !== senha2) {
+            toast.error("Erro... as senhas não conferem")
+            return false
+        }
+
+        return true
+    }
+
+    async function efetuaRegistro(data: Inputs) {
         if (!isChecked) {
             toast.error("Você precisa concordar com os Termos, Política de Privacidade e Política de Cookies para continuar.");
         } else if (tipoUsuario === 'profissional') {
             toast.info("Cadastro de Profissional em desenvolvimento.");
-        } else {
-            toast.success("Cadastro de Clínica realizado com sucesso.");
+        } else if (validaSenha(data.senha, data.confirmaSenha)) {
+                try {
+                    const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/clinicas`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            nome: data.nome,
+                            email: data.email,
+                            senha: data.senha,
+                            cpfCnpj: data.cpfCnpj,
+                            telefone1: data.telefone1,
+                            telefone2: data.telefone2 == "" ? null : data.telefone2
+                        })
+                    });
+
+                    if (response.status === 201) {
+                        toast.success("Cadastro de Clínica realizado com sucesso.");
+                    } else {
+                        toast.error("Erro ao cadastrar clínica.");
+                    }
+                } catch (error) {
+                    toast.error("Erro ao cadastrar clínica.");
+                }
         }
-    };
+    }
 
     const handleNumberInput = (e: ChangeEvent<HTMLInputElement>): void => {
         const inputValue = e.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
-    
+
         let formattedValue;
         if (tipoUsuario === 'profissional') {
             formattedValue = formatarCPF(inputValue); // Formata CPF
         } else {
             formattedValue = formatarCNPJ(inputValue); // Formata CNPJ
         }
-    
+
         // Verifica se é o campo de telefone
         if (e.target.id === 'telefone1' || e.target.id === 'telefone2') {
             formattedValue = formatarTelefone(inputValue); // Formata telefone
         }
-    
+
         e.target.value = formattedValue; // Atualiza o valor do input
     };
 
@@ -79,7 +153,7 @@ export default function SignUp() {
                             </h1>
                         </Link>
                     </div>
-                    <form className="max-w-lg mx-auto mt-10" onSubmit={handleSubmit}>
+                    <form className="max-w-lg mx-auto mt-10" onSubmit={handleSubmit(efetuaRegistro)}>
                         <div className="mb-5">
                             <input
                                 type="text"
@@ -87,6 +161,7 @@ export default function SignUp() {
                                 className={`bg-form border-user text-gray-900 placeholder:text-header-selected text-sm rounded-2xl block w-full p-2.5 ${inter.className}`}
                                 placeholder={tipoUsuario === "profissional" ? "Nome Completo" : "Razão Social"}
                                 required
+                                {...register("nome")}
                             />
                         </div>
                         <div className="flex justify-start gap-3 mb-5 w-80">
@@ -123,6 +198,7 @@ export default function SignUp() {
                                 required
                                 onInput={handleNumberInput}
                                 maxLength={tipoUsuario === "profissional" ? 14 : 18}
+                                {...register("cpfCnpj")}
                             />
                         </div>
                         <div className="mb-5">
@@ -132,6 +208,7 @@ export default function SignUp() {
                                 className={`bg-form border-user border-gray-700 text-gray-900 placeholder:text-header-selected text-sm rounded-2xl block w-full p-2.5 ${inter.className}`}
                                 placeholder="E-mail"
                                 required
+                                {...register("email")}
                             />
                         </div>
                         <div className="mb-5">
@@ -143,6 +220,7 @@ export default function SignUp() {
                                 required
                                 onInput={handleNumberInput}
                                 maxLength={15}
+                                {...register("telefone1")}
                             />
                         </div>
                         <div className="mb-5">
@@ -153,6 +231,7 @@ export default function SignUp() {
                                 placeholder="Telefone 2"
                                 onInput={handleNumberInput}
                                 maxLength={15}
+                                {...register("telefone2")}
                             />
                         </div>
                         <div className="mb-5">
@@ -162,6 +241,7 @@ export default function SignUp() {
                                 className={`bg-form border-user border-gray-700 text-gray-900 placeholder:text-header-selected text-sm rounded-2xl block w-full p-2.5 ${inter.className}`}
                                 placeholder="Senha"
                                 required
+                                {...register("senha")}
                             />
                         </div>
                         <div className="mb-2">
@@ -171,6 +251,7 @@ export default function SignUp() {
                                 className={`bg-form border-user border-gray-700 text-gray-900 placeholder:text-header-selected text-sm rounded-2xl block w-full p-2.5 ${inter.className}`}
                                 placeholder="Confirme a Senha"
                                 required
+                                {...register("confirmaSenha")}
                             />
                         </div>
                         <div className="flex items-center mb-8">
@@ -179,7 +260,7 @@ export default function SignUp() {
                                 type="checkbox"
                                 value="agreement"
                                 className="w-4 h-4 rounded"
-                                onChange={(e) => setIsChecked(e.target.checked)}
+                                onChange={() => setIsChecked(!isChecked)}
                             />
                             <label htmlFor="link-checkbox" className={`ms-2 text-sm text-color-logo ${inter.className}`}>Você concorda com nossos&nbsp;
                                 <Link href="#" className="text-color-logo font-bold hover:underline">

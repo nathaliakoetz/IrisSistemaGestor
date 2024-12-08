@@ -254,7 +254,6 @@ router.post("/login", async (req, res) => {
         }
 
         if (bcrypt.compareSync(senha, dadosUsuario.senha)) {
-            console.log(dadosUsuario) // print 1
 
             const token = jwt.sign({
                 admin_logado_id: dadosUsuario.clinica?.id,
@@ -263,12 +262,6 @@ router.post("/login", async (req, res) => {
                 process.env.JWT_KEY as string,
                 { expiresIn: "12h" }
             )
-
-            console.log(dadosUsuario) // print 2
-
-            console.log(dadosUsuario?.clinica?.id)
-            console.log(dadosUsuario?.nome)
-            console.log(token)
 
             res.status(200).json({ id: dadosUsuario.clinica?.id, nome: dadosUsuario.nome, token })
         } else {
@@ -353,44 +346,46 @@ async function enviaEmail(nome: string, email: string, codigo: number) {
 //     }
 // });
 
-// router.patch("/alterar-senha", async (req, res) => {
-//     const { email, novaSenha } = req.body;
+router.patch("/alterar-senha", async (req, res) => {
+    const { email, novaSenha } = req.body;
 
-//     const erros = validaSenha(novaSenha)
-//     if (erros.length > 0) {
-//         res.status(400).json({ erro: erros.join("; ") })
-//         return
-//     }
+    const erros = validaSenha(novaSenha)
+    if (erros.length > 0) {
+        res.status(400).json({ erro: erros.join("; ") })
+        return
+    }
 
-//     try {
-//         const clinica = await prisma.clinica.findUnique({ where: { email } });
+    try {
+        const clinica = await prisma.dadosUsuario.findUnique({
+            where: { email }
+        });
 
-//         if (!clinica) {
-//             res.status(404).json({ erro: "E-mail não encontrado" });
-//             return;
-//         }
+        if (!clinica) {
+            res.status(404).json({ erro: "E-mail não encontrado" });
+            return;
+        }
 
-//         const senhaAntiga = clinica.senha;
+        const senhaAntiga = clinica.senha;
 
-//         if (bcrypt.compareSync(novaSenha, senhaAntiga)) {
-//             res.status(400).json({ erro: "A nova senha não pode ser igual à senha antiga" });
-//             return;
-//         }
+        if (bcrypt.compareSync(novaSenha, senhaAntiga)) {
+            res.status(400).json({ erro: "A nova senha não pode ser igual à senha antiga" });
+            return;
+        }
 
-//         const salt = bcrypt.genSaltSync(12);
-//         const hash = bcrypt.hashSync(novaSenha, salt);
+        const salt = bcrypt.genSaltSync(12);
+        const hash = bcrypt.hashSync(novaSenha, salt);
 
-//         await prisma.clinica.update({
-//             where: { email },
-//             data: {
-//                 senha: hash
-//             }
-//         });
+        await prisma.dadosUsuario.update({
+            where: { email },
+            data: {
+                senha: hash
+            }
+        });
 
-//         res.status(200).json({ mensagem: "Senha alterada com sucesso!" });
-//     } catch (error) {
-//         res.status(400).json({ erro: "Erro ao alterar senha" });
-//     }
-// });
+        res.status(200).json({ mensagem: "Senha alterada com sucesso!" });
+    } catch (error) {
+        res.status(400).json({ erro: "Erro ao alterar senha" });
+    }
+});
 
 export default router

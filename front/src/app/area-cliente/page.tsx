@@ -39,7 +39,6 @@ export default function AreaCliente() {
 
         if (!clinica.id && !Cookies.get("authID")) {
             sessionStorage.removeItem("logged")
-            //router.push("/area-cliente/error")
         } else if (Cookies.get("authID")) {
             const authID = Cookies.get("authID") as string
             buscaClinica(authID)
