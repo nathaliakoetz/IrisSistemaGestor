@@ -16,6 +16,7 @@ import { HorarioI } from "@/utils/types/horarios";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { ConsultaI } from "@/utils/types/consultas";
+import TextareaAutosize from 'react-textarea-autosize';
 
 type InputsAddConsulta = {
     terapeutaId: string,
@@ -35,6 +36,10 @@ export default function AreaCliente() {
     const [horarios, setHorarios] = useState<{ [key: string]: string[] }>({});
     const router = useRouter();
     const { register, handleSubmit, reset } = useForm<InputsAddConsulta>()
+    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+    const [selectedConsulta, setSelectedConsulta] = useState<ConsultaI | null>(null);
+    const [consultasFinalizadas, setConsultasFinalizadas] = useState<ConsultaI[]>([]);
+
 
     async function buscaConsultas(id: string) {
         const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/consultas/${id}`, {
@@ -109,7 +114,6 @@ export default function AreaCliente() {
 
     useEffect(() => {
         if (selectedDate) {
-            console.log(consultas)
             const formattedSelectedDate = selectedDate ? new Date(selectedDate).toISOString().split('T')[0] : '';
             if (horarios[formattedSelectedDate]) {
                 if (consultas.length > 0) {
@@ -126,6 +130,21 @@ export default function AreaCliente() {
             }
         }
     }, [selectedDate, horarios]);
+
+    useEffect(() => {
+        const filteredConsultas = consultas.filter(consulta => {
+            const consultaDate = consulta.dataInicio ? new Date(consulta.dataInicio).toDateString() : '';
+            const selectedDateString = selectedDate?.toDateString();
+            return consultaDate === selectedDateString && consulta.dataFim;
+        });
+        setConsultasFinalizadas(filteredConsultas);
+    }, [selectedDate, consultas]);
+
+    useEffect(() => {
+        if (dadosClinica) {
+            buscaConsultas(dadosClinica.id);
+        }
+    }, [selectedDate]);
 
     const handleAddConsultaOpening = () => {
         setisAddConsultaOpen(!isAddConsultaOpen);
@@ -171,18 +190,72 @@ export default function AreaCliente() {
         return '';
     };
 
-    const atendimentos = [
-        { id: 1, paciente: "Fulano de Tal", terapeuta: "Ciclano de Tal", data: "30/09/2024", detalhes: "Detalhes da consulta 1" },
-        { id: 2, paciente: "Maria da Silva", terapeuta: "João de Souza", data: "29/09/2024", detalhes: "Detalhes da consulta 2" },
-        { id: 3, paciente: "Ana Pereira", terapeuta: "Roberto Carlos", data: "28/09/2024", detalhes: "Detalhes da consulta 3" },
-        { id: 4, paciente: "Carlos Eduardo", terapeuta: "Fernanda Lima", data: "27/09/2024", detalhes: "Detalhes da consulta 4" },
-        { id: 5, paciente: "Juliana Costa", terapeuta: "Mariana Santos", data: "26/09/2024", detalhes: "Detalhes da consulta 5" },
-        { id: 6, paciente: "Juliana Costa", terapeuta: "Mariana Santos", data: "26/09/2024", detalhes: "Detalhes da consulta 5" },
-        { id: 7, paciente: "Juliana Costa", terapeuta: "Mariana Santos", data: "26/09/2024", detalhes: "Detalhes da consulta 5" },
-        { id: 8, paciente: "Juliana Costa", terapeuta: "Mariana Santos", data: "26/09/2024", detalhes: "Detalhes da consulta 5" },
-        { id: 9, paciente: "Juliana Costa", terapeuta: "Mariana Santos", data: "26/09/2024", detalhes: "Detalhes da consulta 5" },
-        { id: 10, paciente: "Juliana Costa", terapeuta: "Mariana Santos", data: "26/09/2024", detalhes: "Detalhes da consulta 5" },
-    ];
+    const consultasDoDia = consultas
+        .filter(consulta => {
+            const consultaDate = new Date(consulta.dataInicio).toISOString().split('T')[0]
+            const selectedDateString = selectedDate?.toISOString().split('T')[0]
+            return consultaDate === selectedDateString && !consulta.dataFim
+        })
+        .sort((a, b) => new Date(a.dataInicio).getTime() - new Date(b.dataInicio).getTime());
+
+    const openDetailsModal = (consulta: ConsultaI) => {
+        console.log("Opening modal for consulta:", consulta);
+        setSelectedConsulta(consulta);
+        setIsDetailsModalOpen(true);
+    };
+
+    const closeDetailsModal = () => {
+        console.log("Closing modal");
+        setIsDetailsModalOpen(false);
+        setSelectedConsulta(null);
+    };
+
+    const DetailsModal = ({ isOpen, onClose, consulta }: { isOpen: boolean, onClose: () => void, consulta: ConsultaI | null }) => {
+        if (!isOpen || !consulta) return null;
+
+        console.log("Rendering DetailsModal with isOpen:", isOpen);
+
+        return (
+            <div className="fixed inset-0 flex items-center justify-center z-[600]">
+                <div
+                    className="absolute inset-0 bg-black opacity-50"
+                    onClick={() => {
+                        console.log("Backdrop clicked");
+                        onClose()
+                    }}
+                ></div>
+                <div className="bg-white rounded-lg shadow-lg z-10 w-[500px]">
+                    <h2 className={`flex text-2xl font-bold mb-8 items-center justify-center text-white bg-[#6D9CE3] py-1 mt-5 ${inter.className}`}>
+                        Detalhes da Consulta
+                    </h2>
+                    <form className="mx-16" onSubmit={handleSubmit(addConsulta)}>
+                        <p><strong>Paciente:</strong> {consulta.paciente?.nome}</p>
+                        <p><strong>Terapeuta:</strong> {consulta.terapeuta.nome}</p>
+                        <p><strong>Hora de Início:</strong> {new Date(consulta.dataInicio).toLocaleTimeString('pt-BR')}</p>
+                        <p><strong>Hora de Fim:</strong> {consulta.dataFim ? new Date(consulta.dataFim).toLocaleTimeString('pt-BR') : 'N/A'}</p>
+                        <p><strong>Detalhes:</strong></p>
+                        <TextareaAutosize
+                            className="detalhes-consulta"
+                            minRows={5}
+                            maxRows={15}
+                            defaultValue={consulta.detalhes || ''}
+                        />
+                        {/* <p><strong>Detalhes:</strong> {consulta.detalhes}</p> */}
+                        <div className="flex justify-center items-center">
+                            <button
+                                onClick={() => {
+                                    console.log("Close button clicked");
+                                    onClose();
+                                }}
+                                className="my-8 bg-blue-500 text-white py-2 px-4 rounded">
+                                Fechar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        );
+    };
 
     if (!sessionStorage.getItem("logged")) {
         return (
@@ -234,40 +307,41 @@ export default function AreaCliente() {
                                 </div>
                                 <div className="border-b border-gray-300 mb-3" />
                                 <div className="max-h-[405px] overflow-y-auto">
-                                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item, index) => (
+                                    {consultasDoDia.length === 0 ? (
+                                        <p className="text font-bold text-2xl text-center mb-2">Não há atendimentos para serem exibidos.</p>
+                                    ) : (consultasDoDia.map((consulta, index) => (
                                         <div key={index} className={`relative ${index !== 0 ? '-mt-4' : ''}`}>
-                                            <div
-                                                className={`flex items-center justify-between rounded-b-2xl border-b border-gray-500 ${index == 0 ? 'pt-2' : 'pt-6'} pb-2 shadow-lg
-                                            ${index == 0
-                                                        ? 'bg-prox-atendimento-3'
-                                                        : index == 1
-                                                            ? 'bg-prox-atendimento-2'
-                                                            : 'bg-prox-atendimento-1'}`}
+                                            <div className={`flex items-center justify-between rounded-b-2xl border-b border-gray-500 ${index == 0 ? 'pt-2' : 'pt-6'} pb-2 shadow-lg
+                                                ${index == 0
+                                                    ? 'bg-prox-atendimento-3'
+                                                    : index == 1
+                                                        ? 'bg-prox-atendimento-2'
+                                                        : 'bg-prox-atendimento-1'}`}
                                                 style={{ position: 'relative', zIndex: 500 - index }}
                                             >
                                                 <div className="flex items-center">
                                                     <div className="w-16 h-16 ms-3 bg-[#F2F2F2] rounded-lg flex flex-col items-center justify-center text-white">
-                                                        <div className="text-xl font-bold text-black">30</div>
-                                                        <div className="text-sm text-black">SET</div>
+                                                        <div className="text-xl font-bold text-black">{new Date(consulta.dataInicio).getDate()}</div>
+                                                        <div className="text-sm text-black">{new Date(consulta.dataInicio).toLocaleString('pt-BR', { month: 'short' }).toUpperCase()}</div>
                                                     </div>
                                                     <div className="ml-4">
                                                         <p className={`text-md font-bold text-white ${cairo.className}`}>
-                                                            Paciente: Fulano de Tal
+                                                            Paciente: {consulta.paciente?.nome}
                                                         </p>
                                                         <p className={`text-md font-bold text-white ${cairo.className}`}>
-                                                            Terapeuta: Ciclano de Tal
+                                                            Terapeuta: {consulta.terapeuta.nome}
                                                         </p>
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center me-3">
                                                     <div className="border-l-2 border-white h-16 mx-4" />
                                                     <p className={`text-lg font-bold text-white ${cairo.className}`}>
-                                                        22:00
+                                                        {new Date(consulta.dataInicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                                                     </p>
                                                 </div>
                                             </div>
                                         </div>
-                                    ))}
+                                    )))}
                                 </div>
                             </div>
                             <div className="w-[365px] flex flex-col">
@@ -317,16 +391,21 @@ export default function AreaCliente() {
                                 </div>
                             </div>
                             <div className="max-h-[350px] overflow-y-auto">
-                                {atendimentos.map(atendimento => (
-                                    <div key={atendimento.id} className="flex items-center justify-between p-2 mb-1 mx-2 border border-gray-300 shadow-lg">
+                                {consultasFinalizadas.length === 0 ? (
+                                    <p className="text font-bold text-2xl text-center mb-2">Não há atendimentos para serem exibidos.</p>
+                                ) : (consultasFinalizadas.map((consulta, index) => (
+                                    <div key={index} className="flex items-center justify-between p-2 mb-1 mx-2 border border-gray-300 shadow-lg">
                                         <div className="border-l-4 me-2 border-[#6D9CE3] h-12" />
                                         <div className="flex-1">
-                                            <p className="font-bold">{atendimento.paciente}</p>
-                                            <p className="text-sm font-medium text-gray-600">Terapeuta: {atendimento.terapeuta}</p>
+                                            <p className="font-bold">{consulta.paciente?.nome}</p>
+                                            <p className="text-sm font-medium text-gray-600">Terapeuta: {consulta.terapeuta.nome}</p>
                                         </div>
                                         <div className="flex flex-col items-end">
-                                            <p className="text-sm">{atendimento.data}</p>
-                                            <button className="text-blue-500 text-sm flex items-center justify-center gap-1">
+                                            <p className="text-sm">{new Date(consulta.dataInicio).toLocaleDateString('pt-BR')}</p>
+                                            <button
+                                                className="text-blue-500 text-sm flex items-center justify-center gap-1"
+                                                onClick={() => openDetailsModal(consulta)}
+                                            >
                                                 <svg width="13" height="13" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M9.298 12.5714L13.374 8.50015L12.373 7.52415L9.298 10.5991L6.223 7.52415L5.22675 8.50015L9.298 12.5714ZM9.30025 18.7981C8.01442 18.7981 6.80558 18.5538 5.67375 18.0651C4.54175 17.5763 3.55708 16.913 2.71975 16.0751C1.88258 15.2373 1.22 14.2536 0.732 13.1239C0.244 11.9941 0 10.7869 0 9.5024C0 8.21657 0.244333 7.00773 0.733 5.8759C1.22183 4.7439 1.88517 3.75923 2.723 2.9219C3.56083 2.08473 4.54458 1.42215 5.67425 0.934148C6.80408 0.446148 8.01125 0.202148 9.29575 0.202148C10.5816 0.202148 11.7904 0.446482 12.9222 0.935149C14.0542 1.42398 15.0389 2.08731 15.8763 2.92515C16.7134 3.76298 17.376 4.74673 17.864 5.8764C18.352 7.00623 18.596 8.2134 18.596 9.4979C18.596 10.7837 18.3517 11.9926 17.863 13.1244C17.3742 14.2564 16.7108 15.2411 15.873 16.0784C15.0352 16.9156 14.0514 17.5781 12.9218 18.0661C11.7919 18.5541 10.5848 18.7981 9.30025 18.7981ZM9.29775 17.3991C11.4959 17.3991 13.362 16.6323 14.896 15.0986C16.43 13.5648 17.197 11.6987 17.197 9.5004C17.197 7.30223 16.4302 5.43615 14.8965 3.90215C13.3627 2.36815 11.4966 1.60115 9.29825 1.60115C7.10008 1.60115 5.234 2.36798 3.7 3.90165C2.166 5.43548 1.399 7.30156 1.399 9.4999C1.399 11.6981 2.16583 13.5641 3.6995 15.0981C5.23333 16.6321 7.09942 17.3991 9.29775 17.3991Z" fill="#6D9CE3" />
                                                 </svg>
@@ -334,8 +413,13 @@ export default function AreaCliente() {
                                             </button>
                                         </div>
                                     </div>
-                                ))}
+                                )))}
                             </div>
+                            <DetailsModal
+                                isOpen={isDetailsModalOpen}
+                                onClose={closeDetailsModal}
+                                consulta={selectedConsulta}
+                            />
                         </div>
                         {isAddConsultaOpen && (
                             <div className="fixed inset-0 flex items-center justify-center z-[600]">

@@ -144,3 +144,10 @@ main {
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
+
+.detalhes-consulta {
+  overflow-y: auto; /* Barra de rolagem vertical */
+  width: 100%; /* Ocupa o tamanho total horizontal do modal */
+  box-sizing: border-box; /* Inclui padding e border na largura total */
+  resize: none;
+}
