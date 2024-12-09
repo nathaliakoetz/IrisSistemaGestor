@@ -71,6 +71,7 @@ router.post("/", async (req, res) => {
         res.status(400).json(error)
     }
 })
+
 router.delete("/:id", async (req, res) => {
     const { id } = req.params
 
@@ -131,6 +132,65 @@ router.get("/:id", async (req, res) => {
             }
         })
         res.status(200).json(consultas)
+    } catch (error) {
+        res.status(400).json(error)
+    }
+})
+
+router.delete("/desmarcar/:id", async (req, res) => {
+    const { id } = req.params
+
+    try {
+
+        const consulta = await prisma.consulta.findUnique({
+            where: { id: Number(id) }
+        })
+
+        if (!consulta) {
+            res.status(404).json({ erro: "Consulta não encontrada" })
+            return
+        }
+
+        await prisma.consulta.delete({
+            where: { id: Number(id) }
+        })
+
+        const data = consulta.dataInicio.split(' ')[0]
+        const horario = consulta.dataInicio.split(' ')[1]
+
+        const horarioExistente = await prisma.horario.findUnique({
+            where: {
+                clinicaId_data: {
+                    clinicaId: consulta.clinicaId,
+                    data: new Date(data)
+                }
+            }
+        })
+
+        if (horarioExistente) {
+            const horariosAtualizados = [...horarioExistente.horarios, horario].sort()
+            await prisma.horario.update({
+                where: {
+                    clinicaId_data: {
+                        clinicaId: consulta.clinicaId,
+                        data: new Date(data)
+                    }
+                },
+                data: {
+                    horarios: horariosAtualizados
+                }
+            })
+        } else {
+            await prisma.horario.create({
+                data: {
+                    clinicaId: consulta.clinicaId,
+                    data: new Date(data),
+                    horarios: [horario]
+                }
+            })
+        }
+
+        res.status(200).json({ mensagem: "Consulta desmarcada com sucesso" })
     } catch (error) {
         res.status(400).json(error)
     }

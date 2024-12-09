@@ -24,6 +24,11 @@ type InputsAddConsulta = {
     hora: string
 }
 
+type InputsAddHorario = {
+    hora: string
+}
+
+
 export default function AreaCliente() {
     const currentDate = new Date();
     const [selectedDate, setSelectedDate] = useState<Date | null>(currentDate);
@@ -39,7 +44,10 @@ export default function AreaCliente() {
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [selectedConsulta, setSelectedConsulta] = useState<ConsultaI | null>(null);
     const [consultasFinalizadas, setConsultasFinalizadas] = useState<ConsultaI[]>([]);
-
+    const [isAddHorarioModalOpen, setIsAddHorarioModalOpen] = useState(false);
+    const [isDesmarcarModalOpen, setIsDesmarcarModalOpen] = useState(false);
+    const [consultaParaDesmarcar, setConsultaParaDesmarcar] = useState<ConsultaI | null>(null);
+    const [searchTerm, setSearchTerm] = useState("");
 
     async function buscaConsultas(id: string) {
         const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/consultas/${id}`, {
@@ -175,7 +183,7 @@ export default function AreaCliente() {
             await buscaHorarios(dadosClinica!.id);
             reset()
         } else {
-            toast.error("Erro ao adicionar consulta")
+            toast.error("Erro ao adicionar consulta!")
         }
     };
 
@@ -199,28 +207,60 @@ export default function AreaCliente() {
         .sort((a, b) => new Date(a.dataInicio).getTime() - new Date(b.dataInicio).getTime());
 
     const openDetailsModal = (consulta: ConsultaI) => {
-        console.log("Opening modal for consulta:", consulta);
         setSelectedConsulta(consulta);
         setIsDetailsModalOpen(true);
     };
 
     const closeDetailsModal = () => {
-        console.log("Closing modal");
         setIsDetailsModalOpen(false);
         setSelectedConsulta(null);
+    };
+
+    const handleAddHorarioOpening = () => {
+        setIsAddHorarioModalOpen(true);
+    };
+
+    const handleAddHorarioClosing = () => {
+        setIsAddHorarioModalOpen(false);
+        reset();
+    };
+
+    async function addHorario(data: InputsAddHorario) {
+        handleAddHorarioClosing();
+
+        const formattedSelectedDate = selectedDate ? new Date(selectedDate).toISOString().split('T')[0] : '';
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/clinicas/horario`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                clinicaId: dadosClinica?.id,
+                data: formattedSelectedDate,
+                horario: data.hora
+            })
+        })
+
+        if (response.status == 201) {
+            toast.success("Horário adicionado com sucesso!")
+            await buscaConsultas(dadosClinica!.id);
+            await buscaHorarios(dadosClinica!.id);
+            reset()
+        } else {
+            toast.error("Erro ao adicionar horário!")
+        }
     };
 
     const DetailsModal = ({ isOpen, onClose, consulta }: { isOpen: boolean, onClose: () => void, consulta: ConsultaI | null }) => {
         if (!isOpen || !consulta) return null;
 
-        console.log("Rendering DetailsModal with isOpen:", isOpen);
 
         return (
             <div className="fixed inset-0 flex items-center justify-center z-[600]">
                 <div
                     className="absolute inset-0 bg-black opacity-50"
                     onClick={() => {
-                        console.log("Backdrop clicked");
                         onClose()
                     }}
                 ></div>
@@ -244,7 +284,6 @@ export default function AreaCliente() {
                         <div className="flex justify-center items-center">
                             <button
                                 onClick={() => {
-                                    console.log("Close button clicked");
                                     onClose();
                                 }}
                                 className="my-8 bg-blue-500 text-white py-2 px-4 rounded">
@@ -252,6 +291,65 @@ export default function AreaCliente() {
                             </button>
                         </div>
                     </form>
+                </div>
+            </div>
+        );
+    };
+
+    const openDesmarcarModal = (consulta: ConsultaI) => {
+        setConsultaParaDesmarcar(consulta);
+        setIsDesmarcarModalOpen(true);
+    };
+
+    const closeDesmarcarModal = () => {
+        setIsDesmarcarModalOpen(false);
+        setConsultaParaDesmarcar(null);
+    };
+
+    const desmarcarConsulta = async () => {
+        if (!consultaParaDesmarcar) return;
+        closeDesmarcarModal();
+
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/consultas/desmarcar/${consultaParaDesmarcar.id}`, {
+                method: 'DELETE'
+            });
+
+            if (response.status === 200) {
+                toast.success("Consulta desmarcada com sucesso!");
+                await buscaConsultas(dadosClinica!.id);
+                await buscaHorarios(dadosClinica!.id);
+            } else {
+                toast.error("Erro ao desmarcar consulta!");
+            }
+        } catch (error) {
+            toast.error("Erro ao desmarcar consulta!");
+        }
+    };
+
+    const DesmarcarConsultaModal = ({ isOpen, onClose, consulta, onConfirm }: { isOpen: boolean, onClose: () => void, consulta: ConsultaI | null, onConfirm: () => void }) => {
+        if (!isOpen || !consulta) return null;
+
+        return (
+            <div className="fixed inset-0 flex items-center justify-center z-[600]">
+                <div className="absolute inset-0 bg-black opacity-50" onClick={closeDesmarcarModal}></div>
+                <div className="bg-white rounded-lg shadow-lg z-10 w-[500px]">
+                    <h2 className={`flex text-2xl font-bold mb-8 items-center justify-center text-white bg-[#6D9CE3] py-1 mt-5 ${inter.className}`}>
+                        <svg className="me-3" width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.4 24.3807L16 17.7808L22.6 24.3807L24.3893 22.6001L17.7893 16.0001L24.3893 9.40012L22.6 7.61079L16 14.2108L9.4 7.61079L7.61938 9.40012L14.2194 16.0001L7.61938 22.6001L9.4 24.3807ZM3.87479 31.2502C3.00854 31.2502 2.27124 30.9459 1.66288 30.3372C1.05421 29.7289 0.749878 28.9916 0.749878 28.1253V3.87492C0.749878 3.00867 1.05421 2.27136 1.66288 1.663C2.27124 1.05433 3.00854 0.75 3.87479 0.75H28.1252C28.9915 0.75 29.7288 1.05433 30.3371 1.663C30.9458 2.27136 31.2501 3.00867 31.2501 3.87492V28.1253C31.2501 28.9916 30.9458 29.7289 30.3371 30.3372C29.7288 30.9459 28.9915 31.2502 28.1252 31.2502H3.87479ZM3.87892 28.6854H28.1211C28.2623 28.6854 28.3915 28.6266 28.5088 28.509C28.6265 28.3916 28.6853 28.2624 28.6853 28.1212V3.87904C28.6853 3.73787 28.6265 3.60862 28.5088 3.49129C28.3915 3.37365 28.2623 3.31483 28.1211 3.31483H3.87892C3.73775 3.31483 3.6085 3.37365 3.49117 3.49129C3.37353 3.60862 3.31471 3.73787 3.31471 3.87904V28.1212C3.31471 28.2624 3.37353 28.3916 3.49117 28.509C3.6085 28.6266 3.73775 28.6854 3.87892 28.6854Z" fill="#E8EAED" />
+                        </svg>
+                        Desmarcar Consulta
+                    </h2>
+                    <div className="mx-16 mb-8">
+                        <p className="mb-4">Tem certeza que deseja desmarcar a consulta?</p>
+                        <p><strong>Paciente:</strong> {consulta.paciente?.nome}</p>
+                        <p><strong>Terapeuta:</strong> {consulta.terapeuta.nome}</p>
+                        <p><strong>Hora de Início:</strong> {consulta.dataInicio.split(' ')[1]}</p>
+                        <div className="flex items-center justify-between mt-5">
+                            <button onClick={onClose} className="bg-gray-300 text-black rounded-lg py-2 px-4">Cancelar</button>
+                            <button onClick={onConfirm} className="bg-red-500 text-white rounded-lg py-2 px-4">Desmarcar</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         );
@@ -280,6 +378,14 @@ export default function AreaCliente() {
             </section>
         )
     } else {
+
+        const filteredConsultasFinalizadas = consultasFinalizadas.filter((consulta) => {
+            const pacienteNome = consulta.paciente?.nome.toLowerCase() || "";
+            const terapeutaNome = consulta.terapeuta.nome.toLowerCase();
+            const search = searchTerm.toLowerCase();
+            return pacienteNome.includes(search) || terapeutaNome.includes(search);
+        });
+
         return (
             <div className="flex">
                 <SideBar activeLink="geral" />
@@ -310,7 +416,11 @@ export default function AreaCliente() {
                                     {consultasDoDia.length === 0 ? (
                                         <p className="text font-bold text-2xl text-center mb-2">Não há atendimentos para serem exibidos.</p>
                                     ) : (consultasDoDia.map((consulta, index) => (
-                                        <div key={index} className={`relative ${index !== 0 ? '-mt-4' : ''}`}>
+                                        <div
+                                            key={index}
+                                            className={`cursor-pointer relative ${index !== 0 ? '-mt-4' : ''}`}
+                                            onClick={() => openDesmarcarModal(consulta)}
+                                        >
                                             <div className={`flex items-center justify-between rounded-b-2xl border-b border-gray-500 ${index == 0 ? 'pt-2' : 'pt-6'} pb-2 shadow-lg
                                                 ${index == 0
                                                     ? 'bg-prox-atendimento-3'
@@ -344,6 +454,12 @@ export default function AreaCliente() {
                                     )))}
                                 </div>
                             </div>
+                            <DesmarcarConsultaModal
+                                isOpen={isDesmarcarModalOpen}
+                                onClose={closeDesmarcarModal}
+                                consulta={consultaParaDesmarcar}
+                                onConfirm={desmarcarConsulta}
+                            />
                             <div className="w-[365px] flex flex-col">
                                 <div className="w-auto bg-white rounded-lg shadow-lg p-3">
                                     <Calendar
@@ -354,7 +470,10 @@ export default function AreaCliente() {
                                     />
                                 </div>
                                 <div className="flex flex-col items-center justify-center gap-4 mt-6">
-                                    <button className="w-full flex items-center justify-center gap-2 font-medium bg-[#252d39] text-white rounded-lg py-2 pe-[19px]">
+                                    <button
+                                        className="w-full flex items-center justify-center gap-2 font-medium bg-[#252d39] text-white rounded-lg py-2 pe-[19px]"
+                                        onClick={handleAddHorarioOpening}
+                                    >
                                         <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M14.7359 24.5233H17.3008V17.2642H24.5232V14.6994H17.3008V7.47696H14.7359V14.6994H7.47684V17.2642H14.7359V24.5233ZM3.87479 31.2503C3.00854 31.2503 2.27124 30.9459 1.66288 30.3373C1.05421 29.7289 0.749878 28.9916 0.749878 28.1253V3.87492C0.749878 3.00867 1.05421 2.27136 1.66288 1.663C2.27124 1.05433 3.00854 0.75 3.87479 0.75H28.1252C28.9915 0.75 29.7288 1.05433 30.3371 1.663C30.9458 2.27136 31.2501 3.00867 31.2501 3.87492V28.1253C31.2501 28.9916 30.9458 29.7289 30.3371 30.3373C29.7288 30.9459 28.9915 31.2503 28.1252 31.2503H3.87479ZM3.87892 28.6854H28.1211C28.2623 28.6854 28.3915 28.6266 28.5088 28.509C28.6265 28.3916 28.6853 28.2624 28.6853 28.1212V3.87904C28.6853 3.73787 28.6265 3.60863 28.5088 3.49129C28.3915 3.37365 28.2623 3.31483 28.1211 3.31483H3.87892C3.73775 3.31483 3.6085 3.37365 3.49117 3.49129C3.37353 3.60863 3.31471 3.73787 3.31471 3.87904V28.1212C3.31471 28.2624 3.37353 28.3916 3.49117 28.509C3.6085 28.6266 3.73775 28.6854 3.87892 28.6854Z" fill="#E8EAED" />
                                         </svg>
@@ -369,12 +488,6 @@ export default function AreaCliente() {
                                         </svg>
                                         Adicionar Consulta
                                     </button>
-                                    <button className="w-full flex items-center justify-center gap-2 font-medium bg-[#252d39] text-white rounded-lg py-2 px-4">
-                                        <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M9.4 24.3807L16 17.7808L22.6 24.3807L24.3893 22.6001L17.7893 16.0001L24.3893 9.40012L22.6 7.61079L16 14.2108L9.4 7.61079L7.61938 9.40012L14.2194 16.0001L7.61938 22.6001L9.4 24.3807ZM3.87479 31.2502C3.00854 31.2502 2.27124 30.9459 1.66288 30.3372C1.05421 29.7289 0.749878 28.9916 0.749878 28.1253V3.87492C0.749878 3.00867 1.05421 2.27136 1.66288 1.663C2.27124 1.05433 3.00854 0.75 3.87479 0.75H28.1252C28.9915 0.75 29.7288 1.05433 30.3371 1.663C30.9458 2.27136 31.2501 3.00867 31.2501 3.87492V28.1253C31.2501 28.9916 30.9458 29.7289 30.3371 30.3372C29.7288 30.9459 28.9915 31.2502 28.1252 31.2502H3.87479ZM3.87892 28.6854H28.1211C28.2623 28.6854 28.3915 28.6266 28.5088 28.509C28.6265 28.3916 28.6853 28.2624 28.6853 28.1212V3.87904C28.6853 3.73787 28.6265 3.60862 28.5088 3.49129C28.3915 3.37365 28.2623 3.31483 28.1211 3.31483H3.87892C3.73775 3.31483 3.6085 3.37365 3.49117 3.49129C3.37353 3.60862 3.31471 3.73787 3.31471 3.87904V28.1212C3.31471 28.2624 3.37353 28.3916 3.49117 28.509C3.6085 28.6266 3.73775 28.6854 3.87892 28.6854Z" fill="#E8EAED" />
-                                        </svg>
-                                        Desmarcar Consulta
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -382,18 +495,20 @@ export default function AreaCliente() {
                             <div className="flex justify-between items-center bg-[#6D9CE3] p-2 rounded-t-lg mb-2">
                                 <h2 className={`text-lg text-white my-2 font-bold ${cairo.className}`}>Histórico de Consultas</h2>
                                 <div className="relative w-1/3">
-                                    <img src="/icon_connectmenu.png" alt="Buscar" className="absolute left-2 top-1/2 transform -translate-y-1/2 w-5 h-5" /> {/* Ícone de busca */}
+                                    <img src="/icon_connectmenu.png" alt="Buscar" className="absolute left-2 top-1/2 transform -translate-y-1/2 w-5 h-5" />
                                     <input
                                         type="text"
-                                        placeholder="Pesquisar..."
+                                        placeholder="Pesquisar por terapeuta ou paciente"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
                                         className="border border-gray-300 rounded-lg pl-10 pr-2 py-1 w-full outline-none"
                                     />
                                 </div>
                             </div>
                             <div className="max-h-[350px] overflow-y-auto">
-                                {consultasFinalizadas.length === 0 ? (
+                                {filteredConsultasFinalizadas.length === 0 ? (
                                     <p className="text font-bold text-2xl text-center mb-2">Não há atendimentos para serem exibidos.</p>
-                                ) : (consultasFinalizadas.map((consulta, index) => (
+                                ) : (filteredConsultasFinalizadas.map((consulta, index) => (
                                     <div key={index} className="flex items-center justify-between p-2 mb-1 mx-2 border border-gray-300 shadow-lg">
                                         <div className="border-l-4 me-2 border-[#6D9CE3] h-12" />
                                         <div className="flex-1">
@@ -469,6 +584,44 @@ export default function AreaCliente() {
                                                 className="bg-[#F2F2F2] border-2 border-gray-300 text-black rounded-lg py-2 w-[115px]"
                                             >
                                                 Voltar
+                                            </button>
+                                            <button
+                                                type="submit"
+                                                className="bg-blue-500 text-white rounded-lg py-2 w-[115px]"
+                                            >
+                                                Concluir
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        )}
+                        {isAddHorarioModalOpen && (
+                            <div className="fixed inset-0 flex items-center justify-center z-[600]">
+                                <div className="absolute inset-0 bg-black opacity-50" onClick={handleAddHorarioClosing}></div>
+                                <div className="bg-white rounded-lg shadow-lg z-10 w-[500px]">
+                                    <h2 className={`flex text-2xl font-bold mb-8 items-center justify-center text-white bg-[#6D9CE3] py-1 mt-5 ${inter.className}`}>
+                                        <svg className="me-3" width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M14.7359 24.5233H17.3008V17.2642H24.5232V14.6994H17.3008V7.47696H14.7359V14.6994H7.47684V17.2642H14.7359V24.5233ZM3.87479 31.2503C3.00854 31.2503 2.27124 30.9459 1.66288 30.3373C1.05421 29.7289 0.749878 28.9916 0.749878 28.1253V3.87492C0.749878 3.00867 1.05421 2.27136 1.66288 1.663C2.27124 1.05433 3.00854 0.75 3.87479 0.75H28.1252C28.9915 0.75 29.7288 1.05433 30.3371 1.663C30.9458 2.27136 31.2501 3.00867 31.2501 3.87492V28.1253C31.2501 28.9916 30.9458 29.7289 30.3371 30.3373C29.7288 30.9459 28.9915 31.2503 28.1252 31.2503H3.87479ZM3.87892 28.6854H28.1211C28.2623 28.6854 28.3915 28.6266 28.5088 28.509C28.6265 28.3916 28.6853 28.2624 28.6853 28.1212V3.87904C28.6853 3.73787 28.6265 3.60863 28.5088 3.49129C28.3915 3.37365 28.2623 3.31483 28.1211 3.31483H3.87892C3.73775 3.31483 3.6085 3.37365 3.49117 3.49129C3.37353 3.60863 3.31471 3.73787 3.31471 3.87904V28.1212C3.31471 28.2624 3.37353 28.3916 3.49117 28.509C3.6085 28.6266 3.73775 28.6854 3.87892 28.6854Z" fill="#E8EAED" />
+                                        </svg>
+                                        Adicionar Horário
+                                    </h2>
+                                    <form className="mx-16" onSubmit={handleSubmit(addHorario)}>
+                                        <div className="mb-4">
+                                            <label className="block text-gray-700">Horário</label>
+                                            <input
+                                                type="time"
+                                                className="border-2 border-gray-300 bg-blue-100 rounded-lg p-2 w-full mb-4"
+                                                {...register("hora", { required: true })}
+                                            />
+                                        </div>
+                                        <div className="flex items-center justify-between mb-8">
+                                            <button
+                                                type="button"
+                                                onClick={handleAddHorarioClosing}
+                                                className="bg-[#F2F2F2] border-2 border-gray-300 text-black rounded-lg py-2 w-[115px]"
+                                            >
+                                                Cancelar
                                             </button>
                                             <button
                                                 type="submit"
