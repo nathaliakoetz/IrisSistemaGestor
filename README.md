@@ -37,7 +37,7 @@ Certifique-se de ter as seguintes ferramentas instaladas:
 ### **Passo a Passo**  
 1. Clone o repositório:  
    ```bash
-   git clone https://github.com/usuario/sistema-gestor-iris.git
+   git clone  https://github.com/nathaliakoetz/IrisSistemaGestor.git
    cd sistema-gestor-iris
    ```  
 2. Instale as dependências:  
@@ -53,20 +53,6 @@ Certifique-se de ter as seguintes ferramentas instaladas:
    npm run dev
    ```  
 5. Acesse a aplicação no navegador em: `http://localhost:3000`.  
-
----
-
-## **Estrutura do Projeto**  
-```plaintext
-📂 sistema-gestor-iris
-├── 📁 components        # Componentes reutilizáveis do front-end
-├── 📁 pages             # Páginas e rotas do Next.js
-├── 📁 public            # Arquivos estáticos (imagens, ícones, etc.)
-├── 📁 styles            # Arquivos de estilização (Tailwind CSS)
-├── 📁 utils             # Funções e utilitários auxiliares
-├── 📄 .env.example      # Exemplo de configuração de ambiente
-└── 📄 README.md         # Documentação do projeto
-```  
 
 ---
 
