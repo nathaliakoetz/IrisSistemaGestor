@@ -22,6 +22,7 @@ export default function SignIn() {
                 await pause(2)
                 router.push("/signin")
             } else {
+                await pause(2)
                 router.push("/area-cliente")
             }
         }
