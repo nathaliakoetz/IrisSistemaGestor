@@ -1,7 +1,5 @@
 ![Sistema Gestor íris](https://i.postimg.cc/44QgvkZ9/Logo.png)
 
-> **Projeto desenvolvido para a unidade de Gestão Ágil de Projetos, com o Prof. Pablo De Chiaro, UniSenac Pelotas/RS.**  
-
 ## **Descrição do Projeto**  
 O Sistema Gestor Íris é uma aplicação web criada para auxiliar no acompanhamento e gerenciamento de informações de crianças autistas não-verbais em clínicas especializadas. O objetivo é simplificar processos administrativos, oferecer ferramentas interativas para agendamento e consultas, e melhorar a comunicação entre cuidadores e profissionais.
 
