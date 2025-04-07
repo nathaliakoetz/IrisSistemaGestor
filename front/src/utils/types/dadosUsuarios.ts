@@ -9,6 +9,9 @@ export interface DadosUsuarioI {
     cpfCnpj: string,
     telefone1: string,
     telefone2: string | null,
+    genero: string | null,
+    estadoCivil: string | null,
+    dataNascimento: string | null,
     foto: string | null,
     LogContrato: LogContratoI[]
 }

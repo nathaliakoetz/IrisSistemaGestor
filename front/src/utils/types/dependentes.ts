@@ -6,6 +6,8 @@ export interface DependenteI {
     id: string
     nome: string,
     cpf: string
+    genero: string,
+    dataNascimento: string,
     ResponsavelDependente: ResponsavelDependenteI[],
     Consulta: ConsultaI[]
     DependenteClinica: DependenteClinicaI[]

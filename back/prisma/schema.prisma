@@ -22,6 +22,9 @@ model DadosUsuario {
   cpfCnpj           String        @unique
   telefone1         String
   telefone2         String?
+  genero            String?
+  estadoCivil       String?
+  dataNascimento    String?
   foto              String?
   LogContrato       LogContrato[]
   clinica           Clinica?
@@ -137,6 +140,9 @@ model Responsavel {
   cpf                   String
   telefone1             String
   telefone2             String?
+  genero                String
+  estadoCivil           String
+  dataNascimento        String
   endereco              Endereco                @relation(fields: [enderecoId], references: [id])
   enderecoId            Int                     @unique
   ResponsavelDependente ResponsavelDependente[]
@@ -151,6 +157,8 @@ model Dependente {
   id                    String                  @id @default(uuid()) @db.VarChar(36)
   nome                  String
   cpf                   String
+  genero                String
+  dataNascimento        String
   ResponsavelDependente ResponsavelDependente[]
   Consulta              Consulta[]
   DependenteClinica     DependenteClinica[]
@@ -203,9 +211,9 @@ model DependenteClinica {
 
 model Horario {
   clinicaId String
-  clinica  Clinica @relation(fields: [clinicaId], references: [id])
-  data DateTime
-  horarios String[]
+  clinica   Clinica  @relation(fields: [clinicaId], references: [id])
+  data      DateTime
+  horarios  String[]
 
   @@id([clinicaId, data])
   @@map("horarios")

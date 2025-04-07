@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { cairo, inter } from "@/utils/fonts";
 import Link from "next/link";
 import { toast } from "sonner"
-import { ChangeEvent, FormEvent } from "react";
+import { ChangeEvent } from "react";
 import { pause } from "@/utils/functions/pause";
 import { useRouter } from "next/navigation";
 

@@ -8,6 +8,9 @@ export interface ResponsavelI {
     cpf: string,
     telefone1: string,
     telefone2: string | null,
+    genero: string,
+    estadoCivil: string,
+    dataNascimento: string,
     endereco: EnderecoI,
     enderecoId: number,
     ResponsavelDependente: ResponsavelDependenteI[]
