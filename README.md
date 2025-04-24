@@ -9,7 +9,6 @@ O Sistema Gestor Íris é uma aplicação web criada para auxiliar no acompanham
 - **Agendamento de consultas:** Interface intuitiva para criar e gerenciar consultas.  
 - **Agenda interativa:** Ferramenta visual para acompanhar compromissos em tempo real.  
 
----
 
 ## **Tecnologias Utilizadas**  
 As principais tecnologias empregadas no desenvolvimento do Sistema Gestor Íris incluem:  
@@ -18,12 +17,6 @@ As principais tecnologias empregadas no desenvolvimento do Sistema Gestor Íris 
 - **[PostgreSQL](https://www.postgresql.org/):** Banco de dados relacional para armazenamento eficiente.  
 - **[Tailwind CSS](https://tailwindcss.com/):** Framework de estilização CSS utilitário.  
 
-## **Metodologias e Ferramentas Ágeis**  
-O desenvolvimento foi guiado por práticas ágeis:  
-- **Scrum e Kanban:** Planejamento e organização de tarefas no **[Miro](https://miro.com/)**.  
-- **Prototipagem:** Design inicial das telas no **[Figma](https://figma.com/)**.  
-
----
 
 ## **Como Executar o Projeto**  
 
@@ -52,7 +45,6 @@ Certifique-se de ter as seguintes ferramentas instaladas:
    ```  
 5. Acesse a aplicação no navegador em: `http://localhost:3000`.  
 
----
 
 ## **Contribuição**  
 Contribuições são bem-vindas! Siga os passos abaixo para contribuir:  
@@ -70,13 +62,12 @@ Contribuições são bem-vindas! Siga os passos abaixo para contribuir:
    git push origin minha-feature
    ```  
 
----
 
 ## **Autores**  
-- **Nathalia Koetz**  
-- **Guilherme Acosta**  
 
----
+<a href="https://github.com/nathaliakoetz"><img src="https://github.com/nathaliakoetz.png" width="100" height="100"></a>
+<a href="https://github.com/gwacosta"><img src="https://github.com/gwacosta.png" width="100" height="100"></a>
+
 
 ## **Licença**  
 Este projeto está licenciado sob a [MIT License](LICENSE).  
