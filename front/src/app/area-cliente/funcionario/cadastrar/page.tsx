@@ -17,6 +17,7 @@ type Inputs = {
     cpfCnpj: string;
     telefone1: string;
     telefone2: string | null;
+    profissao: string;
 }
 
 export default function CadastrarFuncionario() {
@@ -111,7 +112,9 @@ export default function CadastrarFuncionario() {
 
     async function efetuaRegistro(data: Inputs) {
         if (validaSenha(data.senha, data.confirmaSenha)) {
+            
             try {
+                
                 const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/terapeutas`, {
                     method: "POST",
                     headers: {
@@ -124,9 +127,12 @@ export default function CadastrarFuncionario() {
                         cpfCnpj: data.cpfCnpj,
                         telefone1: data.telefone1,
                         telefone2: data.telefone2 == "" ? null : data.telefone2,
+                        profissao: data.profissao,
                         clinicaId: clinica.id
                     })
                 });
+
+                
 
                 if (response.status === 201) {
                     toast.success("Cadastro de Funcionário realizado com sucesso.");
@@ -146,7 +152,7 @@ export default function CadastrarFuncionario() {
                     <div className="max-w-lg border border-gray-400 bg-white rounded-3xl shadow flex flex-col items-center h-auto overflow-hidden">
                         <div className="flex flex-row w-card-login items-center justify-center mt-14">
                             <Link href="/" className="flex">
-                                <img src="./../logo.png" alt="Icone do Sistema Íris" className="w-32" />
+                                <img src="./../../logo.png" alt="Icone do Sistema Íris" className="w-32" />
                                 <h1 className={`text-7xl ms-1 text-color-logo ${cairo.className}`}>
                                     ÍRIS
                                 </h1>
@@ -290,6 +296,21 @@ export default function CadastrarFuncionario() {
                                         onInput={handleNumberInput}
                                         maxLength={15}
                                         {...register("telefone2")}
+                                    />
+                                </div>
+
+                                {/* Profissão */}
+                                <div className="flex flex-col col-span-10">
+                                    <label htmlFor="profissao" className={`text-sm font-semibold text-gray-700 ${inter.className}`}>
+                                        Profissão
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="profissao"
+                                        className={`mt-1 p-2 border border-gray-300 rounded-md ${inter.className}`}
+                                        placeholder="Digite a profissão"
+                                        {...register("profissao")}
+                                        required
                                     />
                                 </div>
 

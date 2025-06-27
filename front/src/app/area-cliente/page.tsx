@@ -16,7 +16,6 @@ import { HorarioI } from "@/utils/types/horarios";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { ConsultaI } from "@/utils/types/consultas";
-import TextareaAutosize from 'react-textarea-autosize';
 
 type InputsAddConsulta = {
     terapeutaId: string,
@@ -41,13 +40,12 @@ export default function AreaCliente() {
     const [horarios, setHorarios] = useState<{ [key: string]: string[] }>({});
     const router = useRouter();
     const { register, handleSubmit, reset } = useForm<InputsAddConsulta>()
-    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-    const [selectedConsulta, setSelectedConsulta] = useState<ConsultaI | null>(null);
     const [consultasFinalizadas, setConsultasFinalizadas] = useState<ConsultaI[]>([]);
     const [isAddHorarioModalOpen, setIsAddHorarioModalOpen] = useState(false);
     const [isDesmarcarModalOpen, setIsDesmarcarModalOpen] = useState(false);
     const [consultaParaDesmarcar, setConsultaParaDesmarcar] = useState<ConsultaI | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
+    const [terapeutaFiltro, setTerapeutaFiltro] = useState<string>("");
 
     async function buscaConsultas(id: string) {
         const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/consultas/${id}`, {
@@ -126,7 +124,7 @@ export default function AreaCliente() {
             if (horarios[formattedSelectedDate]) {
                 if (consultas.length > 0) {
                     const horariosOcupados = consultas
-                        .filter(consulta => consulta.dataInicio.includes(formattedSelectedDate))
+                        .filter(consulta => consulta.dataInicio.includes(formattedSelectedDate) && !consulta.dataFim)
                         .map(consulta => consulta.dataInicio.split(' ')[1].slice(0, 5))
                     const horariosDisponiveis = horarios[formattedSelectedDate].filter(horario => !horariosOcupados.includes(horario))
                     setHorariosPorData(horariosDisponiveis);
@@ -137,7 +135,7 @@ export default function AreaCliente() {
                 setHorariosPorData([]);
             }
         }
-    }, [selectedDate, horarios]);
+    }, [selectedDate, horarios, consultas]);
 
     useEffect(() => {
         const filteredConsultas = consultas.filter(consulta => {
@@ -147,12 +145,6 @@ export default function AreaCliente() {
         });
         setConsultasFinalizadas(filteredConsultas);
     }, [selectedDate, consultas]);
-
-    useEffect(() => {
-        if (dadosClinica) {
-            buscaConsultas(dadosClinica.id);
-        }
-    }, [selectedDate]);
 
     const handleAddConsultaOpening = () => {
         setisAddConsultaOpen(!isAddConsultaOpen);
@@ -202,18 +194,14 @@ export default function AreaCliente() {
         .filter(consulta => {
             const consultaDate = new Date(consulta.dataInicio).toISOString().split('T')[0]
             const selectedDateString = selectedDate?.toISOString().split('T')[0]
-            return consultaDate === selectedDateString && !consulta.dataFim
+            const matchesDate = consultaDate === selectedDateString && !consulta.dataFim;
+            const matchesTerapeuta = !terapeutaFiltro || consulta.terapeutaId === terapeutaFiltro;
+            return matchesDate && matchesTerapeuta;
         })
         .sort((a, b) => new Date(a.dataInicio).getTime() - new Date(b.dataInicio).getTime());
 
-    const openDetailsModal = (consulta: ConsultaI) => {
-        setSelectedConsulta(consulta);
-        setIsDetailsModalOpen(true);
-    };
-
-    const closeDetailsModal = () => {
-        setIsDetailsModalOpen(false);
-        setSelectedConsulta(null);
+    const openDetailsPage = (consultaId: number) => {
+        router.push(`/area-cliente/detalhes-consulta/${consultaId}`);
     };
 
     const handleAddHorarioOpening = () => {
@@ -250,50 +238,6 @@ export default function AreaCliente() {
         } else {
             toast.error("Erro ao adicionar horário!")
         }
-    };
-
-    const DetailsModal = ({ isOpen, onClose, consulta }: { isOpen: boolean, onClose: () => void, consulta: ConsultaI | null }) => {
-        if (!isOpen || !consulta) return null;
-
-
-        return (
-            <div className="fixed inset-0 flex items-center justify-center z-[600]">
-                <div
-                    className="absolute inset-0 bg-black opacity-50"
-                    onClick={() => {
-                        onClose()
-                    }}
-                ></div>
-                <div className="bg-white rounded-lg shadow-lg z-10 w-[500px]">
-                    <h2 className={`flex text-2xl font-bold mb-8 items-center justify-center text-white bg-[#6D9CE3] py-1 mt-5 ${inter.className}`}>
-                        Detalhes da Consulta
-                    </h2>
-                    <form className="mx-16" onSubmit={handleSubmit(addConsulta)}>
-                        <p><strong>Paciente:</strong> {consulta.paciente?.nome}</p>
-                        <p><strong>Terapeuta:</strong> {consulta.terapeuta.nome}</p>
-                        <p><strong>Hora de Início:</strong> {new Date(consulta.dataInicio).toLocaleTimeString('pt-BR')}</p>
-                        <p><strong>Hora de Fim:</strong> {consulta.dataFim ? new Date(consulta.dataFim).toLocaleTimeString('pt-BR') : 'N/A'}</p>
-                        <p><strong>Detalhes:</strong></p>
-                        <TextareaAutosize
-                            className="detalhes-consulta"
-                            minRows={5}
-                            maxRows={15}
-                            defaultValue={consulta.detalhes || ''}
-                        />
-                        {/* <p><strong>Detalhes:</strong> {consulta.detalhes}</p> */}
-                        <div className="flex justify-center items-center">
-                            <button
-                                onClick={() => {
-                                    onClose();
-                                }}
-                                className="my-8 bg-blue-500 text-white py-2 px-4 rounded">
-                                Fechar
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        );
     };
 
     const openDesmarcarModal = (consulta: ConsultaI) => {
@@ -397,8 +341,12 @@ export default function AreaCliente() {
                                 Bem vindo de volta, Clinica Alfa
                             </div>
                             <div className="flex justify-between gap-10 me-10">
-                                <select className={`bg-white border border-gray-300 font-bold text-black rounded-lg px-2 ${cairo.className}`}>
-                                    <option value="">Filtrar por Terapeutas</option>
+                                <select 
+                                    className={`bg-white border border-gray-300 font-bold text-black rounded-lg px-2 ${cairo.className}`}
+                                    value={terapeutaFiltro}
+                                    onChange={(e) => setTerapeutaFiltro(e.target.value)}
+                                >
+                                    <option value="">Todos os Terapeutas</option>
                                     {dadosClinica?.Terapeuta.map((terapeuta) => (
                                         <option key={terapeuta.id} value={terapeuta.id}>{terapeuta.nome}</option>
                                     ))}
@@ -519,7 +467,7 @@ export default function AreaCliente() {
                                             <p className="text-sm">{new Date(consulta.dataInicio).toLocaleDateString('pt-BR')}</p>
                                             <button
                                                 className="text-blue-500 text-sm flex items-center justify-center gap-1"
-                                                onClick={() => openDetailsModal(consulta)}
+                                                onClick={() => openDetailsPage(consulta.id)}
                                             >
                                                 <svg width="13" height="13" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M9.298 12.5714L13.374 8.50015L12.373 7.52415L9.298 10.5991L6.223 7.52415L5.22675 8.50015L9.298 12.5714ZM9.30025 18.7981C8.01442 18.7981 6.80558 18.5538 5.67375 18.0651C4.54175 17.5763 3.55708 16.913 2.71975 16.0751C1.88258 15.2373 1.22 14.2536 0.732 13.1239C0.244 11.9941 0 10.7869 0 9.5024C0 8.21657 0.244333 7.00773 0.733 5.8759C1.22183 4.7439 1.88517 3.75923 2.723 2.9219C3.56083 2.08473 4.54458 1.42215 5.67425 0.934148C6.80408 0.446148 8.01125 0.202148 9.29575 0.202148C10.5816 0.202148 11.7904 0.446482 12.9222 0.935149C14.0542 1.42398 15.0389 2.08731 15.8763 2.92515C16.7134 3.76298 17.376 4.74673 17.864 5.8764C18.352 7.00623 18.596 8.2134 18.596 9.4979C18.596 10.7837 18.3517 11.9926 17.863 13.1244C17.3742 14.2564 16.7108 15.2411 15.873 16.0784C15.0352 16.9156 14.0514 17.5781 12.9218 18.0661C11.7919 18.5541 10.5848 18.7981 9.30025 18.7981ZM9.29775 17.3991C11.4959 17.3991 13.362 16.6323 14.896 15.0986C16.43 13.5648 17.197 11.6987 17.197 9.5004C17.197 7.30223 16.4302 5.43615 14.8965 3.90215C13.3627 2.36815 11.4966 1.60115 9.29825 1.60115C7.10008 1.60115 5.234 2.36798 3.7 3.90165C2.166 5.43548 1.399 7.30156 1.399 9.4999C1.399 11.6981 2.16583 13.5641 3.6995 15.0981C5.23333 16.6321 7.09942 17.3991 9.29775 17.3991Z" fill="#6D9CE3" />
@@ -530,11 +478,6 @@ export default function AreaCliente() {
                                     </div>
                                 )))}
                             </div>
-                            <DetailsModal
-                                isOpen={isDetailsModalOpen}
-                                onClose={closeDetailsModal}
-                                consulta={selectedConsulta}
-                            />
                         </div>
                         {isAddConsultaOpen && (
                             <div className="fixed inset-0 flex items-center justify-center z-[600]">

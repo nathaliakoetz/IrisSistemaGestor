@@ -151,3 +151,28 @@ main {
   box-sizing: border-box; /* Inclui padding e border na largura total */
   resize: none;
 }
+
+/* Estilos para a página de detalhes da consulta */
+.detalhes-consulta-page {
+  background-color: #f2f2f2;
+  min-height: 100vh;
+}
+
+.detalhes-textarea {
+  transition: border-color 0.3s ease;
+}
+
+.detalhes-textarea:focus {
+  border-color: #6d9ce3;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(109, 156, 227, 0.1);
+}
+
+.btn-voltar {
+  transition: all 0.3s ease;
+}
+
+.btn-voltar:hover {
+  background-color: #f8f9fa;
+  transform: translateX(-2px);
+}

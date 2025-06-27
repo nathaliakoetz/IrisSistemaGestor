@@ -3,151 +3,240 @@
 import { SideBar } from "@/components/SideBar";
 import { TopBar } from "@/components/TopBar";
 import { cairo, inter } from "@/utils/fonts";
+import { useClinicaStore } from "@/context/clinica";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 
+interface CardTerapeuta {
+    id: string;
+    title: string;
+    description: string;
+    image: string;
+}
+
 export default function GestaoFuncionarios() {
+    const { clinica, carregaClinicaDaStorage } = useClinicaStore();
+    const router = useRouter();
+    
+    const [cards, setCards] = useState<CardTerapeuta[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    const cards = [
-        { id: 1, title: "Ana Silva", description: "Psicóloga Clínica", image: "/avatar.png" },
-        { id: 2, title: "Carlos Santos", description: "Psicólogo Cognitivo-Comportamental", image: "/avatar.png" },
-        { id: 3, title: "Marina Costa", description: "Neuropsicóloga", image: "/avatar.png" },
-        { id: 4, title: "Pedro Oliveira", description: "Psicólogo Organizacional", image: "/avatar.png" },
-        { id: 5, title: "Juliana Ferreira", description: "Psicóloga Infantil", image: "/avatar.png" },
-        { id: 6, title: "Roberto Lima", description: "Psicoterapeuta de Casal", image: "/avatar.png" },
-        { id: 7, title: "Fernanda Rocha", description: "Psicóloga Escolar", image: "/avatar.png" },
-        { id: 8, title: "Thiago Mendes", description: "Psicólogo Social", image: "/avatar.png" },
-        { id: 9, title: "Luciana Moreira", description: "Psicóloga Humanista", image: "/avatar.png" },
-        { id: 10, title: "André Barbosa", description: "Psicólogo Esportivo", image: "/avatar.png" },
-        { id: 11, title: "Renata Alves", description: "Psicóloga Gestalt", image: "/avatar.png" },
-        { id: 12, title: "Marcos Pereira", description: "Psicólogo Hospitalar", image: "/avatar.png" },
-        { id: 13, title: "Camila Rodrigues", description: "Psicóloga Familiar", image: "/avatar.png" },
-        { id: 14, title: "Eduardo Nunes", description: "Psicólogo Junguiano", image: "/avatar.png" },
-        { id: 15, title: "Beatriz Araújo", description: "Psicóloga do Adolescente", image: "/avatar.png" },
-        { id: 16, title: "Felipe Torres", description: "Psicoanalista", image: "/avatar.png" },
-        { id: 17, title: "Patrícia Gomes", description: "Psicóloga Comportamental", image: "/avatar.png" },
-        { id: 18, title: "Rafael Cardoso", description: "Psicólogo do Trabalho", image: "/avatar.png" },
-        { id: 19, title: "Gabriela Melo", description: "Psicóloga Transpessoal", image: "/avatar.png" },
-        { id: 20, title: "Diego Sousa", description: "Psicólogo Forense", image: "/avatar.png" },
-        { id: 21, title: "Amanda Castro", description: "Psicóloga Positiva", image: "/avatar.png" },
-        { id: 22, title: "Bruno Teixeira", description: "Psicólogo da Terceira Idade", image: "/avatar.png" },
-        { id: 23, title: "Larissa Campos", description: "Psicóloga Sistêmica", image: "/avatar.png" },
-        { id: 24, title: "Vinícius Ramos", description: "Psicólogo de Reabilitação", image: "/avatar.png" },
-        { id: 25, title: "Natália Freitas", description: "Psicóloga Psicodramática", image: "/avatar.png" },
-        { id: 26, title: "Gustavo Miranda", description: "Psicólogo EMDR", image: "/avatar.png" },
-        { id: 27, title: "Isabella Correia", description: "Psicóloga de Emergências", image: "/avatar.png" },
-        { id: 28, title: "Leonardo Dias", description: "Psicólogo Existencial", image: "/avatar.png" },
-        { id: 29, title: "Stephanie Vieira", description: "Psicóloga de Grupo", image: "/avatar.png" },
-        { id: 30, title: "Henrique Lopes", description: "Psicólogo de Trauma", image: "/avatar.png" },
-        { id: 31, title: "Bianca Martins", description: "Psicóloga da Saúde", image: "/avatar.png" },
-        { id: 32, title: "Rodrigo Cunha", description: "Psicólogo Hipnoterapeuta", image: "/avatar.png" },
-        { id: 33, title: "Vanessa Pinto", description: "Psicóloga Familiar Sistêmica", image: "/avatar.png" },
-        { id: 34, title: "Mateus Gonçalves", description: "Psicólogo de Casal", image: "/avatar.png" },
-        { id: 35, title: "Priscila Reis", description: "Psicóloga de Ansiedade", image: "/avatar.png" },
-        { id: 36, title: "Lucas Monteiro", description: "Psicólogo de Dependência", image: "/avatar.png" },
-        { id: 37, title: "Aline Fonseca", description: "Psicóloga Perinatal", image: "/avatar.png" },
-        { id: 38, title: "Danilo Morais", description: "Psicólogo Mindfulness", image: "/avatar.png" },
-        { id: 39, title: "Caroline Ribeiro", description: "Psicóloga de Luto", image: "/avatar.png" },
-        { id: 40, title: "Alexandre Cruz", description: "Psicólogo ACT", image: "/avatar.png" },
-        { id: 41, title: "Tatiana Macedo", description: "Psicóloga Sexual", image: "/avatar.png" },
-        { id: 42, title: "João Batista", description: "Psicólogo Comunitário", image: "/avatar.png" },
-        { id: 43, title: "Bruna Aguiar", description: "Psicóloga DBT", image: "/avatar.png" },
-        { id: 44, title: "Ricardo Moura", description: "Psicólogo de Vícios", image: "/avatar.png" },
-        { id: 45, title: "Débora Xavier", description: "Psicóloga Transpessoal", image: "/avatar.png" },
-        { id: 46, title: "Gabriel Caldeira", description: "Psicólogo Fenomenológico", image: "/avatar.png" },
-        { id: 47, title: "Simone Duarte", description: "Psicóloga Arteterapia", image: "/avatar.png" },
-        { id: 48, title: "Fábio Nascimento", description: "Psicólogo Musical", image: "/avatar.png" },
-        { id: 49, title: "Cristiane Borges", description: "Psicóloga Logoterapia", image: "/avatar.png" },
-        { id: 50, title: "Sérgio Azevedo", description: "Psicólogo Reichiano", image: "/avatar.png" },
-        { id: 51, title: "Márcia Tavares", description: "Psicóloga TEA", image: "/avatar.png" },
-        { id: 52, title: "Fabiano Coelho", description: "Psicólogo TDAH", image: "/avatar.png" },
-        { id: 53, title: "Raquel Vargas", description: "Psicóloga de Transtornos", image: "/avatar.png" },
-        { id: 54, title: "William Carvalho", description: "Psicólogo de Estresse", image: "/avatar.png" },
-        { id: 55, title: "Karina Santana", description: "Psicóloga de Depressão", image: "/avatar.png" },
-        { id: 56, title: "Marcelo Brito", description: "Psicólogo de Fobias", image: "/avatar.png" },
-        { id: 57, title: "Eliane Medeiros", description: "Psicóloga Preventiva", image: "/avatar.png" },
-        { id: 58, title: "Leandro Castro", description: "Psicólogo de Relacionamentos", image: "/avatar.png" },
-        { id: 59, title: "Jéssica Rezende", description: "Psicóloga de Autoestima", image: "/avatar.png" },
-        { id: 60, title: "Márcio Franco", description: "Psicólogo de Liderança", image: "/avatar.png" },
-        { id: 61, title: "Carla Siqueira", description: "Psicóloga de Mudanças", image: "/avatar.png" },
-        { id: 62, title: "Everton Mendonça", description: "Psicólogo de Conflitos", image: "/avatar.png" },
-        { id: 63, title: "Mônica Bastos", description: "Psicóloga de Adaptação", image: "/avatar.png" },
-        { id: 64, title: "César Nogueira", description: "Psicólogo de Carreira", image: "/avatar.png" },
-        { id: 65, title: "Adriana Paiva", description: "Psicóloga de Desenvolvimento", image: "/avatar.png" },
-        { id: 66, title: "Douglas Antunes", description: "Psicólogo de Motivação", image: "/avatar.png" },
-        { id: 67, title: "Valéria Soares", description: "Psicóloga de Criatividade", image: "/avatar.png" },
-        { id: 68, title: "Antônio Veloso", description: "Psicólogo de Comunicação", image: "/avatar.png" },
-        { id: 69, title: "Claudia Rangel", description: "Psicóloga de Socialização", image: "/avatar.png" },
-        { id: 70, title: "Flávio Dourado", description: "Psicólogo de Timidez", image: "/avatar.png" },
-        { id: 71, title: "Denise Evangelista", description: "Psicóloga de Confiança", image: "/avatar.png" },
-        { id: 72, title: "Robson Figueiredo", description: "Psicólogo de Assertividade", image: "/avatar.png" },
-        { id: 73, title: "Luana Toledo", description: "Psicóloga de Empatia", image: "/avatar.png" },
-        { id: 74, title: "Otávio Brandão", description: "Psicólogo de Inteligência Emocional", image: "/avatar.png" },
-        { id: 75, title: "Silvia Sampaio", description: "Psicóloga de Habilidades Sociais", image: "/avatar.png" },
-        { id: 76, title: "Igor Guerreiro", description: "Psicólogo de Resolução de Problemas", image: "/avatar.png" },
-        { id: 77, title: "Cintia Valente", description: "Psicóloga de Tomada de Decisões", image: "/avatar.png" },
-        { id: 78, title: "Renato Escobar", description: "Psicólogo de Planejamento", image: "/avatar.png" },
-        { id: 79, title: "Glória Amaral", description: "Psicóloga de Organização", image: "/avatar.png" },
-        { id: 80, title: "Jefferson Silveira", description: "Psicólogo de Produtividade", image: "/avatar.png" },
-        { id: 81, title: "Helen Neves", description: "Psicóloga de Concentração", image: "/avatar.png" },
-        { id: 82, title: "Caio Ferraz", description: "Psicólogo de Atenção", image: "/avatar.png" },
-        { id: 83, title: "Solange Guimarães", description: "Psicóloga de Memória", image: "/avatar.png" },
-        { id: 84, title: "Edson Machado", description: "Psicólogo de Aprendizagem", image: "/avatar.png" },
-        { id: 85, title: "Viviane Rosa", description: "Psicóloga de Estudos", image: "/avatar.png" },
-        { id: 86, title: "Júlio Peixoto", description: "Psicólogo de Performance", image: "/avatar.png" },
-        { id: 87, title: "Paula Aragão", description: "Psicóloga de Competição", image: "/avatar.png" },
-        { id: 88, title: "Nelson Farias", description: "Psicólogo de Resiliência", image: "/avatar.png" },
-        { id: 89, title: "Sabrina Leite", description: "Psicóloga de Superação", image: "/avatar.png" },
-        { id: 90, title: "Walter Ramos", description: "Psicólogo de Transformação", image: "/avatar.png" },
-        { id: 91, title: "Mariana Senna", description: "Psicóloga de Bem-estar", image: "/avatar.png" },
-        { id: 92, title: "Rubens Pacheco", description: "Psicólogo de Felicidade", image: "/avatar.png" },
-        { id: 93, title: "Cláudia Horta", description: "Psicóloga de Harmonia", image: "/avatar.png" },
-        { id: 94, title: "Rogério Delgado", description: "Psicólogo de Equilíbrio", image: "/avatar.png" },
-        { id: 95, title: "Gisele Maciel", description: "Psicóloga de Mindfulness", image: "/avatar.png" },
-        { id: 96, title: "Reinaldo Viana", description: "Psicólogo de Meditação", image: "/avatar.png" },
-        { id: 97, title: "Célia Portela", description: "Psicóloga de Relaxamento", image: "/avatar.png" },
-        { id: 98, title: "Vanderlei Leal", description: "Psicólogo de Yoga Terapia", image: "/avatar.png" },
-        { id: 99, title: "Rosana Vieira", description: "Psicóloga de Respiração", image: "/avatar.png" },
-        { id: 100, title: "Benedito Furtado", description: "Psicólogo de Autocuidado", image: "/avatar.png" },
-    ];
-
-    const [menuVisible, setMenuVisible] = useState<Record<number, boolean>>({});
+    const [menuVisible, setMenuVisible] = useState<Record<string, boolean>>({});
     const [sortMenuVisible, setSortMenuVisible] = useState(false);
+    const [sortedCards, setSortedCards] = useState<CardTerapeuta[]>([]);
+    const [currentSortCriteria, setCurrentSortCriteria] = useState<string>("Nome A-Z");
+    const [searchTerm, setSearchTerm] = useState<string>("");
+    const [filteredCards, setFilteredCards] = useState<CardTerapeuta[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
 
     const sortMenuRef = useRef<HTMLDivElement>(null);
-    const cardMenuRefs = useRef<Record<number, HTMLDivElement | null>>({});
+    const cardMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+    // Função para buscar terapeutas do banco de dados
+    const fetchTerapeutas = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            
+            // Verificar se existe clínica, se não, tentar carregar do storage
+            const clinicaAtual = clinica?.id ? clinica : (() => {
+                carregaClinicaDaStorage();
+                const clinicaStorage = sessionStorage.getItem('clinica');
+                return clinicaStorage ? JSON.parse(clinicaStorage) : null;
+            })();
+            
+            if (!clinicaAtual?.id) {
+                setError("ID da clínica não encontrado");
+                return;
+            }
+
+            const response = await fetch(`http://localhost:3004/terapeutas/clinica/${clinicaAtual.id}`);
+            
+            if (!response.ok) {
+                throw new Error('Erro ao buscar terapeutas');
+            }
+            
+            const terapeutas = await response.json();
+            
+            // Converter para o formato dos cards
+            const cardsData: CardTerapeuta[] = terapeutas.map((terapeuta: any) => ({
+                id: terapeuta.id,
+                title: terapeuta.nome,
+                description: terapeuta.profissao,
+                image: "/avatar.png"
+            }));
+            
+            setCards(cardsData);
+            setSortedCards(cardsData);
+            setFilteredCards(cardsData);
+        } catch (error) {
+            console.error('Erro ao buscar terapeutas:', error);
+            setError('Erro ao carregar os terapeutas');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const toggleSortMenu = () => {
         setSortMenuVisible((prev) => !prev);
     };
 
+    const sortCards = (criteria: string) => {
+        let sorted = [...cards];
+
+        switch (criteria) {
+            case "Nome A-Z":
+                sorted.sort((a, b) => a.title.localeCompare(b.title));
+                break;
+            case "Nome Z-A":
+                sorted.sort((a, b) => b.title.localeCompare(a.title));
+                break;
+            case "Profissão A-Z":
+                sorted.sort((a, b) => a.description.localeCompare(b.description));
+                break;
+            case "Profissão Z-A":
+                sorted.sort((a, b) => b.description.localeCompare(a.description));
+                break;
+            default:
+                sorted.sort((a, b) => a.title.localeCompare(b.title));
+        }
+
+        setSortedCards(sorted);
+        setCurrentSortCriteria(criteria);
+        setCurrentPage(1); // Resetar para a primeira página após ordenação
+        
+        // Aplicar filtro na nova ordem
+        applySearch(searchTerm, sorted);
+    };
+
+    const applySearch = (term: string, cardsToFilter = sortedCards) => {
+        if (term.length >= 3) {
+            const filtered = cardsToFilter.filter((card) =>
+                card.title.toLowerCase().includes(term.toLowerCase()) ||
+                card.description.toLowerCase().includes(term.toLowerCase())
+            );
+            setFilteredCards(filtered);
+        } else {
+            setFilteredCards(cardsToFilter);
+        }
+        setCurrentPage(1); // Resetar para a primeira página após filtro
+    };
+
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const term = e.target.value;
+        setSearchTerm(term);
+        applySearch(term);
+    };
+
     const handleSort = (criteria: string) => {
         console.log(`Ordenar por: ${criteria}`);
+        sortCards(criteria);
         setSortMenuVisible(false);
     };
 
-    const toggleMenu = (cardId: number) => {
+    const toggleMenu = (cardId: string) => {
         setMenuVisible((prevState) => ({
             ...prevState,
             [cardId]: !prevState[cardId],
         }));
     };
 
-    const handleEditCard = (cardId: number) => {
+    const handleEditCard = (cardId: string) => {
         setMenuVisible((prevState) => ({
             ...prevState,
             [cardId]: false,
         }));
-        console.log(`Editar card ${cardId}`);
+        
+        // Navegar para a página de edição
+        router.push(`/area-cliente/funcionario/editar/${cardId}`);
     };
 
-    const handleDeleteCard = (cardId: number) => {
+    const handleDeleteCard = async (cardId: string) => {
         setMenuVisible((prevState) => ({
             ...prevState,
             [cardId]: false,
         }));
-        console.log(`Excluir card ${cardId}`);
+        
+        // Confirmar exclusão
+        const confirmDelete = window.confirm("Tem certeza que deseja excluir este funcionário? Esta ação não pode ser desfeita.");
+        
+        if (!confirmDelete) {
+            return;
+        }
+        
+        try {
+            // Verificar se existe clínica, se não, tentar carregar do storage
+            const clinicaAtual = clinica?.id ? clinica : (() => {
+                const clinicaStorage = sessionStorage.getItem('clinica');
+                return clinicaStorage ? JSON.parse(clinicaStorage) : null;
+            })();
+
+            const response = await fetch(`http://localhost:3004/terapeutas`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: cardId,
+                    clinicaId: clinicaAtual?.id
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error('Erro ao excluir terapeuta');
+            }
+            
+            // Remover o card da lista local
+            const updatedCards = cards.filter(card => card.id !== cardId);
+            setCards(updatedCards);
+            setSortedCards(updatedCards);
+            
+            // Aplicar filtro novamente nos cards atualizados
+            applySearch(searchTerm, updatedCards);
+            
+            // Ajustar página se necessário
+            const newTotalPages = Math.ceil(updatedCards.length / itemsPerPage);
+            if (currentPage > newTotalPages && newTotalPages > 0) {
+                setCurrentPage(newTotalPages);
+            }
+            
+            alert("Funcionário excluído com sucesso!");
+            
+        } catch (error) {
+            console.error('Erro ao excluir terapeuta:', error);
+            alert("Erro ao excluir funcionário. Tente novamente.");
+        }
     };
+
+    useEffect(() => {
+        // Carregar a clínica do storage e buscar terapeutas
+        if (!clinica?.id) {
+            carregaClinicaDaStorage();
+        }
+        // Sempre tentar carregar os dados quando o componente montar
+        fetchTerapeutas();
+    }, []);
+
+    useEffect(() => {
+        // Carregar terapeutas quando a clínica mudar
+        if (clinica?.id) {
+            fetchTerapeutas();
+        }
+    }, [clinica?.id]);
+
+    useEffect(() => {
+        // Inicializar a ordenação padrão quando os cards carregarem
+        if (cards.length > 0) {
+            sortCards("Nome A-Z");
+        }
+    }, [cards]);
+
+    useEffect(() => {
+        // Inicializar cards filtrados
+        setFilteredCards(sortedCards);
+    }, [sortedCards]);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -162,9 +251,9 @@ export default function GestaoFuncionarios() {
             setMenuVisible((prevState) => {
                 const newState = { ...prevState };
                 Object.keys(cardMenuRefs.current).forEach((cardId) => {
-                    const ref = cardMenuRefs.current[Number(cardId)];
+                    const ref = cardMenuRefs.current[cardId];
                     if (ref && !ref.contains(target)) {
-                        newState[Number(cardId)] = false;
+                        newState[cardId] = false;
                     }
                 });
                 return newState;
@@ -177,14 +266,13 @@ export default function GestaoFuncionarios() {
         };
     }, []);
 
-    const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 6;
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentCards = cards.slice(indexOfFirstItem, indexOfLastItem);
+    const currentCards = filteredCards.slice(indexOfFirstItem, indexOfLastItem);
 
-    const totalPages = Math.ceil(cards.length / itemsPerPage);
+    const totalPages = Math.ceil(filteredCards.length / itemsPerPage);
 
     const handleNextPage = () => {
         if (currentPage < totalPages) {
@@ -263,7 +351,7 @@ export default function GestaoFuncionarios() {
                                         onClick={toggleSortMenu}
                                         className={`flex justify-center w-[250px] border-2 font-bold items-center bg-white p-3 text-dark text-sm rounded-lg ${inter.className}`}
                                     >
-                                        Ordenar Por
+                                        {currentSortCriteria}
                                     </button>
                                     {sortMenuVisible && (
                                         <div
@@ -302,67 +390,94 @@ export default function GestaoFuncionarios() {
                                     <input
                                         type="text"
                                         placeholder="Pesquisar Funcionário"
-                                        // value={searchTerm}
-                                        // onChange={(e) => setSearchTerm(e.target.value)}
+                                        value={searchTerm}
+                                        onChange={handleSearchChange}
                                         className="border-2 font-semibold rounded-lg pl-10 p-2.5 w-full outline-none"
                                     />
                                 </div>
                             </div>
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 justify-items-center mt-5 mb-5">
-                            {currentCards.map((card) => (
-                                <div
-                                    key={card.id}
-                                    className="bg-blue-500 rounded-lg p-4 relative shadow-md w-[350px] h-[350px] flex flex-col items-center justify-center"
-                                >
-                                    <div className="absolute top-2 right-2">
-                                        <button
-                                            className="text-white text-xl"
-                                            onClick={() => toggleMenu(card.id)}
+                        
+                        {loading && (
+                            <div className="flex justify-center items-center mt-10">
+                                <p className={`text-xl text-gray-600 ${inter.className}`}>
+                                    Carregando funcionários...
+                                </p>
+                            </div>
+                        )}
+                        
+                        {error && (
+                            <div className="flex justify-center items-center mt-10">
+                                <p className={`text-xl text-red-600 ${inter.className}`}>
+                                    {error}
+                                </p>
+                            </div>
+                        )}
+                        
+                        {!loading && !error && currentCards.length === 0 && (
+                            <div className="flex justify-center items-center mt-10">
+                                <p className={`text-xl text-gray-600 ${inter.className}`}>
+                                    Nenhum funcionário encontrado.
+                                </p>
+                            </div>
+                        )}
+                        
+                        {!loading && !error && currentCards.length > 0 && (
+                            <>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 justify-items-center mt-5 mb-5">
+                                    {currentCards.map((card) => (
+                                        <div
+                                            key={card.id}
+                                            className="bg-blue-500 rounded-lg p-4 relative shadow-md w-[350px] h-[350px] flex flex-col items-center justify-center"
                                         >
-                                            ...
-                                        </button>
-                                        {menuVisible[card.id] && (
-                                            <div
-                                                ref={(el) => { cardMenuRefs.current[card.id] = el; }}
-                                                className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg"
-                                            >
+                                            <div className="absolute top-2 right-2">
                                                 <button
-                                                    onClick={() => handleEditCard(card.id)}
-                                                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                    className="text-white text-xl"
+                                                    onClick={() => toggleMenu(card.id)}
                                                 >
-                                                    Editar Card
+                                                    ...
                                                 </button>
-                                                <button
-                                                    onClick={() => handleDeleteCard(card.id)}
-                                                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                                >
-                                                    Excluir Card
-                                                </button>
+                                                {menuVisible[card.id] && (
+                                                    <div
+                                                        ref={(el) => { cardMenuRefs.current[card.id] = el; }}
+                                                        className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg"
+                                                    >
+                                                        <button
+                                                            onClick={() => handleEditCard(card.id)}
+                                                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                        >
+                                                            Editar Funcionário
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDeleteCard(card.id)}
+                                                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                        >
+                                                            Excluir Funcionário
+                                                        </button>
+                                                    </div>
+                                                )}
                                             </div>
-                                        )}
-                                    </div>
 
-                                    {/* Área redonda para imagem */}
-                                    <div className="flex justify-center mt-5">
-                                        <div className="w-52 h-52 rounded-full bg-white overflow-hidden">
-                                            <img
-                                                src={card.image}
-                                                alt={`Imagem do ${card.title}`}
-                                                className="w-full h-full object-cover"
-                                            />
+                                            {/* Área redonda para imagem */}
+                                            <div className="flex justify-center mt-5">
+                                                <div className="w-52 h-52 rounded-full bg-white overflow-hidden">
+                                                    <img
+                                                        src={card.image}
+                                                        alt={`Imagem do ${card.title}`}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* Área de texto abaixo da imagem */}
+                                            <div className="text-center mt-4 mb-5">
+                                                <h2 className={`text-white text-lg font-semibold ${inter.className}`}>{card.title}</h2>
+                                                <p className={`text-white text-lg mt-2 ${inter.className}`}>{card.description}</p>
+                                            </div>
                                         </div>
-                                    </div>
-
-                                    {/* Área de texto abaixo da imagem */}
-                                    <div className="text-center mt-4 mb-5">
-                                        <h2 className={`text-white text-lg font-semibold ${inter.className}`}>{card.title}</h2>
-                                        <p className={`text-white text-lg mt-2 ${inter.className}`}>{card.description}</p>
-                                    </div>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
-                        <div className="flex justify-center items-center gap-2 mt-4">
+                                <div className="flex justify-center items-center gap-2 mt-4">
                             {/* Botão para a primeira página */}
                             <button
                                 onClick={handleFirstPage}
@@ -432,7 +547,9 @@ export default function GestaoFuncionarios() {
                             >
                                 Última
                             </button>
-                        </div>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>

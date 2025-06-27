@@ -70,6 +70,7 @@ model Terapeuta {
   cpfCnpj           String
   telefone1         String
   telefone2         String?
+  profissao         String
 
   clinica   Clinica @relation(fields: [clinicaId], references: [id])
   clinicaId String

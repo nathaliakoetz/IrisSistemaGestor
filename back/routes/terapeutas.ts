@@ -23,6 +23,62 @@ router.get("/", async (req, res) => {
     }
 })
 
+router.get("/clinica/:clinicaId", async (req, res) => {
+    const { clinicaId } = req.params
+    
+    try {
+        const terapeutas = await prisma.terapeuta.findMany({
+            where: {
+                clinicaId: clinicaId
+            },
+            select: {
+                id: true,
+                nome: true,
+                profissao: true,
+                email: true,
+                telefone1: true
+            }
+        })
+        res.status(200).json(terapeutas)
+    } catch (error) {
+        res.status(400).json(error)
+    }
+})
+
+router.get("/:id/:clinicaId", async (req, res) => {
+    const { id, clinicaId } = req.params
+    
+    try {
+        const terapeuta = await prisma.terapeuta.findUnique({
+            where: {
+                id_clinicaId: {
+                    id: id,
+                    clinicaId: clinicaId,
+                }
+            },
+            select: {
+                id: true,
+                nome: true,
+                email: true,
+                cpfCnpj: true,
+                telefone1: true,
+                telefone2: true,
+                profissao: true,
+                clinicaId: true
+            }
+        })
+        
+        if (!terapeuta) {
+            res.status(404).json({ erro: "Terapeuta não encontrado" })
+            return
+        }
+        
+        res.status(200).json(terapeuta)
+    } catch (error) {
+        res.status(400).json(error)
+    }
+})
+
 function validaSenha(senha: string) {
 
     const mensa: string[] = []
@@ -65,18 +121,22 @@ function validaSenha(senha: string) {
 }
 
 router.post("/", async (req, res) => {
-    const { nome, email, senha, cpfCnpj, telefone1, telefone2, clinicaId } = req.body
+    const { nome, email, senha, cpfCnpj, telefone1, telefone2, profissao, clinicaId } = req.body
 
-    if (!nome || !email || !senha || !cpfCnpj || !telefone1 || !clinicaId) {
-        res.status(400).json({ "erro": "Informe nome, email, senha, cnpfCnpj, telefone1 e clinicaId" })
+    if (!nome || !email || !senha || !cpfCnpj || !telefone1 || !profissao || !clinicaId) {
+        res.status(400).json({ "erro": "Informe nome, email, senha, cnpfCnpj, telefone1, profissao e clinicaId" })
         return
     }
+
+    console.log(profissao)
 
     const erros = validaSenha(senha)
     if (erros.length > 0) {
         res.status(400).json({ erro: erros.join("; ") })
         return
     }
+
+    console.log(profissao)
 
     const salt = bcrypt.genSaltSync(12)
     const hash = bcrypt.hashSync(senha, salt)
@@ -90,6 +150,7 @@ router.post("/", async (req, res) => {
                 cpfCnpj,
                 telefone1,
                 telefone2: telefone2 ? telefone2 : null,
+                profissao,
                 clinicaId
             }
         })
@@ -101,10 +162,10 @@ router.post("/", async (req, res) => {
 
 router.patch("/:id/:clinicaId", async (req, res) => {
     const { id, clinicaId } = req.params
-    const { nome, email, cpfCnpj, telefone1, telefone2 } = req.body
+    const { nome, email, cpfCnpj, telefone1, telefone2, profissao } = req.body
 
-    if (!nome && !email && !cpfCnpj && !telefone1) {
-        res.status(400).json({ "erro": "Informe pelo menos 1 dos dados: nome, email, cpfCnpj, telefone1, telefone2" })
+    if (!nome && !email && !cpfCnpj && !telefone1 && !profissao) {
+        res.status(400).json({ "erro": "Informe pelo menos 1 dos dados: nome, email, cpfCnpj, telefone1, telefone2, profissao" })
         return
     }
 
@@ -115,6 +176,7 @@ router.patch("/:id/:clinicaId", async (req, res) => {
     if (cpfCnpj) updateData.cpfCnpj = cpfCnpj
     if (telefone1) updateData.telefone1 = telefone1
     if (telefone2) updateData.telefone2 = telefone2
+    if (profissao) updateData.profissao = profissao
 
     try {
         const terapeuta = await prisma.terapeuta.update({

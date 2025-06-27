@@ -66,6 +66,34 @@ router.post("/", async (req, res) => {
             }
         })
 
+        // Remove o horário da lista de horários disponíveis quando uma consulta é criada
+        const data = dataInicio.split(' ')[0]
+        const horario = dataInicio.split(' ')[1]
+
+        const horarioExistente = await prisma.horario.findUnique({
+            where: {
+                clinicaId_data: {
+                    clinicaId,
+                    data: new Date(data)
+                }
+            }
+        })
+
+        if (horarioExistente && horarioExistente.horarios.includes(horario)) {
+            const horariosAtualizados = horarioExistente.horarios.filter(h => h !== horario)
+            await prisma.horario.update({
+                where: {
+                    clinicaId_data: {
+                        clinicaId,
+                        data: new Date(data)
+                    }
+                },
+                data: {
+                    horarios: horariosAtualizados
+                }
+            })
+        }
+
         res.status(201).json(consulta)
     } catch (error) {
         res.status(400).json(error)
@@ -90,6 +118,22 @@ router.delete("/:id", async (req, res) => {
                 deletedAt: new Date(),
                 updatedAt: updated?.updatedAt
             }
+        })
+
+        res.status(200).json(consulta)
+    } catch (error) {
+        res.status(400).json(error)
+    }
+})
+
+router.patch("/finalizar/:id", async (req, res) => {
+    const { id } = req.params
+    const dados = req.body
+
+    try {
+        const consulta = await prisma.consulta.update({
+            where: { id: Number(id) },
+            data: dados
         })
 
         res.status(200).json(consulta)
@@ -137,6 +181,70 @@ router.get("/:id", async (req, res) => {
     }
 })
 
+router.get("/detalhes/:id", async (req, res) => {
+    const { id } = req.params
+
+    try {
+        const consulta = await prisma.consulta.findUnique({
+            where: { id: Number(id) },
+            include: {
+                terapeuta: true,
+                paciente: {
+                    include: {
+                        ResponsavelDependente: {
+                            include: {
+                                responsavel: {
+                                    include: {
+                                        endereco: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        })
+
+        if (!consulta) {
+            res.status(404).json({ erro: "Consulta não encontrada" })
+            return
+        }
+
+        res.status(200).json(consulta)
+    } catch (error) {
+        res.status(400).json(error)
+    }
+})
+
+router.put("/detalhes/:id", async (req, res) => {
+    const { id } = req.params
+    const { detalhes } = req.body
+
+    try {
+        const consulta = await prisma.consulta.findUnique({
+            where: { id: Number(id) }
+        })
+
+        if (!consulta) {
+            res.status(404).json({ erro: "Consulta não encontrada" })
+            return
+        }
+
+        const consultaAtualizada = await prisma.consulta.update({
+            where: { id: Number(id) },
+            data: { detalhes },
+            include: {
+                terapeuta: true,
+                paciente: true
+            }
+        })
+
+        res.status(200).json(consultaAtualizada)
+    } catch (error) {
+        res.status(400).json(error)
+    }
+})
+
 router.delete("/desmarcar/:id", async (req, res) => {
     const { id } = req.params
 
@@ -168,18 +276,21 @@ router.delete("/desmarcar/:id", async (req, res) => {
         })
 
         if (horarioExistente) {
-            const horariosAtualizados = [...horarioExistente.horarios, horario].sort()
-            await prisma.horario.update({
-                where: {
-                    clinicaId_data: {
-                        clinicaId: consulta.clinicaId,
-                        data: new Date(data)
+            // Verifica se o horário já existe na lista antes de adicionar
+            if (!horarioExistente.horarios.includes(horario)) {
+                const horariosAtualizados = [...horarioExistente.horarios, horario].sort()
+                await prisma.horario.update({
+                    where: {
+                        clinicaId_data: {
+                            clinicaId: consulta.clinicaId,
+                            data: new Date(data)
+                        }
+                    },
+                    data: {
+                        horarios: horariosAtualizados
                     }
-                },
-                data: {
-                    horarios: horariosAtualizados
-                }
-            })
+                })
+            }
         } else {
             await prisma.horario.create({
                 data: {

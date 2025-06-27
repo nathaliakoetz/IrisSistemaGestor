@@ -10,6 +10,7 @@ export interface TerapeutaI {
     cpfCnpj: string,
     telefone1: string,
     telefone2: string | null,
+    profissao: string,
     clinica: ClinicaI,
     clinicaId: string,
     Consulta: ConsultaI[]
