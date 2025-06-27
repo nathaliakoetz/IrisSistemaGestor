@@ -23,10 +23,10 @@ router.get("/", async (req, res) => {
 })
 
 router.post("/", async (req, res) => {
-    const { nome, email, cpf, telefone1, telefone2, enderecoId } = req.body
+    const { nome, email, cpf, telefone1, telefone2, enderecoId, genero, estadoCivil, dataNascimento } = req.body
 
-    if (!nome || !email || !cpf || !telefone1 || !enderecoId) {
-        res.status(400).json({ erro: "Informe nome, email, cpf, telefone1, telefone2, enderecoId" })
+    if (!nome || !email || !cpf || !telefone1 || !enderecoId || !genero || !estadoCivil || !dataNascimento) {
+        res.status(400).json({ erro: "Informe nome, email, cpf, telefone1, telefone2, enderecoId, genero, estadoCivil, dataNascimento" })
         return
     }
 
@@ -39,6 +39,9 @@ router.post("/", async (req, res) => {
                 cpf,
                 telefone1,
                 telefone2: telefone2 ? telefone2 : null,
+                genero,
+                estadoCivil,
+                dataNascimento,
                 enderecoId
             }
         })

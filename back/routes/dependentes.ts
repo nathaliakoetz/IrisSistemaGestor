@@ -44,10 +44,10 @@ router.get("/", async (req, res) => {
 })
 
 router.post("/", async (req, res) => {
-    const { nome, cpf, responsavelId, clinicaId } = req.body
+    const { nome, cpf, responsavelId, clinicaId, genero, dataNascimento } = req.body
 
-    if (!nome || !cpf || !responsavelId) {
-        res.status(400).json({ erro: "Informe nome, cpf, responsavelId" })
+    if (!nome || !cpf || !responsavelId || !genero || !dataNascimento) {
+        res.status(400).json({ erro: "Informe nome, cpf, responsavelId, genero, dataNascimento" })
         return
     }
 
@@ -57,6 +57,8 @@ router.post("/", async (req, res) => {
             data: {
                 nome,
                 cpf,
+                genero,
+                dataNascimento
             }
         })
 
