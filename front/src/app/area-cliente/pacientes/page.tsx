@@ -153,6 +153,16 @@ export default function GestaoPacientes() {
         router.push(`/area-cliente/pacientes/editar/${cardId}`);
     };
 
+    const handleViewResponsible = (cardId: string) => {
+        setMenuVisible((prevState) => ({
+            ...prevState,
+            [cardId]: false,
+        }));
+        
+        // Navegar para a página de responsáveis
+        router.push(`/area-cliente/pacientes/responsavel/${cardId}`);
+    };
+
     const handleDeleteCard = async (cardId: string) => {
         setMenuVisible((prevState) => ({
             ...prevState,
@@ -434,6 +444,12 @@ export default function GestaoPacientes() {
                                                             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                                         >
                                                             Editar Paciente
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleViewResponsible(card.id)}
+                                                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                        >
+                                                            Ver Responsáveis
                                                         </button>
                                                         <button
                                                             onClick={() => handleDeleteCard(card.id)}

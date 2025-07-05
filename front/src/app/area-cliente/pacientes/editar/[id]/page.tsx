@@ -15,6 +15,14 @@ type Inputs = {
     cpf: string;
     genero: string;
     dataNascimento: string;
+    responsavelId: string;
+}
+
+type Responsavel = {
+    id: string;
+    nome: string;
+    email: string;
+    cpf: string;
 }
 
 export default function EditarPaciente() {
@@ -25,34 +33,59 @@ export default function EditarPaciente() {
     const pacienteId = params.id as string;
 
     const [loading, setLoading] = useState(true);
+    const [responsaveis, setResponsaveis] = useState<Responsavel[]>([]);
+    const [responsavelAtual, setResponsavelAtual] = useState<string>('');
 
     useEffect(() => {
-        const fetchPaciente = async () => {
+        const fetchDados = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/dependentes`);
+                // Buscar responsáveis
+                const responsaveisResponse = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/responsaveis`);
+                if (responsaveisResponse.ok) {
+                    const responsaveisData = await responsaveisResponse.json();
+                    setResponsaveis(responsaveisData);
+                }
+
+                // Buscar dados do paciente
+                const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/dependentes/${pacienteId}`);
                 if (response.ok) {
-                    const dependentes = await response.json();
-                    const paciente = dependentes.find((dep: any) => dep.id === pacienteId);
+                    const paciente = await response.json();
                     
                     if (paciente) {
                         setValue('nome', paciente.nome);
                         setValue('cpf', paciente.cpf);
                         setValue('genero', paciente.genero);
-                        setValue('dataNascimento', paciente.dataNascimento);
+                        
+                        // Formatar data para input tipo date (YYYY-MM-DD)
+                        if (paciente.dataNascimento) {
+                            const data = new Date(paciente.dataNascimento);
+                            const dataFormatada = data.toISOString().split('T')[0];
+                            setValue('dataNascimento', dataFormatada);
+                        }
+
+                        // Buscar responsável atual
+                        if (paciente.ResponsavelDependente && paciente.ResponsavelDependente.length > 0) {
+                            const responsavelId = paciente.ResponsavelDependente[0].responsavelId;
+                            setResponsavelAtual(responsavelId);
+                            setValue('responsavelId', responsavelId);
+                        }
                     }
+                } else {
+                    toast.error('Paciente não encontrado');
+                    router.push("/area-cliente/pacientes");
                 }
             } catch (error) {
-                console.error('Erro ao buscar dados do paciente:', error);
-                toast.error('Erro ao carregar dados do paciente');
+                console.error('Erro ao buscar dados:', error);
+                toast.error('Erro ao carregar dados');
             } finally {
                 setLoading(false);
             }
         };
 
         if (pacienteId) {
-            fetchPaciente();
+            fetchDados();
         }
-    }, [pacienteId, setValue]);
+    }, [pacienteId, setValue, router]);
 
     const formatarCPF = (cpf: string) => {
         return cpf
@@ -71,22 +104,25 @@ export default function EditarPaciente() {
 
     async function efetuaEdicao(data: Inputs) {
         try {
-            // Note: Esta é uma implementação básica pois não existe rota PUT no backend
-            toast.info("Funcionalidade de edição não implementada no backend ainda.");
-            
-            // Aqui você implementaria a lógica de atualização quando houver endpoint PUT
-            // const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/dependentes/${pacienteId}`, {
-            //     method: "PUT",
-            //     headers: {
-            //         "Content-Type": "application/json"
-            //     },
-            //     body: JSON.stringify(data)
-            // });
+            const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/dependentes/${pacienteId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
 
-            setTimeout(() => {
-                router.push("/area-cliente/pacientes");
-            }, 2000);
+            if (response.ok) {
+                toast.success("Paciente editado com sucesso!");
+                setTimeout(() => {
+                    router.push("/area-cliente/pacientes");
+                }, 2000);
+            } else {
+                const errorData = await response.json();
+                toast.error(errorData.erro || "Erro ao editar paciente");
+            }
         } catch (error) {
+            console.error('Erro ao editar paciente:', error);
             toast.error("Erro ao editar Paciente.");
         }
     }
@@ -200,7 +236,7 @@ export default function EditarPaciente() {
                             </div>
 
                             {/* Gênero */}
-                            <div className="flex flex-col col-span-10">
+                            <div className="flex flex-col col-span-5">
                                 <label htmlFor="genero" className={`text-sm font-semibold text-gray-700 ${inter.className}`}>
                                     Gênero
                                 </label>
@@ -214,6 +250,26 @@ export default function EditarPaciente() {
                                     <option value="Masculino">Masculino</option>
                                     <option value="Feminino">Feminino</option>
                                     <option value="Outro">Outro</option>
+                                </select>
+                            </div>
+
+                            {/* Responsável */}
+                            <div className="flex flex-col col-span-5">
+                                <label htmlFor="responsavelId" className={`text-sm font-semibold text-gray-700 ${inter.className}`}>
+                                    Responsável
+                                </label>
+                                <select
+                                    id="responsavelId"
+                                    className={`mt-1 p-2 border border-gray-300 rounded-md ${inter.className}`}
+                                    {...register("responsavelId")}
+                                    required
+                                >
+                                    <option value="">Selecione um responsável</option>
+                                    {responsaveis.map((responsavel) => (
+                                        <option key={responsavel.id} value={responsavel.id}>
+                                            {responsavel.nome} - {responsavel.cpf}
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
 

@@ -61,6 +61,42 @@ router.post("/", async (req, res) => {
     }
 })
 
+router.get("/:id", async (req, res) => {
+    const { id } = req.params
+
+    try {
+        const responsavel = await prisma.responsavel.findUnique({
+            where: { id },
+            include: {
+                endereco: true,
+                ResponsavelDependente: {
+                    include: {
+                        dependente: true
+                    }
+                },
+                ResponsavelClinica: {
+                    include: {
+                        clinica: {
+                            include: {
+                                dadosUsuario: true
+                            }
+                        }
+                    }
+                }
+            }
+        })
+
+        if (!responsavel) {
+            res.status(404).json({ erro: "Responsável não encontrado" })
+            return
+        }
+
+        res.status(200).json(responsavel)
+    } catch (error) {
+        res.status(400).json(error)
+    }
+})
+
 router.delete("/:id", async (req, res) => {
     const { id } = req.params
 
@@ -82,6 +118,77 @@ router.delete("/:id", async (req, res) => {
         })
 
         res.status(200).json(responsavel)
+    } catch (error) {
+        res.status(400).json(error)
+    }
+})
+
+router.put("/:id", async (req, res) => {
+    const { id } = req.params
+    const { nome, email, cpf, telefone1, telefone2, genero, estadoCivil, dataNascimento, endereco } = req.body
+
+    try {
+        const responsavelExistente = await prisma.responsavel.findUnique({
+            where: { id },
+            include: { endereco: true }
+        })
+
+        if (!responsavelExistente) {
+            res.status(404).json({ erro: "Responsável não encontrado" })
+            return
+        }
+
+        // Preparar dados para atualização
+        const updateData: any = {}
+        if (nome) updateData.nome = nome
+        if (email) updateData.email = email
+        if (cpf) updateData.cpf = cpf
+        if (telefone1) updateData.telefone1 = telefone1
+        if (telefone2 !== undefined) updateData.telefone2 = telefone2
+        if (genero) updateData.genero = genero
+        if (estadoCivil) updateData.estadoCivil = estadoCivil
+        if (dataNascimento) updateData.dataNascimento = dataNascimento
+
+        // Atualizar endereço se fornecido
+        if (endereco && responsavelExistente.endereco) {
+            const enderecoUpdateData: any = {}
+            if (endereco.logradouro) enderecoUpdateData.logradouro = endereco.logradouro
+            if (endereco.numero) enderecoUpdateData.numero = endereco.numero
+            if (endereco.bairro) enderecoUpdateData.bairro = endereco.bairro
+            if (endereco.cidade) enderecoUpdateData.cidade = endereco.cidade
+            if (endereco.estado) enderecoUpdateData.estado = endereco.estado
+            if (endereco.cep) enderecoUpdateData.cep = endereco.cep
+
+            await prisma.endereco.update({
+                where: { id: responsavelExistente.endereco.id },
+                data: enderecoUpdateData
+            })
+        }
+
+        // Atualizar responsável
+        const responsavelAtualizado = await prisma.responsavel.update({
+            where: { id },
+            data: updateData,
+            include: {
+                endereco: true,
+                ResponsavelDependente: {
+                    include: {
+                        dependente: true
+                    }
+                },
+                ResponsavelClinica: {
+                    include: {
+                        clinica: {
+                            include: {
+                                dadosUsuario: true
+                            }
+                        }
+                    }
+                }
+            }
+        })
+
+        res.status(200).json(responsavelAtualizado)
     } catch (error) {
         res.status(400).json(error)
     }

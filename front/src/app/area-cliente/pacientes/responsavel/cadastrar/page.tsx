@@ -4,7 +4,7 @@ import { SideBar } from "@/components/SideBar";
 import { TopBar } from "@/components/TopBar";
 import { cairo, inter } from "@/utils/fonts";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner"
 import { ChangeEvent } from "react";
 import { useForm } from "react-hook-form";
@@ -34,6 +34,9 @@ export default function CadastrarResponsavel() {
     const { register, handleSubmit } = useForm<Inputs>()
     const { clinica } = useClinicaStore();
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const dependenteId = searchParams.get('dependenteId');
+    const redirect = searchParams.get('redirect');
 
     const formatarCPF = (cpf: string) => {
         return cpf
@@ -141,12 +144,45 @@ export default function CadastrarResponsavel() {
             });
 
             if (responsavelClinicaResponse.ok) {
-                toast.success("Cadastro de Responsável realizado com sucesso.");
-                setTimeout(() => {
-                    // Salvar o responsável criado e redirecionar para cadastro do paciente
-                    sessionStorage.setItem('responsavelSelecionado', responsavel.id);
-                    router.push("/area-cliente/pacientes/cadastrar/dados");
-                }, 2000);
+                // Se veio da página de responsáveis, fazer o vínculo automático
+                if (dependenteId && redirect === 'responsaveis') {
+                    try {
+                        const vinculoResponse = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/responsaveisDependentes`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                responsavelId: responsavel.id,
+                                dependenteId: dependenteId
+                            })
+                        });
+
+                        if (vinculoResponse.ok) {
+                            toast.success("Responsável cadastrado e vinculado ao paciente com sucesso.");
+                            setTimeout(() => {
+                                router.push(`/area-cliente/pacientes/responsavel/${dependenteId}`);
+                            }, 2000);
+                        } else {
+                            toast.error("Responsável cadastrado, mas erro ao vincular ao paciente.");
+                            setTimeout(() => {
+                                router.push(`/area-cliente/pacientes/responsavel/vincular?dependenteId=${dependenteId}`);
+                            }, 2000);
+                        }
+                    } catch (error) {
+                        toast.error("Responsável cadastrado, mas erro ao vincular ao paciente.");
+                        setTimeout(() => {
+                            router.push(`/area-cliente/pacientes/responsavel/vincular?dependenteId=${dependenteId}`);
+                        }, 2000);
+                    }
+                } else {
+                    // Fluxo normal - redirecionar para cadastro do paciente
+                    toast.success("Cadastro de Responsável realizado com sucesso.");
+                    setTimeout(() => {
+                        sessionStorage.setItem('responsavelSelecionado', responsavel.id);
+                        router.push("/area-cliente/pacientes/cadastrar/dados");
+                    }, 2000);
+                }
             } else {
                 toast.error("Erro ao vincular responsável à clínica.");
             }
