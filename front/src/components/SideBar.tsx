@@ -72,13 +72,13 @@ export function SideBar({ activeLink }: SideBarProps) {
                 </div>
                 <Link href="/area-cliente/funcionario" className={activeLink == "funcionario" ? "w-60 pl-11 py-2 bg-[#eaeaea] border-r-8 border-[#6d9ce3] justify-start gap-3 items-center inline-flex" : "pl-11 py-2 justify-start items-center gap-3 inline-flex"}>
                     <img className="w-5 h-5" src="/icon_funcionarios.png" />
-                    <p className={`text-[#737f8f] text-[15px] font-normal ${inter.className}`}>
+                    <p className={activeLink == "funcionario" ? `text-[#192333] text-[15px] font-normal ${inter.className}` : `text-[#798391] text-[15px] font-normal ${inter.className}`}>
                         Funcionários
                     </p>
                 </Link>
-                <Link href="#" className="pl-11 py-2 justify-between items-center gap-3 inline-flex">
+                <Link href="/area-cliente/pacientes" className={activeLink == "pacientes" ? "w-60 pl-11 py-2 bg-[#eaeaea] border-r-8 border-[#6d9ce3] justify-start gap-3 items-center inline-flex" : "pl-11 py-2 justify-start items-center gap-3 inline-flex"}>
                     <img className="w-5 h-5" src="/icon_pacientes.png" />
-                    <p className={`text-[#737f8f] text-[15px] font-normal ${inter.className}`}>
+                    <p className={activeLink == "pacientes" ? `text-[#192333] text-[15px] font-normal ${inter.className}` : `text-[#798391] text-[15px] font-normal ${inter.className}`}>
                         Pacientes
                     </p>
                 </Link>

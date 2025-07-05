@@ -8,6 +8,7 @@ router.get("/", async (req, res) => {
     try {
         const responsaveis = await prisma.responsavel.findMany({
             include: {
+                endereco: true,
                 ResponsavelDependente: {
                     include: {
                         dependente: true
@@ -15,10 +16,13 @@ router.get("/", async (req, res) => {
                 },
                 ResponsavelClinica: {
                     include: {
-                        clinica: true
+                        clinica: {
+                            include: {
+                                dadosUsuario: true
+                            }
+                        }
                     }
-                },
-                endereco: true
+                }
             }
         })
         res.status(200).json(responsaveis)

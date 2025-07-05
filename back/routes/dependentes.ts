@@ -10,7 +10,11 @@ router.get("/", async (req, res) => {
             include: {
                 ResponsavelDependente: {
                     include: {
-                        dependente: true
+                        responsavel: {
+                            include: {
+                                endereco: true,
+                            }
+                        }
                     }
                 },
                 Consulta: {
