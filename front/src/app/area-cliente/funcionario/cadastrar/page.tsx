@@ -4,6 +4,7 @@ import { SideBar } from "@/components/SideBar";
 import { TopBar } from "@/components/TopBar";
 import { cairo, inter } from "@/utils/fonts";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner"
 import { ChangeEvent, FormEvent } from "react";
 import { useForm } from "react-hook-form";
@@ -24,6 +25,7 @@ export default function CadastrarFuncionario() {
 
     const { register, handleSubmit } = useForm<Inputs>()
     const { clinica } = useClinicaStore();
+    const router = useRouter();
 
     const formatarCPF = (cpf: string) => {
         return cpf
@@ -136,6 +138,9 @@ export default function CadastrarFuncionario() {
 
                 if (response.status === 201) {
                     toast.success("Cadastro de Funcionário realizado com sucesso.");
+                    setTimeout(() => {
+                        router.push("/area-cliente/funcionario");
+                    }, 2000);
                 } else {
                     toast.error("Erro ao cadastrar Funcionário.");
                 }
