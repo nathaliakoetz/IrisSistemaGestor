@@ -93,12 +93,6 @@ export default function GestaoPacientes() {
             case "Nome Z-A":
                 sorted.sort((a, b) => b.title.localeCompare(a.title));
                 break;
-            case "Gênero A-Z":
-                sorted.sort((a, b) => a.description.localeCompare(b.description));
-                break;
-            case "Gênero Z-A":
-                sorted.sort((a, b) => b.description.localeCompare(a.description));
-                break;
             default:
                 sorted.sort((a, b) => a.title.localeCompare(b.title));
         }
@@ -366,18 +360,6 @@ export default function GestaoPacientes() {
                                                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                             >
                                                 Nome Z-A
-                                            </button>
-                                            <button
-                                                onClick={() => handleSort("Gênero A-Z")}
-                                                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                            >
-                                                Gênero A-Z
-                                            </button>
-                                            <button
-                                                onClick={() => handleSort("Gênero Z-A")}
-                                                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                            >
-                                                Gênero Z-A
                                             </button>
                                         </div>
                                     )}
