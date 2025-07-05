@@ -15,14 +15,6 @@ type Inputs = {
     cpf: string;
     genero: string;
     dataNascimento: string;
-    responsavelId: string;
-}
-
-type Responsavel = {
-    id: string;
-    nome: string;
-    email: string;
-    cpf: string;
 }
 
 export default function EditarPaciente() {
@@ -33,19 +25,10 @@ export default function EditarPaciente() {
     const pacienteId = params.id as string;
 
     const [loading, setLoading] = useState(true);
-    const [responsaveis, setResponsaveis] = useState<Responsavel[]>([]);
-    const [responsavelAtual, setResponsavelAtual] = useState<string>('');
 
     useEffect(() => {
         const fetchDados = async () => {
             try {
-                // Buscar responsáveis
-                const responsaveisResponse = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/responsaveis`);
-                if (responsaveisResponse.ok) {
-                    const responsaveisData = await responsaveisResponse.json();
-                    setResponsaveis(responsaveisData);
-                }
-
                 // Buscar dados do paciente
                 const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/dependentes/${pacienteId}`);
                 if (response.ok) {
@@ -61,13 +44,6 @@ export default function EditarPaciente() {
                             const data = new Date(paciente.dataNascimento);
                             const dataFormatada = data.toISOString().split('T')[0];
                             setValue('dataNascimento', dataFormatada);
-                        }
-
-                        // Buscar responsável atual
-                        if (paciente.ResponsavelDependente && paciente.ResponsavelDependente.length > 0) {
-                            const responsavelId = paciente.ResponsavelDependente[0].responsavelId;
-                            setResponsavelAtual(responsavelId);
-                            setValue('responsavelId', responsavelId);
                         }
                     }
                 } else {
@@ -250,26 +226,6 @@ export default function EditarPaciente() {
                                     <option value="Masculino">Masculino</option>
                                     <option value="Feminino">Feminino</option>
                                     <option value="Outro">Outro</option>
-                                </select>
-                            </div>
-
-                            {/* Responsável */}
-                            <div className="flex flex-col col-span-5">
-                                <label htmlFor="responsavelId" className={`text-sm font-semibold text-gray-700 ${inter.className}`}>
-                                    Responsável
-                                </label>
-                                <select
-                                    id="responsavelId"
-                                    className={`mt-1 p-2 border border-gray-300 rounded-md ${inter.className}`}
-                                    {...register("responsavelId")}
-                                    required
-                                >
-                                    <option value="">Selecione um responsável</option>
-                                    {responsaveis.map((responsavel) => (
-                                        <option key={responsavel.id} value={responsavel.id}>
-                                            {responsavel.nome} - {responsavel.cpf}
-                                        </option>
-                                    ))}
                                 </select>
                             </div>
 
