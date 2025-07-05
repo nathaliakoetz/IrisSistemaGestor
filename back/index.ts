@@ -10,6 +10,7 @@ import consultasRoutes from "./routes/consultas"
 import responsaveisRoutes from "./routes/responsaveis"
 import dependentesRoutes from "./routes/dependentes"
 import dependentesClinicasRoutes from "./routes/dependentesClinicas"
+import responsaveisClinicasRoutes from "./routes/responsaveisClinicas"
 
 
 const app = express()
@@ -27,6 +28,7 @@ app.use("/consultas", consultasRoutes)
 app.use("/responsaveis", responsaveisRoutes)
 app.use("/dependentes", dependentesRoutes)
 app.use("/dependentesClinicas", dependentesClinicasRoutes)
+app.use("/responsaveisClinicas", responsaveisClinicasRoutes)
 
 app.get('/', (req, res) => {
   res.send('API: Íris Sistema Gestor')

@@ -36,15 +36,16 @@ model DadosUsuario {
 }
 
 model Clinica {
-  id                String              @id @default(uuid()) @db.VarChar(36)
-  dadosUsuario      DadosUsuario        @relation(references: [id], fields: [dadosUsuarioId])
-  dadosUsuarioId    Int                 @unique
+  id                String               @id @default(uuid()) @db.VarChar(36)
+  dadosUsuario      DadosUsuario         @relation(references: [id], fields: [dadosUsuarioId])
+  dadosUsuarioId    Int                  @unique
   Legendas          Legenda[]
   Terapeuta         Terapeuta[]
   DependenteClinica DependenteClinica[]
+  ResponsavelClinica ResponsavelClinica[]
   Horarios          Horario[]
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
   deletedAt         DateTime?
 
   @@map("clinicas")
@@ -147,6 +148,7 @@ model Responsavel {
   endereco              Endereco                @relation(fields: [enderecoId], references: [id])
   enderecoId            Int                     @unique
   ResponsavelDependente ResponsavelDependente[]
+  ResponsavelClinica    ResponsavelClinica[]
   createdAt             DateTime                @default(now())
   updatedAt             DateTime                @updatedAt
   deletedAt             DateTime?
@@ -208,6 +210,19 @@ model DependenteClinica {
 
   @@id([clinicaId, dependenteId])
   @@map("dependentes_clinicas")
+}
+
+model ResponsavelClinica {
+  clinica       Clinica     @relation(fields: [clinicaId], references: [id])
+  clinicaId     String
+  responsavel   Responsavel @relation(fields: [responsavelId], references: [id])
+  responsavelId String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  deletedAt     DateTime?
+
+  @@id([clinicaId, responsavelId])
+  @@map("responsaveis_clinicas")
 }
 
 model Horario {

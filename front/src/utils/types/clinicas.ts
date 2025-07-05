@@ -3,6 +3,7 @@ import { DependenteClinicaI } from "./dependenteClinicas"
 import { DependenteI } from "./dependentes"
 import { HorarioI } from "./horarios"
 import { LegendaI } from "./legendas"
+import { ResponsavelClinicaI } from "./responsavelClinicas"
 import { TerapeutaI } from "./terapeutas"
 
 export interface ClinicaI {
@@ -12,6 +13,7 @@ export interface ClinicaI {
     Legendas: LegendaI[],
     Terapeuta: TerapeutaI[],
     DependenteClinica: DependenteClinicaI[],
+    ResponsavelClinica: ResponsavelClinicaI[],
     Horarios: HorarioI[]
 }
 

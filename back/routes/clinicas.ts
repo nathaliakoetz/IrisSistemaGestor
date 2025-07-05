@@ -26,6 +26,20 @@ router.get("/", async (req, res) => {
                             }
                         }
                     }
+                },
+                ResponsavelClinica: {
+                    include: {
+                        responsavel: {
+                            include: {
+                                endereco: true,
+                                ResponsavelDependente: {
+                                    include: {
+                                        dependente: true
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         })
@@ -232,6 +246,20 @@ router.get("/:id", async (req, res) => {
                 dadosUsuario: true,
                 Terapeuta: true,
                 Legendas: true,
+                ResponsavelClinica: {
+                    include: {
+                        responsavel: {
+                            include: {
+                                endereco: true,
+                                ResponsavelDependente: {
+                                    include: {
+                                        dependente: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         })
         res.status(200).json(clinicas)

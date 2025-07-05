@@ -1,5 +1,6 @@
 import { EnderecoI } from "./enderecos"
 import { ResponsavelDependenteI } from "./reponsavelDependentes"
+import { ResponsavelClinicaI } from "./responsavelClinicas"
 
 export interface ResponsavelI {
     id: string,
@@ -13,5 +14,6 @@ export interface ResponsavelI {
     dataNascimento: string,
     endereco: EnderecoI,
     enderecoId: number,
-    ResponsavelDependente: ResponsavelDependenteI[]
+    ResponsavelDependente: ResponsavelDependenteI[],
+    ResponsavelClinica: ResponsavelClinicaI[]
 }

@@ -13,6 +13,11 @@ router.get("/", async (req, res) => {
                         dependente: true
                     }
                 },
+                ResponsavelClinica: {
+                    include: {
+                        clinica: true
+                    }
+                },
                 endereco: true
             }
         })
