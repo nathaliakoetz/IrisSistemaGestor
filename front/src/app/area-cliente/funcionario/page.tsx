@@ -7,6 +7,7 @@ import { useClinicaStore } from "@/context/clinica";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
+import { toast } from "sonner";
 
 interface CardTerapeuta {
     id: string;
@@ -159,55 +160,63 @@ export default function GestaoFuncionarios() {
             [cardId]: false,
         }));
         
-        // Confirmar exclusão
-        const confirmDelete = window.confirm("Tem certeza que deseja excluir este funcionário? Esta ação não pode ser desfeita.");
-        
-        if (!confirmDelete) {
-            return;
-        }
-        
-        try {
-            // Verificar se existe clínica, se não, tentar carregar do storage
-            const clinicaAtual = clinica?.id ? clinica : (() => {
-                const clinicaStorage = sessionStorage.getItem('clinica');
-                return clinicaStorage ? JSON.parse(clinicaStorage) : null;
-            })();
+        // Confirmar exclusão com toast
+        toast("Tem certeza que deseja excluir este funcionário?", {
+            description: "Esta ação não pode ser desfeita.",
+            action: {
+                label: "Excluir",
+                onClick: async () => {
+                    try {
+                        // Verificar se existe clínica, se não, tentar carregar do storage
+                        const clinicaAtual = clinica?.id ? clinica : (() => {
+                            const clinicaStorage = sessionStorage.getItem('clinica');
+                            return clinicaStorage ? JSON.parse(clinicaStorage) : null;
+                        })();
 
-            const response = await fetch(`http://localhost:3004/terapeutas`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
+                        const response = await fetch(`http://localhost:3004/terapeutas`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                id: cardId,
+                                clinicaId: clinicaAtual?.id
+                            })
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error('Erro ao excluir terapeuta');
+                        }
+                        
+                        // Remover o card da lista local
+                        const updatedCards = cards.filter(card => card.id !== cardId);
+                        setCards(updatedCards);
+                        setSortedCards(updatedCards);
+                        
+                        // Aplicar filtro novamente nos cards atualizados
+                        applySearch(searchTerm, updatedCards);
+                        
+                        // Ajustar página se necessário
+                        const newTotalPages = Math.ceil(updatedCards.length / itemsPerPage);
+                        if (currentPage > newTotalPages && newTotalPages > 0) {
+                            setCurrentPage(newTotalPages);
+                        }
+                        
+                        toast.success("Funcionário excluído com sucesso!");
+                        
+                    } catch (error) {
+                        console.error('Erro ao excluir terapeuta:', error);
+                        toast.error("Erro ao excluir funcionário. Tente novamente.");
+                    }
                 },
-                body: JSON.stringify({
-                    id: cardId,
-                    clinicaId: clinicaAtual?.id
-                })
-            });
-            
-            if (!response.ok) {
-                throw new Error('Erro ao excluir terapeuta');
+            },
+            cancel: {
+                label: "Cancelar",
+                onClick: () => {
+                    toast.dismiss();
+                }
             }
-            
-            // Remover o card da lista local
-            const updatedCards = cards.filter(card => card.id !== cardId);
-            setCards(updatedCards);
-            setSortedCards(updatedCards);
-            
-            // Aplicar filtro novamente nos cards atualizados
-            applySearch(searchTerm, updatedCards);
-            
-            // Ajustar página se necessário
-            const newTotalPages = Math.ceil(updatedCards.length / itemsPerPage);
-            if (currentPage > newTotalPages && newTotalPages > 0) {
-                setCurrentPage(newTotalPages);
-            }
-            
-            alert("Funcionário excluído com sucesso!");
-            
-        } catch (error) {
-            console.error('Erro ao excluir terapeuta:', error);
-            alert("Erro ao excluir funcionário. Tente novamente.");
-        }
+        });
     };
 
     useEffect(() => {

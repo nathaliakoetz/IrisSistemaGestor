@@ -58,6 +58,18 @@ router.post("/", async (req, res) => {
     }
 
     try {
+        // Verificar se já existe um dependente/paciente com o mesmo CPF
+        const dependenteExistenteCpf = await prisma.dependente.findFirst({
+            where: {
+                cpf: cpf,
+                deletedAt: null
+            }
+        })
+
+        if (dependenteExistenteCpf) {
+            res.status(409).json({ "erro": "Já existe um paciente cadastrado com este CPF" })
+            return
+        }
 
         const dependente = await prisma.dependente.create({
             data: {
@@ -216,6 +228,24 @@ router.put("/:id", async (req, res) => {
         if (!dependenteExistente) {
             res.status(404).json({ erro: "Dependente não encontrado" })
             return
+        }
+
+        // Se estiver atualizando o CPF, verificar se já existe outro dependente com o mesmo CPF
+        if (cpf && cpf !== dependenteExistente.cpf) {
+            const dependenteExistenteCpf = await prisma.dependente.findFirst({
+                where: {
+                    cpf: cpf,
+                    deletedAt: null,
+                    NOT: {
+                        id: id
+                    }
+                }
+            })
+
+            if (dependenteExistenteCpf) {
+                res.status(409).json({ "erro": "Já existe um paciente cadastrado com este CPF" })
+                return
+            }
         }
 
         // Atualizar dados do dependente

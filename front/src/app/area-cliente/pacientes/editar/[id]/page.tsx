@@ -88,18 +88,22 @@ export default function EditarPaciente() {
                 body: JSON.stringify(data)
             });
 
-            if (response.ok) {
+            if (response.status === 200) {
                 toast.success("Paciente editado com sucesso!");
                 setTimeout(() => {
                     router.push("/area-cliente/pacientes");
                 }, 2000);
+            } else if (response.status === 409) {
+                // Erro de duplicação (CPF já existente)
+                const errorData = await response.json();
+                toast.error(errorData.erro || "Já existe um paciente cadastrado com este CPF.");
             } else {
                 const errorData = await response.json();
                 toast.error(errorData.erro || "Erro ao editar paciente");
             }
         } catch (error) {
             console.error('Erro ao editar paciente:', error);
-            toast.error("Erro ao editar Paciente.");
+            toast.error("Erro ao editar Paciente. Verifique sua conexão.");
         }
     }
 

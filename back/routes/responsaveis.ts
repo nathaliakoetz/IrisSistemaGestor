@@ -40,6 +40,31 @@ router.post("/", async (req, res) => {
     }
 
     try {
+        // Verificar se já existe um responsável com o mesmo email
+        const responsavelExistenteEmail = await prisma.responsavel.findFirst({
+            where: {
+                email: email,
+                deletedAt: null
+            }
+        })
+
+        if (responsavelExistenteEmail) {
+            res.status(409).json({ "erro": "Já existe um responsável cadastrado com este e-mail" })
+            return
+        }
+
+        // Verificar se já existe um responsável com o mesmo CPF
+        const responsavelExistenteCpf = await prisma.responsavel.findFirst({
+            where: {
+                cpf: cpf,
+                deletedAt: null
+            }
+        })
+
+        if (responsavelExistenteCpf) {
+            res.status(409).json({ "erro": "Já existe um responsável cadastrado com este CPF" })
+            return
+        }
 
         const responsavel = await prisma.responsavel.create({
             data: {
@@ -136,6 +161,42 @@ router.put("/:id", async (req, res) => {
         if (!responsavelExistente) {
             res.status(404).json({ erro: "Responsável não encontrado" })
             return
+        }
+
+        // Se estiver atualizando o email, verificar se já existe outro responsável com o mesmo email
+        if (email) {
+            const responsavelExistenteEmail = await prisma.responsavel.findFirst({
+                where: {
+                    email: email,
+                    deletedAt: null,
+                    NOT: {
+                        id: id
+                    }
+                }
+            })
+
+            if (responsavelExistenteEmail) {
+                res.status(409).json({ "erro": "Já existe um responsável cadastrado com este e-mail" })
+                return
+            }
+        }
+
+        // Se estiver atualizando o CPF, verificar se já existe outro responsável com o mesmo CPF
+        if (cpf) {
+            const responsavelExistenteCpf = await prisma.responsavel.findFirst({
+                where: {
+                    cpf: cpf,
+                    deletedAt: null,
+                    NOT: {
+                        id: id
+                    }
+                }
+            })
+
+            if (responsavelExistenteCpf) {
+                res.status(409).json({ "erro": "Já existe um responsável cadastrado com este CPF" })
+                return
+            }
         }
 
         // Preparar dados para atualização

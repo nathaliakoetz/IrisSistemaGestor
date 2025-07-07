@@ -134,18 +134,22 @@ export default function CadastrarFuncionario() {
                     })
                 });
 
-                
-
                 if (response.status === 201) {
                     toast.success("Cadastro de Funcionário realizado com sucesso.");
                     setTimeout(() => {
                         router.push("/area-cliente/funcionario");
                     }, 2000);
+                } else if (response.status === 409) {
+                    // Erro de duplicação (CPF/CNPJ ou e-mail já existente)
+                    const errorData = await response.json();
+                    toast.error(errorData.erro || "Funcionário já cadastrado com estes dados.");
                 } else {
-                    toast.error("Erro ao cadastrar Funcionário.");
+                    const errorData = await response.json();
+                    toast.error(errorData.erro || "Erro ao cadastrar Funcionário.");
                 }
             } catch (error) {
-                toast.error("Erro ao cadastrar Funcionário.");
+                console.error("Erro na requisição:", error);
+                toast.error("Erro ao cadastrar Funcionário. Verifique sua conexão.");
             }
         }
     }

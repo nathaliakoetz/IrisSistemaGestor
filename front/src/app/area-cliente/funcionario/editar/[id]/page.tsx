@@ -142,12 +142,17 @@ export default function EditarFuncionario() {
             if (response.status === 200) {
                 toast.success("Dados do funcionário atualizados com sucesso.");
                 router.push('/area-cliente/funcionario');
+            } else if (response.status === 409) {
+                // Erro de duplicação (CPF/CNPJ ou e-mail já existente)
+                const errorData = await response.json();
+                toast.error(errorData.erro || "Já existe um funcionário cadastrado com estes dados.");
             } else {
-                toast.error("Erro ao atualizar dados do funcionário.");
+                const errorData = await response.json();
+                toast.error(errorData.erro || "Erro ao atualizar dados do funcionário.");
             }
         } catch (error) {
             console.error("Erro ao editar funcionário:", error);
-            toast.error("Erro ao atualizar dados do funcionário.");
+            toast.error("Erro ao atualizar dados do funcionário. Verifique sua conexão.");
         }
     }
 

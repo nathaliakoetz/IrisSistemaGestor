@@ -124,8 +124,14 @@ export default function CadastrarResponsavel() {
                 })
             });
 
-            if (!responsavelResponse.ok) {
-                toast.error("Erro ao cadastrar responsável.");
+            if (responsavelResponse.status === 409) {
+                // Erro de duplicação (CPF ou e-mail já existente)
+                const errorData = await responsavelResponse.json();
+                toast.error(errorData.erro || "Já existe um responsável cadastrado com estes dados.");
+                return;
+            } else if (!responsavelResponse.ok) {
+                const errorData = await responsavelResponse.json();
+                toast.error(errorData.erro || "Erro ao cadastrar responsável.");
                 return;
             }
 
@@ -158,13 +164,21 @@ export default function CadastrarResponsavel() {
                             })
                         });
 
-                        if (vinculoResponse.ok) {
+                        if (vinculoResponse.status === 201) {
                             toast.success("Responsável cadastrado e vinculado ao paciente com sucesso.");
                             setTimeout(() => {
                                 router.push(`/area-cliente/pacientes/responsavel/${dependenteId}`);
                             }, 2000);
+                        } else if (vinculoResponse.status === 409) {
+                            // Erro de duplicação (responsável já vinculado)
+                            const errorData = await vinculoResponse.json();
+                            toast.error(`Responsável cadastrado, mas ${errorData.erro || "já está vinculado ao paciente"}.`);
+                            setTimeout(() => {
+                                router.push(`/area-cliente/pacientes/responsavel/${dependenteId}`);
+                            }, 2000);
                         } else {
-                            toast.error("Responsável cadastrado, mas erro ao vincular ao paciente.");
+                            const errorData = await vinculoResponse.json();
+                            toast.error(`Responsável cadastrado, mas erro ao vincular: ${errorData.erro || "Erro desconhecido"}.`);
                             setTimeout(() => {
                                 router.push(`/area-cliente/pacientes/responsavel/vincular?dependenteId=${dependenteId}`);
                             }, 2000);

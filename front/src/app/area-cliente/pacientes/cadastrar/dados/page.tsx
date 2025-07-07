@@ -73,11 +73,17 @@ export default function CadastrarDadosPaciente() {
                 setTimeout(() => {
                     router.push("/area-cliente/pacientes");
                 }, 2000);
+            } else if (response.status === 409) {
+                // Erro de duplicação (CPF já existente)
+                const errorData = await response.json();
+                toast.error(errorData.erro || "Já existe um paciente cadastrado com este CPF.");
             } else {
-                toast.error("Erro ao cadastrar Paciente.");
+                const errorData = await response.json();
+                toast.error(errorData.erro || "Erro ao cadastrar Paciente.");
             }
         } catch (error) {
-            toast.error("Erro ao cadastrar Paciente.");
+            console.error("Erro na requisição:", error);
+            toast.error("Erro ao cadastrar Paciente. Verifique sua conexão.");
         }
     }
 

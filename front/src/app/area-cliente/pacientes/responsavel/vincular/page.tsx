@@ -95,13 +95,17 @@ export default function VincularResponsavel() {
                 })
             });
 
-            if (!response.ok) {
+            if (response.status === 201) {
+                toast.success("Responsável vinculado com sucesso!");
+                router.push(`/area-cliente/pacientes/responsavel/${dependenteId}`);
+            } else if (response.status === 409) {
+                // Erro de duplicação (responsável já vinculado)
                 const errorData = await response.json();
-                throw new Error(errorData.erro || 'Erro ao vincular responsável');
+                toast.error(errorData.erro || "Este responsável já está vinculado a este paciente.");
+            } else {
+                const errorData = await response.json();
+                toast.error(errorData.erro || 'Erro ao vincular responsável');
             }
-
-            toast.success("Responsável vinculado com sucesso!");
-            router.push(`/area-cliente/pacientes/responsavel/${dependenteId}`);
 
         } catch (error) {
             console.error('Erro ao vincular responsável:', error);

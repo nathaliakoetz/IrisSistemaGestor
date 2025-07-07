@@ -92,7 +92,7 @@ router.post("/", async (req, res) => {
         })
 
         if (existente) {
-            res.status(400).json({ erro: "A relação entre este responsável e dependente já existe" })
+            res.status(409).json({ erro: "Este responsável já está vinculado a este paciente" })
             return
         }
 

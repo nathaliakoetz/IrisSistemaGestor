@@ -128,20 +128,42 @@ router.post("/", async (req, res) => {
         return
     }
 
-    console.log(profissao)
-
     const erros = validaSenha(senha)
     if (erros.length > 0) {
         res.status(400).json({ erro: erros.join("; ") })
         return
     }
 
-    console.log(profissao)
-
-    const salt = bcrypt.genSaltSync(12)
-    const hash = bcrypt.hashSync(senha, salt)
-
     try {
+        // Verificar se já existe um terapeuta com o mesmo email na clínica
+        const terapeutaExistenteEmail = await prisma.terapeuta.findFirst({
+            where: {
+                email: email,
+                clinicaId: clinicaId
+            }
+        })
+
+        if (terapeutaExistenteEmail) {
+            res.status(409).json({ "erro": "Já existe um funcionário cadastrado com este e-mail nesta clínica" })
+            return
+        }
+
+        // Verificar se já existe um terapeuta com o mesmo CPF/CNPJ na clínica
+        const terapeutaExistenteCpf = await prisma.terapeuta.findFirst({
+            where: {
+                cpfCnpj: cpfCnpj,
+                clinicaId: clinicaId
+            }
+        })
+
+        if (terapeutaExistenteCpf) {
+            res.status(409).json({ "erro": "Já existe um funcionário cadastrado com este CPF/CNPJ nesta clínica" })
+            return
+        }
+
+        const salt = bcrypt.genSaltSync(12)
+        const hash = bcrypt.hashSync(senha, salt)
+
         const terapeuta = await prisma.terapeuta.create({
             data: {
                 nome,
@@ -169,16 +191,52 @@ router.patch("/:id/:clinicaId", async (req, res) => {
         return
     }
 
-    const updateData: any = {}
-
-    if (nome) updateData.nome = nome
-    if (email) updateData.email = email
-    if (cpfCnpj) updateData.cpfCnpj = cpfCnpj
-    if (telefone1) updateData.telefone1 = telefone1
-    if (telefone2) updateData.telefone2 = telefone2
-    if (profissao) updateData.profissao = profissao
-
     try {
+        // Se estiver atualizando o email, verificar se já existe outro terapeuta com o mesmo email
+        if (email) {
+            const terapeutaExistenteEmail = await prisma.terapeuta.findFirst({
+                where: {
+                    email: email,
+                    clinicaId: clinicaId,
+                    NOT: {
+                        id: id
+                    }
+                }
+            })
+
+            if (terapeutaExistenteEmail) {
+                res.status(409).json({ "erro": "Já existe um funcionário cadastrado com este e-mail nesta clínica" })
+                return
+            }
+        }
+
+        // Se estiver atualizando o CPF/CNPJ, verificar se já existe outro terapeuta com o mesmo CPF/CNPJ
+        if (cpfCnpj) {
+            const terapeutaExistenteCpf = await prisma.terapeuta.findFirst({
+                where: {
+                    cpfCnpj: cpfCnpj,
+                    clinicaId: clinicaId,
+                    NOT: {
+                        id: id
+                    }
+                }
+            })
+
+            if (terapeutaExistenteCpf) {
+                res.status(409).json({ "erro": "Já existe um funcionário cadastrado com este CPF/CNPJ nesta clínica" })
+                return
+            }
+        }
+
+        const updateData: any = {}
+
+        if (nome) updateData.nome = nome
+        if (email) updateData.email = email
+        if (cpfCnpj) updateData.cpfCnpj = cpfCnpj
+        if (telefone1) updateData.telefone1 = telefone1
+        if (telefone2) updateData.telefone2 = telefone2
+        if (profissao) updateData.profissao = profissao
+
         const terapeuta = await prisma.terapeuta.update({
             where: {
                 id_clinicaId: {
