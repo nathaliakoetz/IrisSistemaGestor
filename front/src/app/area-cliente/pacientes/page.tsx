@@ -7,6 +7,7 @@ import { useClinicaStore } from "@/context/clinica";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
+import { toast } from 'sonner';
 
 interface CardPaciente {
     id: string;
@@ -193,11 +194,11 @@ export default function GestaoPacientes() {
                 setCurrentPage(newTotalPages);
             }
             
-            alert("Paciente excluído com sucesso!");
+            toast.success("Paciente excluído com sucesso!");
             
         } catch (error) {
             console.error('Erro ao excluir paciente:', error);
-            alert("Erro ao excluir paciente. Tente novamente.");
+            toast.error("Erro ao excluir paciente. Tente novamente.");
         }
     };
 

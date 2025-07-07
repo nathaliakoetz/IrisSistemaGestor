@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useClinicaStore } from "@/context/clinica";
 import { ResponsavelI } from "@/utils/types/responsaveis";
+import { toast } from 'sonner';
 
 export default function CadastrarPaciente() {
     const { clinica } = useClinicaStore();
@@ -46,7 +47,7 @@ export default function CadastrarPaciente() {
             sessionStorage.setItem('responsavelSelecionado', selectedResponsavel);
             router.push('/area-cliente/pacientes/cadastrar/dados');
         } else {
-            alert("Por favor, selecione um responsável.");
+            toast.error("Por favor, selecione um responsável.");
         }
     };
 

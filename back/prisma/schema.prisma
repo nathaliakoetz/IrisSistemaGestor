@@ -76,7 +76,8 @@ model Terapeuta {
   clinica   Clinica @relation(fields: [clinicaId], references: [id])
   clinicaId String
 
-  Consulta Consulta[]
+  Consulta         Consulta[]
+  LegendaTerapeuta LegendaTerapeuta[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -86,14 +87,25 @@ model Terapeuta {
 }
 
 model Legenda {
-  id        Int     @id @default(autoincrement())
-  descricao String
-  cor       String
-  isFixed   Boolean
-  clinica   Clinica @relation(fields: [clinicaId], references: [id])
-  clinicaId String
+  id             Int             @id @default(autoincrement())
+  cor            String
+  isFixed        Boolean
+  clinica        Clinica         @relation(fields: [clinicaId], references: [id])
+  clinicaId      String
+  LegendaTerapeuta LegendaTerapeuta[]
 
   @@map("legendas")
+}
+
+model LegendaTerapeuta {
+  legenda     Legenda   @relation(fields: [legendaId], references: [id])
+  legendaId   Int
+  terapeuta   Terapeuta @relation(fields: [terapeutaId, clinicaId], references: [id, clinicaId])
+  terapeutaId String
+  clinicaId   String
+  
+  @@id([legendaId, terapeutaId, clinicaId])
+  @@map("legendas_terapeutas")
 }
 
 model Plano {

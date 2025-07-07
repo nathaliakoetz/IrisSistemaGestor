@@ -6,6 +6,40 @@ import nodemailer from "nodemailer"
 const prisma = new PrismaClient()
 const router = Router()
 
+// Cores predefinidas para as legendas
+const CORES_DISPONIVEIS = [
+    "#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7", 
+    "#DDA0DD", "#FFB347", "#87CEEB", "#F0E68C", "#FFA07A",
+    "#98D8C8", "#F7DC6F", "#BB8FCE", "#85C1E9", "#F8C471",
+    "#82E0AA", "#F1948A", "#AED6F1", "#A9DFBF", "#F9E79F",
+    "#D7BDE2", "#85AFFF", "#FFD93D", "#6BCF7F", "#FF85B3",
+    "#8ED1FC", "#FFA726", "#81C784", "#64B5F6", "#FFB74D"
+]
+
+async function obterCorUnica(clinicaId: string): Promise<string> {
+    // Buscar todas as cores já utilizadas na clínica
+    const legendasExistentes = await prisma.legenda.findMany({
+        where: { clinicaId },
+        select: { cor: true }
+    })
+    
+    const coresUtilizadas = legendasExistentes.map(legenda => legenda.cor)
+    
+    // Encontrar a primeira cor disponível
+    const corDisponivel = CORES_DISPONIVEIS.find(cor => !coresUtilizadas.includes(cor))
+    
+    // Se todas as cores predefinidas estão em uso, gerar uma cor aleatória
+    if (!corDisponivel) {
+        let novaCor: string
+        do {
+            novaCor = "#" + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0').toUpperCase()
+        } while (coresUtilizadas.includes(novaCor))
+        return novaCor
+    }
+    
+    return corDisponivel
+}
+
 router.get("/", async (req, res) => {
     try {
         const terapeutas = await prisma.terapeuta.findMany({
@@ -164,19 +198,47 @@ router.post("/", async (req, res) => {
         const salt = bcrypt.genSaltSync(12)
         const hash = bcrypt.hashSync(senha, salt)
 
-        const terapeuta = await prisma.terapeuta.create({
-            data: {
-                nome,
-                email,
-                senha: hash,
-                cpfCnpj,
-                telefone1,
-                telefone2: telefone2 ? telefone2 : null,
-                profissao,
-                clinicaId
-            }
+        // Usar uma transação para criar o terapeuta e a legenda atomicamente
+        const resultado = await prisma.$transaction(async (tx) => {
+            // Criar o terapeuta
+            const terapeuta = await tx.terapeuta.create({
+                data: {
+                    nome,
+                    email,
+                    senha: hash,
+                    cpfCnpj,
+                    telefone1,
+                    telefone2: telefone2 ? telefone2 : null,
+                    profissao,
+                    clinicaId
+                }
+            })
+
+            // Obter uma cor única para a legenda
+            const corUnica = await obterCorUnica(clinicaId)
+
+            // Criar a legenda para o terapeuta
+            const legenda = await tx.legenda.create({
+                data: {
+                    cor: corUnica,
+                    isFixed: false,
+                    clinicaId
+                }
+            })
+
+            // Criar a relação entre legenda e terapeuta
+            await tx.legendaTerapeuta.create({
+                data: {
+                    legendaId: legenda.id,
+                    terapeutaId: terapeuta.id,
+                    clinicaId: terapeuta.clinicaId
+                }
+            })
+
+            return { terapeuta, legenda }
         })
-        res.status(201).json(terapeuta)
+
+        res.status(201).json(resultado.terapeuta)
     } catch (error) {
         res.status(400).json(error)
     }
@@ -262,15 +324,51 @@ router.delete("/", async (req, res) => {
     }
 
     try {
-        const terapeuta = await prisma.terapeuta.delete({
-            where: {
-                id_clinicaId: {
-                    id: id,
-                    clinicaId: clinicaId,
-                },
+        // Usar uma transação para remover o terapeuta e sua legenda atomicamente
+        const resultado = await prisma.$transaction(async (tx) => {
+            // Buscar a relação legenda-terapeuta
+            const legendaTerapeuta = await tx.legendaTerapeuta.findFirst({
+                where: {
+                    terapeutaId: id,
+                    clinicaId: clinicaId
+                }
+            })
+
+            // Deletar o terapeuta
+            const terapeuta = await tx.terapeuta.delete({
+                where: {
+                    id_clinicaId: {
+                        id: id,
+                        clinicaId: clinicaId,
+                    },
+                }
+            })
+
+            // Se existe uma legenda associada, remover a relação e a legenda
+            if (legendaTerapeuta) {
+                await tx.legendaTerapeuta.delete({
+                    where: {
+                        legendaId_terapeutaId_clinicaId: {
+                            legendaId: legendaTerapeuta.legendaId,
+                            terapeutaId: id,
+                            clinicaId: clinicaId
+                        }
+                    }
+                })
+
+                // Remover a legenda se não for fixa
+                await tx.legenda.deleteMany({
+                    where: {
+                        id: legendaTerapeuta.legendaId,
+                        isFixed: false
+                    }
+                })
             }
+
+            return terapeuta
         })
-        res.status(200).json(terapeuta)
+
+        res.status(200).json(resultado)
     } catch (error) {
         res.status(400).json(error)
     }
