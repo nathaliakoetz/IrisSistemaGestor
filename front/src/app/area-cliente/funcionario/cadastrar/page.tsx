@@ -199,7 +199,7 @@ export default function CadastrarFuncionario() {
                         <div className="flex justify-center items-center mt-20">
                             <form className="grid grid-cols-10 gap-4 w-full max-w-3xl" onSubmit={handleSubmit(efetuaRegistro)}>
                                 {/* Número do Conselho */}
-                                <div className="flex flex-col col-span-8">
+                                {/* <div className="flex flex-col col-span-8">
                                     <label htmlFor="numeroConselho" className={`text-sm font-semibold text-gray-700 ${inter.className}`}>
                                         Número do Conselho
                                     </label>
@@ -210,10 +210,10 @@ export default function CadastrarFuncionario() {
                                         className={`mt-1 p-2 border border-gray-300 rounded-md ${inter.className}`}
                                         placeholder="Digite o número do conselho"
                                     />
-                                </div>
+                                </div> */}
 
                                 {/* Conselho */}
-                                <div className="flex flex-col col-span-2">
+                                {/* <div className="flex flex-col col-span-2">
                                     <label htmlFor="conselho" className={`text-sm font-semibold text-gray-700 ${inter.className}`}>
                                         Conselho
                                     </label>
@@ -228,7 +228,7 @@ export default function CadastrarFuncionario() {
                                         <option value="Opt 3">Opt 3</option>
                                         <option value="Opt 4">Opt 4</option>
                                     </select>
-                                </div>
+                                </div> */}
 
                                 {/* Nome Completo */}
                                 <div className="flex flex-col col-span-10">
