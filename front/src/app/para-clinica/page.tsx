@@ -71,7 +71,7 @@ export default function ParaClinica({ activeLink }: ParaClinicaProps) {
                                     <li className={`text-sm text-black mt-5 mb-5 ${inter.className}`}>&bull;&nbsp;&nbsp;Suporte técnico prioritário e atendimento exclusivo.</li>
                                 </ul>
                                 <div className="flex justify-center">
-                                    <Link href="#" className="inline-flex items-center px-20 py-3 text-sm font-medium text-center text-white bg-footer-email rounded-3xl hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
+                                    <Link href="#" className="inline-flex items-center mt-5 px-20 py-3 text-sm font-medium text-center text-white bg-footer-email rounded-3xl hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
                                         Assinar Agora
                                     </Link>
                                 </div>
