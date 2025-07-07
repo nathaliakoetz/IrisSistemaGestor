@@ -70,8 +70,21 @@ export default function ResponsaveisPaciente() {
             return;
         }
 
-        const confirmRemove = window.confirm("Tem certeza que deseja remover este responsável do paciente?");
-        if (!confirmRemove) return;
+        // Usar toast para confirmação ao invés de window.confirm
+        toast("Tem certeza que deseja remover este responsável?", {
+            action: {
+                label: "Confirmar",
+                onClick: () => executeRemoveResponsavel(responsavelId)
+            },
+            cancel: {
+                label: "Cancelar",
+                onClick: () => {}
+            }
+        });
+    };
+
+    // Função para executar a remoção do responsável
+    const executeRemoveResponsavel = async (responsavelId: string) => {
 
         try {
             setRemovingId(responsavelId);

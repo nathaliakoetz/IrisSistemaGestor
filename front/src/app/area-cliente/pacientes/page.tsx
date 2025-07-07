@@ -164,12 +164,21 @@ export default function GestaoPacientes() {
             [cardId]: false,
         }));
         
-        // Confirmar exclusão
-        const confirmDelete = window.confirm("Tem certeza que deseja excluir este paciente? Esta ação não pode ser desfeita.");
-        
-        if (!confirmDelete) {
-            return;
-        }
+        // Usar toast para confirmação ao invés de window.confirm
+        toast("Tem certeza que deseja excluir este paciente? Esta ação não pode ser desfeita.", {
+            action: {
+                label: "Confirmar",
+                onClick: () => executeDeleteCard(cardId)
+            },
+            cancel: {
+                label: "Cancelar",
+                onClick: () => {}
+            }
+        });
+    };
+
+    // Função para executar a exclusão do paciente
+    const executeDeleteCard = async (cardId: string) => {
         
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/dependentes/${cardId}`, {
