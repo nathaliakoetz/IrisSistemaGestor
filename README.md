@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="https://i.postimg.cc/44QgvkZ9/Logo.png" alt="Logo Íris" width="200"><br>
+  <img src="https://i.postimg.cc/44QgvkZ9/Logo.png" alt="Logo Íris" width="400"><br>
 </h1>
 
 <p align="center">
