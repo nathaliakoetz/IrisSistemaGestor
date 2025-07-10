@@ -23,24 +23,24 @@
 
 ## 📖 Índice
 
-- [🎯 Sobre o Projeto](#-sobre-o-projeto)
-- [✨ Funcionalidades](#-funcionalidades)
-- [🛠️ Tecnologias Utilizadas](#️-tecnologias-utilizadas)
-- [🚀 Como Começar](#-começando)
+- [Sobre o Projeto](#sobre-o-projeto)
+- [Funcionalidades](#funcionalidades)
+- [Tecnologias Utilizadas](#tecnologias-utilizadas)
+- [Como Começar](#como-começar)
   - [Pré-requisitos](#pré-requisitos)
   - [Instalação](#instalação)
-- [🎨 Design e Prototipação](#-design-e-prototipação)
-- [🗺️ Roadmap](#️-roadmap)
-- [🤝 Como Contribuir](#-como-contribuir)
-- [🧑‍💻 Autores](#-autores)
+- [Design e Prototipação](#design-e-prototipação)
+- [Roadmap](#roadmap)
+- [Como Contribuir](#como-contribuir)
+- [Autores](#autores)
 
-## 🎯 Sobre o Projeto
+## Sobre o Projeto
 
 O **Sistema Gestor Íris** é uma aplicação web criada para auxiliar no acompanhamento e gerenciamento de informações de crianças autistas não-verbais em clínicas especializadas. O projeto nasceu da necessidade de uma solução que centralizasse as informações clínicas, facilitasse o acompanhamento interativo dos pacientes e criasse uma plataforma de conexão entre profissionais e clínicas.
 
 Atualmente, muitos sistemas de gestão clínica são genéricos e não atendem às necessidades específicas desse público. O Íris se propõe a resolver essa lacuna, combinando a eficiência administrativa com ferramentas terapêuticas especializadas.
 
-## ✨ Funcionalidades
+## Funcionalidades
 
 - **Gestão Administrativa:** Cadastro e gerenciamento completo de clínicas, profissionais, pacientes e responsáveis.
 - **Agenda Inteligente:** Sistema para agendamento de consultas com visualização interativa e gestão de horários.
@@ -48,7 +48,7 @@ Atualmente, muitos sistemas de gestão clínica são genéricos e não atendem �
 - **Plataforma Connect:** Área para profissionais da saúde cadastrarem seus currículos, facilitando a conexão com clínicas.
 - **Segurança e Conformidade:** Validação de senha, criptografia e estrutura pensada para a segurança dos dados.
 
-## 🛠️ Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
 Este projeto foi construído com as seguintes tecnologias:
 
@@ -60,7 +60,7 @@ Este projeto foi construído com as seguintes tecnologias:
 | **Banco de Dados** | ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white) |
 | **ORM** | ![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white) |
 
-## 🚀 Como Começar
+## Como Começar
 
 Siga estas instruções para obter uma cópia do projeto em execução na sua máquina local para desenvolvimento e testes.
 
@@ -121,13 +121,13 @@ Siga estas instruções para obter uma cópia do projeto em execução na sua m�
         ```
     A aplicação estará disponível em `http://localhost:3000`.
 
-## 🎨 Design e Prototipação
+## Design e Prototipação
 
 O design e o fluxo de telas do projeto foram criados no Figma e podem ser acessados publicamente.
 
 ➡️ **[Acessar Protótipo no Figma](https://www.figma.com/design/cMrr6Hh5QQ1Yx3vYUCKxLg/%C3%8Dris-Sistema-Gestor)**
 
-## 🗺️ Roadmap
+## Roadmap
 
 -   [x] Estruturação do banco de dados e modelagem ER.
 -   [x] Implementação da autenticação de usuários (Clínica e Profissional).
@@ -137,7 +137,7 @@ O design e o fluxo de telas do projeto foram criados no Figma e podem ser acessa
 -   [ ] Criação do módulo interativo "Mundo das Emoções".
 -   [ ] Desenvolvimento do Módulo "Connect" para currículos.
 
-## 🤝 Como Contribuir
+## Como Contribuir
 
 Contribuições são muito bem-vindas! Se você tem alguma sugestão para melhorar o projeto, por favor, faça um fork do repositório e crie um pull request.
 
@@ -147,7 +147,7 @@ Contribuições são muito bem-vindas! Se você tem alguma sugestão para melhor
 4.  Faça o **Push** para a Branch (`git push origin feature/sua-feature`).
 5.  Abra um **Pull Request**.
 
-## 🧑‍💻 Autores
+## Autores
 
 | [<img src="https://github.com/nathaliakoetz.png" width="100px;" alt="Nathalia Koetz"/><br /><sub><b>Nathalia Koetz</b></sub>](https://github.com/nathaliakoetz) | [<img src="https://github.com/gwacosta.png" width="100px;" alt="Guilherme Acosta"/><br /><sub><b>Guilherme Acosta</b></sub>](https://github.com/gwacosta) |
 | :---: | :---: |
