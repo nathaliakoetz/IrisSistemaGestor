@@ -3,10 +3,6 @@
 </h1>
 
 <p align="center">
-  <strong>Uma plataforma web integrada para a gestão de clínicas e o acompanhamento especializado de crianças com Transtorno do Espectro Autista (TEA).</strong>
-</p>
-
-<p align="center">
   <a href="https://github.com/nathaliakoetz/IrisSistemaGestor/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="Licença MIT">
   </a>
