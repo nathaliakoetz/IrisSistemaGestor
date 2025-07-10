@@ -75,7 +75,7 @@ Siga estas instruções para obter uma cópia do projeto em execução na sua m�
 
 1.  **Clone o repositório:**
     ```sh
-    git clone [https://github.com/nathaliakoetz/IrisSistemaGestor.git](https://github.com/nathaliakoetz/IrisSistemaGestor.git)
+    git clone https://github.com/nathaliakoetz/IrisSistemaGestor.git
     ```
 
 2.  **Instale as dependências do Backend:**
