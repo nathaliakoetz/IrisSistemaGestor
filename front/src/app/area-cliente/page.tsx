@@ -331,6 +331,7 @@ export default function AreaCliente() {
         });
 
         return (
+            <>
             <div className="flex">
                 <SideBar activeLink="geral" />
                 <div className="flex flex-col flex-1">
@@ -580,6 +581,54 @@ export default function AreaCliente() {
                     </div>
                 </div>
             </div>
+
+            <style jsx global>{`
+                .react-calendar {
+                    width: 100% !important;
+                    border: none !important;
+                    font-family: inherit;
+                }
+
+                .react-calendar__tile {
+                    padding: 1em 0.5em;
+                    border-radius: 8px;
+                    transition: all 0.2s;
+                }
+
+                .react-calendar__tile:hover {
+                    background-color: #e5f0ff !important;
+                }
+
+                .react-calendar__tile--active {
+                    background-color: #6D9CE3 !important;
+                    color: white !important;
+                }
+
+                .highlight-selected {
+                    background-color: #6D9CE3 !important;
+                    color: white !important;
+                }
+
+                .remove-today-highlight {
+                    background-color: transparent !important;
+                }
+
+                .react-calendar__month-view__days__day--weekend {
+                    color: #d87d4a;
+                }
+
+                .react-calendar__navigation button {
+                    font-size: 1.1em;
+                    font-weight: 600;
+                    color: #192333;
+                }
+
+                .react-calendar__navigation button:enabled:hover,
+                .react-calendar__navigation button:enabled:focus {
+                    background-color: #e5f0ff;
+                }
+            `}</style>
+            </>
         )
     }
 }

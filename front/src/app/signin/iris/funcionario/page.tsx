@@ -4,13 +4,47 @@ import { cairo, inter } from "@/utils/fonts";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react"
+import { toast } from 'sonner'
+import Cookies from "js-cookie";
+
+import { useTerapeutaStore } from "@/context/terapeuta";
+
+type Inputs = {
+    email: string
+    senha: string
+}
 
 export default function SignIn() {
+    const { register, handleSubmit, setFocus } = useForm<Inputs>()
     const router = useRouter();
-    const { handleSubmit } = useForm();
+    const { logaTerapeuta } = useTerapeutaStore()
+    const [rememberMe, setRememberMe] = useState<boolean>(false)
 
-    function redireciona() {
-        router.push("/signin/carregando")
+    useEffect(() => {
+        setFocus("email")
+    }, [])
+
+    async function verificaLogin(data: Inputs) {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/terapeutas/login`, {
+            method: "POST",
+            headers: { "Content-type": "Application/json" },
+            body: JSON.stringify({ email: data.email, senha: data.senha })
+        })
+
+        if (response.status == 200) {
+            const terapeuta = await response.json()
+            logaTerapeuta(terapeuta)
+            sessionStorage.setItem("logged", "true")
+
+            if (rememberMe) {
+                Cookies.set("authID", terapeuta.id)
+            }
+
+            router.push("/area-medica")
+        } else if (response.status == 400) {
+            toast.error("Erro... Login ou senha incorretos")
+        }
     }
 
     return (
@@ -25,13 +59,14 @@ export default function SignIn() {
                             </h1>
                         </Link>
                     </div>
-                    <form className="max-w-lg mx-auto mt-10" onSubmit={handleSubmit(redireciona)}>
+                    <form className="max-w-lg mx-auto mt-10" onSubmit={handleSubmit(verificaLogin)}>
                         <div className="mb-5">
                             <input
                                 type="email"
                                 id="email"
                                 className={`bg-form border-user text-gray-900 placeholder:text-header-selected text-sm rounded-2xl block w-80 p-2.5 ${inter.className}`}
                                 placeholder="E-mail"
+                                {...register("email")}
                                 required
                             />
                         </div>
@@ -41,10 +76,22 @@ export default function SignIn() {
                                 id="password"
                                 className={`bg-form border-user border-gray-700 text-gray-900 placeholder:text-header-selected text-sm rounded-2xl block w-full p-2.5 ${inter.className}`}
                                 placeholder="Senha"
+                                {...register("senha")}
                                 required
                             />
                         </div>
-                        <div className="flex items-start mb-5">
+                        <div className="flex justify-between items-center mb-8">
+                            <div className="flex items-center">
+                                <input
+                                    type="checkbox"
+                                    id="rememberMe"
+                                    className="mr-2"
+                                    onChange={(e) => setRememberMe(e.target.checked)}
+                                />
+                                <label htmlFor="rememberMe" className={`text-sm text-color-logo ${inter.className}`}>
+                                    Lembrar de mim
+                                </label>
+                            </div>
                             <Link href="/" className="hover:underline">
                                 <p className={`text-sm text-color-logo ${inter.className}`}>
                                     Esqueceu a senha?

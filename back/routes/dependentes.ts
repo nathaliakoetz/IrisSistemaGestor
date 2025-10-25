@@ -184,6 +184,39 @@ router.get("/:id", async (req, res) => {
     }
 })
 
+router.get("/clinica/:clinicaId", async (req, res) => {
+    const { clinicaId } = req.params
+
+    try {
+        const dependentesClinica = await prisma.dependenteClinica.findMany({
+            where: {
+                clinicaId: clinicaId,
+                dependente: {
+                    deletedAt: null
+                }
+            },
+            include: {
+                dependente: {
+                    include: {
+                        ResponsavelDependente: {
+                            include: {
+                                responsavel: true
+                            }
+                        }
+                    }
+                }
+            }
+        })
+
+        // Extrair apenas os dependentes
+        const dependentes = dependentesClinica.map(dc => dc.dependente)
+
+        res.status(200).json(dependentes)
+    } catch (error) {
+        res.status(400).json(error)
+    }
+})
+
 router.delete("/:id", async (req, res) => {
     const { id } = req.params
 

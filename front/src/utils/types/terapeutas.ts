@@ -15,3 +15,15 @@ export interface TerapeutaI {
     clinicaId: string,
     Consulta: ConsultaI[]
 }
+
+export interface TerapeutaZustandI {
+    id: string,
+    nome: string,
+    email: string,
+    cpfCnpj: string,
+    telefone1: string,
+    telefone2: string | null,
+    profissao: string,
+    clinicaId: string
+}
+

@@ -181,6 +181,63 @@ router.get("/:id", async (req, res) => {
     }
 })
 
+router.get("/terapeuta/:terapeutaId/:clinicaId", async (req, res) => {
+    const { terapeutaId, clinicaId } = req.params
+
+    try {
+        const consultas = await prisma.consulta.findMany({
+            where: {
+                terapeutaId: terapeutaId,
+                clinicaId: clinicaId
+            },
+            include: {
+                terapeuta: true,
+                paciente: {
+                    include: {
+                        ResponsavelDependente: {
+                            include: {
+                                responsavel: {
+                                    include: {
+                                        endereco: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            orderBy: {
+                dataInicio: 'asc'
+            }
+        })
+        res.status(200).json(consultas)
+    } catch (error) {
+        res.status(400).json(error)
+    }
+})
+
+router.get("/paciente/:pacienteId", async (req, res) => {
+    const { pacienteId } = req.params
+
+    try {
+        const consultas = await prisma.consulta.findMany({
+            where: {
+                pacienteId: pacienteId
+            },
+            include: {
+                terapeuta: true,
+                paciente: true
+            },
+            orderBy: {
+                dataInicio: 'desc'
+            }
+        })
+        res.status(200).json(consultas)
+    } catch (error) {
+        res.status(400).json(error)
+    }
+})
+
 router.get("/detalhes/:id", async (req, res) => {
     const { id } = req.params
 

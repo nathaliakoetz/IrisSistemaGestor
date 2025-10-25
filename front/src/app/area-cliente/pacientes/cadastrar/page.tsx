@@ -5,7 +5,7 @@ import { TopBar } from "@/components/TopBar";
 import { cairo, inter } from "@/utils/fonts";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useClinicaStore } from "@/context/clinica";
 import { ResponsavelI } from "@/utils/types/responsaveis";
 import { toast } from 'sonner';
@@ -16,6 +16,9 @@ export default function CadastrarPaciente() {
     const [responsaveis, setResponsaveis] = useState<ResponsavelI[]>([]);
     const [selectedResponsavel, setSelectedResponsavel] = useState<string>("");
     const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [showDropdown, setShowDropdown] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
     // Buscar responsáveis da clínica
     const fetchResponsaveis = async () => {
@@ -41,6 +44,20 @@ export default function CadastrarPaciente() {
         }
     }, [clinica?.id]);
 
+    // Fechar dropdown ao clicar fora
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setShowDropdown(false);
+            }
+        }
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
     const handleConfirmarSelecao = () => {
         if (selectedResponsavel) {
             // Salvar o responsável selecionado no sessionStorage e redirecionar
@@ -53,6 +70,18 @@ export default function CadastrarPaciente() {
 
     const handleAdicionarResponsavel = () => {
         router.push('/area-cliente/pacientes/responsavel/cadastrar');
+    };
+
+    const responsaveisFiltrados = responsaveis.filter(responsavel =>
+        responsavel.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        responsavel.cpf.includes(searchTerm)
+    );
+
+    const responsavelSelecionadoObj = responsaveis.find(r => r.id === selectedResponsavel);
+
+    const handleSelectResponsavel = (responsavelId: string) => {
+        setSelectedResponsavel(responsavelId);
+        setShowDropdown(false);
     };
 
     if (!sessionStorage.getItem("logged")) {
@@ -108,20 +137,42 @@ export default function CadastrarPaciente() {
                                 {loading ? (
                                     <p className={`text-gray-600 ${inter.className}`}>Carregando responsáveis...</p>
                                 ) : (
-                                    <select
-                                        id="responsavel"
-                                        name="responsavel"
-                                        value={selectedResponsavel}
-                                        onChange={(e) => setSelectedResponsavel(e.target.value)}
-                                        className={`w-full p-3 border border-gray-300 rounded-md ${inter.className} text-lg`}
-                                    >
-                                        <option value="">Selecione um responsável</option>
-                                        {responsaveis.map((responsavel) => (
-                                            <option key={responsavel.id} value={responsavel.id}>
-                                                {responsavel.nome} - {responsavel.cpf}
-                                            </option>
-                                        ))}
-                                    </select>
+                                    <div className="relative" ref={dropdownRef}>
+                                        <input
+                                            type="text"
+                                            value={responsavelSelecionadoObj ? `${responsavelSelecionadoObj.nome} - ${responsavelSelecionadoObj.cpf}` : searchTerm}
+                                            onChange={(e) => {
+                                                setSearchTerm(e.target.value);
+                                                setShowDropdown(true);
+                                                if (responsavelSelecionadoObj) {
+                                                    setSelectedResponsavel("");
+                                                }
+                                            }}
+                                            onFocus={() => setShowDropdown(true)}
+                                            placeholder="Digite para buscar um responsável..."
+                                            className={`w-full p-3 border border-gray-300 rounded-md ${inter.className} text-lg`}
+                                        />
+                                        
+                                        {showDropdown && (
+                                            <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                                                {responsaveisFiltrados.length > 0 ? (
+                                                    responsaveisFiltrados.map((responsavel) => (
+                                                        <div
+                                                            key={responsavel.id}
+                                                            onClick={() => handleSelectResponsavel(responsavel.id)}
+                                                            className={`p-3 cursor-pointer hover:bg-gray-100 ${inter.className}`}
+                                                        >
+                                                            {responsavel.nome} - {responsavel.cpf}
+                                                        </div>
+                                                    ))
+                                                ) : (
+                                                    <div className={`p-3 text-gray-500 ${inter.className}`}>
+                                                        Nenhum responsável encontrado
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
                                 )}
 
                                 <div className="flex justify-center gap-4 mt-8">

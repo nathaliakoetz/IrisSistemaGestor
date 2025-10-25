@@ -379,15 +379,21 @@ export default function AreaAgenda() {
                                             <div className="text-[12px] mb-2">
                                                 Horário: {new Date(consulta.dataInicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                                             </div>
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    openDesmarcarModal(consulta);
-                                                }}
-                                                className="text-[10px] bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition-colors"
-                                            >
-                                                Desmarcar
-                                            </button>
+                                            {consulta.dataFim ? (
+                                                <div className="text-[10px] text-green-600 font-semibold">
+                                                    ✓ Finalizada
+                                                </div>
+                                            ) : (
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        openDesmarcarModal(consulta);
+                                                    }}
+                                                    className="text-[10px] bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition-colors"
+                                                >
+                                                    Desmarcar
+                                                </button>
+                                            )}
                                         </div>
                                     )}
                                 </div>
@@ -488,6 +494,7 @@ export default function AreaAgenda() {
     } else {
 
         return (
+            <>
             <div className="flex">
                 <SideBar activeLink="agenda" />
                 <div className="flex flex-col flex-1">
@@ -736,7 +743,48 @@ export default function AreaAgenda() {
                         </div>
                     </div>
                 )}
-            </div >
+            </div>
+                <style jsx global>{`
+                    .react-calendar {
+                        border-radius: 8px;
+                        transition: all 0.3s ease-in-out;
+                    }
+
+                    .react-calendar__tile {
+                        border-radius: 50%;
+                        transition: all 0.3s ease-in-out;
+                    }
+
+                    .react-calendar__tile:hover {
+                        background-color: #a0c4ff !important;
+                        transform: scale(1.05);
+                    }
+
+                    .react-calendar__tile--active {
+                        background-color: #6D9CE3 !important;
+                        color: white !important;
+                    }
+
+                    .highlight-selected {
+                        background-color: #6D9CE3 !important;
+                        color: white !important;
+                        font-weight: bold;
+                    }
+
+                    .remove-today-highlight {
+                        background-color: transparent !important;
+                    }
+
+                    .react-calendar__month-view__days__day--weekend {
+                        color: #ff8c42;
+                    }
+
+                    .react-calendar__navigation button:hover {
+                        background-color: #e0e0e0;
+                        border-radius: 5px;
+                    }
+                `}</style>
+            </>
         )
     }
 }

@@ -6,7 +6,7 @@ import { cairo, inter } from "@/utils/fonts";
 import { ResponsavelI } from "@/utils/types/responsaveis";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 
 interface Dependente {
@@ -26,6 +26,9 @@ export default function VincularResponsavel() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [vinculando, setVinculando] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [showDropdown, setShowDropdown] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
     // Buscar dependente e responsáveis disponíveis
     const fetchData = async () => {
@@ -126,6 +129,33 @@ export default function VincularResponsavel() {
         }
     }, [dependenteId]);
 
+    // Fechar dropdown ao clicar fora
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setShowDropdown(false);
+            }
+        }
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
+    const responsaveisFiltrados = responsaveisDisponiveis.filter(responsavel =>
+        responsavel.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        responsavel.cpf.includes(searchTerm) ||
+        responsavel.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const responsavelSelecionadoObj = responsaveisDisponiveis.find(r => r.id === selectedResponsavel);
+
+    const handleSelectResponsavel = (responsavelId: string) => {
+        setSelectedResponsavel(responsavelId);
+        setShowDropdown(false);
+    };
+
     if (!sessionStorage.getItem("logged")) {
         return (
             <section className="bg-[url('/bg_login.jpeg')] bg-cover bg-no-repeat flex justify-center items-center h-[1080px]">
@@ -195,23 +225,47 @@ export default function VincularResponsavel() {
                                         <label className={`block text-lg font-semibold text-gray-700 mb-2 ${inter.className}`}>
                                             Escolha um responsável para vincular:
                                         </label>
-                                        <select
-                                            value={selectedResponsavel}
-                                            onChange={(e) => setSelectedResponsavel(e.target.value)}
-                                            className={`w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 mb-4 ${inter.className}`}
-                                        >
-                                            <option value="">Selecione um responsável</option>
-                                            {responsaveisDisponiveis.map((responsavel) => (
-                                                <option key={responsavel.id} value={responsavel.id}>
-                                                    {responsavel.nome} - {responsavel.cpf} - {responsavel.email}
-                                                </option>
-                                            ))}
-                                        </select>
+                                        <div className="relative" ref={dropdownRef}>
+                                            <input
+                                                type="text"
+                                                value={responsavelSelecionadoObj ? `${responsavelSelecionadoObj.nome} - ${responsavelSelecionadoObj.cpf}` : searchTerm}
+                                                onChange={(e) => {
+                                                    setSearchTerm(e.target.value);
+                                                    setShowDropdown(true);
+                                                    if (responsavelSelecionadoObj) {
+                                                        setSelectedResponsavel("");
+                                                    }
+                                                }}
+                                                onFocus={() => setShowDropdown(true)}
+                                                placeholder="Digite para buscar um responsável..."
+                                                className={`w-full p-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 ${inter.className}`}
+                                            />
+                                            
+                                            {showDropdown && (
+                                                <div className="absolute z-10 w-full mt-1 bg-white border-2 border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                                                    {responsaveisFiltrados.length > 0 ? (
+                                                        responsaveisFiltrados.map((responsavel) => (
+                                                            <div
+                                                                key={responsavel.id}
+                                                                onClick={() => handleSelectResponsavel(responsavel.id)}
+                                                                className={`p-3 cursor-pointer hover:bg-gray-100 ${inter.className}`}
+                                                            >
+                                                                {responsavel.nome} - {responsavel.cpf} - {responsavel.email}
+                                                            </div>
+                                                        ))
+                                                    ) : (
+                                                        <div className={`p-3 text-gray-500 ${inter.className}`}>
+                                                            Nenhum responsável encontrado
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
                                         
                                         <button
                                             onClick={handleVincularResponsavel}
                                             disabled={!selectedResponsavel || vinculando}
-                                            className={`w-full px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed mb-6 ${inter.className}`}
+                                            className={`w-full px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed mb-6 mt-4 ${inter.className}`}
                                         >
                                             {vinculando ? 'Vinculando...' : 'Confirmar Vínculo'}
                                         </button>

@@ -374,6 +374,42 @@ router.delete("/", async (req, res) => {
     }
 })
 
+router.post("/login", async (req, res) => {
+    const { email, senha } = req.body
+
+    const mensaPadrao = "Login ou senha incorretos"
+
+    if (!email || !senha) {
+        res.status(400).json({ erro: mensaPadrao })
+        return
+    }
+
+    try {
+        const terapeuta = await prisma.terapeuta.findFirst({
+            where: { email }
+        })
+
+        if (!terapeuta) {
+            res.status(400).json({ erro: mensaPadrao })
+            return
+        }
+
+        const senhaOk = bcrypt.compareSync(senha, terapeuta.senha)
+
+        if (!senhaOk) {
+            res.status(400).json({ erro: mensaPadrao })
+            return
+        }
+
+        // Retornar os dados do terapeuta (sem a senha)
+        const { senha: _, codigoRecuperacao, ...terapeutaSemSenha } = terapeuta
+
+        res.status(200).json(terapeutaSemSenha)
+    } catch (error) {
+        res.status(400).json(error)
+    }
+})
+
 async function enviaEmail(nome: string, email: string, codigo: number) {
     const transporter = nodemailer.createTransport({
         host: "sandbox.smtp.mailtrap.io",
