@@ -6,7 +6,7 @@ import { cairo, inter } from "@/utils/fonts";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner"
-import { ChangeEvent, FormEvent } from "react";
+import { ChangeEvent, FormEvent, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useClinicaStore } from "@/context/clinica";
 
@@ -153,6 +153,15 @@ export default function CadastrarFuncionario() {
             }
         }
     }
+
+    useEffect(() => {
+        if (!sessionStorage.getItem("logged")) {
+            const timer = setTimeout(() => {
+                router.push("/signin");
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [router]);
 
     if (!sessionStorage.getItem("logged")) {
         return (

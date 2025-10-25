@@ -340,6 +340,15 @@ export default function AreaAgenda() {
         });
     };
 
+    useEffect(() => {
+        if (!sessionStorage.getItem("logged")) {
+            const timer = setTimeout(() => {
+                router.push("/signin");
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [router]);
+
     // Função para renderizar as consultas em uma célula da tabela
     const renderConsultasCell = (data: Date, hora: number) => {
         const consultasHora = getConsultasHoraDia(data, hora);

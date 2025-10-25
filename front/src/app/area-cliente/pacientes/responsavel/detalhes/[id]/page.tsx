@@ -148,6 +148,15 @@ export default function DetalhesResponsavel() {
         }
     }, [responsavelId]);
 
+    useEffect(() => {
+        if (!sessionStorage.getItem("logged")) {
+            const timer = setTimeout(() => {
+                router.push("/signin");
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [router]);
+
     if (!sessionStorage.getItem("logged")) {
         return (
             <section className="bg-[url('/bg_login.jpeg')] bg-cover bg-no-repeat flex justify-center items-center h-[1080px]">
