@@ -3,8 +3,6 @@
 import { SideBarMedico } from "@/components/SideBarMedico";
 import { TopBarMedico } from "@/components/TopBarMedico";
 import { cairo, inter } from "@/utils/fonts";
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
 import { useEffect, useState } from 'react';
 import { useTerapeutaStore } from "@/context/terapeuta";
 import Cookies from "js-cookie";
@@ -15,7 +13,6 @@ import { ConsultaI } from "@/utils/types/consultas";
 
 export default function AreaMedica() {
     const currentDate = new Date();
-    const [selectedDate, setSelectedDate] = useState<Date | null>(currentDate);
     const { terapeuta } = useTerapeutaStore();
     const [consultas, setConsultas] = useState<ConsultaI[]>([]);
     const router = useRouter();
@@ -39,16 +36,7 @@ export default function AreaMedica() {
         }
     }, []);
 
-    const tileClassName = ({ date, view }: { date: Date, view: string }) => {
-        if (view === 'month') {
-            const isSelected = selectedDate && date.toDateString() === selectedDate.toDateString();
-            const isToday = date.toDateString() === currentDate.toDateString();
-            return isSelected ? 'highlight-selected' : (isToday ? 'remove-today-highlight' : '');
-        }
-        return '';
-    };
-
-    // Consultas de HOJE (sempre do dia atual, não muda com seleção do calendário)
+    // Consultas de HOJE (pendentes)
     const consultasHoje = consultas
         .filter(consulta => {
             const consultaDate = new Date(consulta.dataInicio).toISOString().split('T')[0];
@@ -57,19 +45,19 @@ export default function AreaMedica() {
         })
         .sort((a, b) => new Date(a.dataInicio).getTime() - new Date(b.dataInicio).getTime());
 
-    // Consultas finalizadas HOJE (sempre do dia atual, não muda com seleção do calendário)
+    // Consultas finalizadas HOJE
     const consultasFinalizadasHoje = consultas.filter(consulta => {
         const consultaDate = new Date(consulta.dataInicio).toISOString().split('T')[0];
         const todayString = currentDate.toISOString().split('T')[0];
         return consultaDate === todayString && consulta.dataFim;
     });
 
-    // Consultas da data selecionada no calendário (TODAS: finalizadas e não finalizadas)
+    // Todas as consultas de HOJE (finalizadas e não finalizadas)
     const consultasDoDia = consultas
         .filter(consulta => {
-            const consultaDate = new Date(consulta.dataInicio).toISOString().split('T')[0]
-            const selectedDateString = selectedDate?.toISOString().split('T')[0]
-            return consultaDate === selectedDateString;
+            const consultaDate = new Date(consulta.dataInicio).toISOString().split('T')[0];
+            const todayString = currentDate.toISOString().split('T')[0];
+            return consultaDate === todayString;
         })
         .sort((a, b) => new Date(a.dataInicio).getTime() - new Date(b.dataInicio).getTime());
 
@@ -123,7 +111,7 @@ export default function AreaMedica() {
                     </p>
 
                     <div className="flex gap-8 mt-8">
-                        {/* Coluna Esquerda - Estatísticas e Consultas do Dia */}
+                        {/* Conteúdo Principal */}
                         <div className="flex-1">
                             {/* Cards de Estatísticas */}
                             <div className="grid grid-cols-2 gap-5 mb-8">
@@ -131,7 +119,7 @@ export default function AreaMedica() {
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <p className={`text-sm text-gray-500 ${inter.className}`}>
-                                                Consultas Pendentes para Hoje
+                                                Consultas Pendentes
                                             </p>
                                             <h2 className={`text-3xl font-bold text-color-logo mt-2 ${cairo.className}`}>
                                                 {consultasHoje.length}
@@ -149,7 +137,7 @@ export default function AreaMedica() {
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <p className={`text-sm text-gray-500 ${inter.className}`}>
-                                                Consultas Finalizadas Hoje
+                                                Consultas Finalizadas
                                             </p>
                                             <h2 className={`text-3xl font-bold text-green-600 mt-2 ${cairo.className}`}>
                                                 {consultasFinalizadasHoje.length}
@@ -168,7 +156,7 @@ export default function AreaMedica() {
                             <div className="bg-white rounded-2xl shadow p-6">
                                 <div className="flex items-center justify-between mb-6">
                                     <h2 className={`text-xl font-bold text-color-logo ${cairo.className}`}>
-                                        Consultas de {selectedDate ? formatDate(selectedDate.toISOString()) : 'Hoje'}
+                                        Consultas de Hoje
                                     </h2>
                                 </div>
 
@@ -226,71 +214,9 @@ export default function AreaMedica() {
                                 )}
                             </div>
                         </div>
-
-                        {/* Coluna Direita - Calendário */}
-                        <div className="w-96">
-                            <div className="bg-white rounded-2xl shadow p-6">
-                                <h2 className={`text-xl font-bold text-color-logo mb-4 ${cairo.className}`}>
-                                    Calendário
-                                </h2>
-                                <Calendar
-                                    onChange={(value) => setSelectedDate(value as Date)}
-                                    value={selectedDate}
-                                    tileClassName={tileClassName}
-                                    locale="pt-BR"
-                                />
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
-
-            <style jsx global>{`
-                .react-calendar {
-                    width: 100% !important;
-                    border: none !important;
-                    font-family: inherit;
-                }
-
-                .react-calendar__tile {
-                    padding: 1em 0.5em;
-                    border-radius: 8px;
-                    transition: all 0.2s;
-                }
-
-                .react-calendar__tile:hover {
-                    background-color: #e5f0ff !important;
-                }
-
-                .react-calendar__tile--active {
-                    background-color: #6D9CE3 !important;
-                    color: white !important;
-                }
-
-                .highlight-selected {
-                    background-color: #6D9CE3 !important;
-                    color: white !important;
-                }
-
-                .remove-today-highlight {
-                    background-color: transparent !important;
-                }
-
-                .react-calendar__month-view__days__day--weekend {
-                    color: #d87d4a;
-                }
-
-                .react-calendar__navigation button {
-                    font-size: 1.1em;
-                    font-weight: 600;
-                    color: #192333;
-                }
-
-                .react-calendar__navigation button:enabled:hover,
-                .react-calendar__navigation button:enabled:focus {
-                    background-color: #e5f0ff;
-                }
-            `}</style>
         </main>
     )
 }
