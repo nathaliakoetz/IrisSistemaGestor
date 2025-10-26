@@ -33,12 +33,20 @@ export default function SignIn() {
         })
 
         if (response.status == 200) {
-            const clinica = await response.json()
+            const { token, ...clinica } = await response.json()
             logaClinica(clinica)
             sessionStorage.setItem("logged", "true")
+            
+            // Armazenar o token
+            if (token) {
+                sessionStorage.setItem("authToken", token)
+            }
 
             if (rememberMe) {
                 Cookies.set("authID", clinica.id)
+                if (token) {
+                    Cookies.set("authToken", token)
+                }
             }
 
             router.push("/signin/carregando")

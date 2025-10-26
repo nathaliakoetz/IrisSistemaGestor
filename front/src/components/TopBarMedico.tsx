@@ -24,7 +24,9 @@ export function TopBarMedico() {
 
     async function sairTerapeuta() {
         Cookies.remove("authID")
+        Cookies.remove("authToken")
         sessionStorage.removeItem("logged")
+        sessionStorage.removeItem("authToken")
         window.location.href = "/signin"
         await pause(1)
         deslogaTerapeuta()

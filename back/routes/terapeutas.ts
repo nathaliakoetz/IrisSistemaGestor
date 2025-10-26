@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client"
 import { Router } from "express"
 import bcrypt from 'bcrypt'
 import nodemailer from "nodemailer"
+import jwt from "jsonwebtoken"
 
 const prisma = new PrismaClient()
 const router = Router()
@@ -401,10 +402,20 @@ router.post("/login", async (req, res) => {
             return
         }
 
-        // Retornar os dados do terapeuta (sem a senha)
+        // Gerar token JWT
+        const token = jwt.sign({
+            terapeuta_logado_id: terapeuta.id,
+            terapeuta_logado_nome: terapeuta.nome,
+            clinicaId: terapeuta.clinicaId
+        },
+            process.env.JWT_KEY as string,
+            { expiresIn: "12h" }
+        )
+
+        // Retornar os dados do terapeuta (sem a senha) e o token
         const { senha: _, codigoRecuperacao, ...terapeutaSemSenha } = terapeuta
 
-        res.status(200).json(terapeutaSemSenha)
+        res.status(200).json({ ...terapeutaSemSenha, token })
     } catch (error) {
         res.status(400).json(error)
     }

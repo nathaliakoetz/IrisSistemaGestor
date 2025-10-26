@@ -33,12 +33,20 @@ export default function SignIn() {
         })
 
         if (response.status == 200) {
-            const terapeuta = await response.json()
+            const { token, ...terapeuta } = await response.json()
             logaTerapeuta(terapeuta)
             sessionStorage.setItem("logged", "true")
+            
+            // Armazenar o token
+            if (token) {
+                sessionStorage.setItem("authToken", token)
+            }
 
             if (rememberMe) {
                 Cookies.set("authID", terapeuta.id)
+                if (token) {
+                    Cookies.set("authToken", token)
+                }
             }
 
             router.push("/signin/carregando-medico")

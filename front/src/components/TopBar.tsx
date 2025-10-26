@@ -59,7 +59,9 @@ export function TopBar() {
 
     async function sairClinica() {
         Cookies.remove("authID")
+        Cookies.remove("authToken")
         sessionStorage.removeItem("logged")
+        sessionStorage.removeItem("authToken")
         window.location.href = "/signin"
         await pause(1)
         deslogaClinica()
