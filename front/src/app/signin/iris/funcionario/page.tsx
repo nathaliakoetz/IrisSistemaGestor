@@ -41,7 +41,7 @@ export default function SignIn() {
                 Cookies.set("authID", terapeuta.id)
             }
 
-            router.push("/area-medica")
+            router.push("/signin/carregando-medico")
         } else if (response.status == 400) {
             toast.error("Erro... Login ou senha incorretos")
         }
