@@ -26,9 +26,9 @@ export default function ParaClinica({ activeLink }: ParaClinicaProps) {
                 </h1>
                 <div className="flex justify-center items-center mt-8">
                     <div className="max-w-sm mt-9 mb-10 border border-gray-400 bg-white rounded-s-3xl shadow flex flex-col items-center h-auto">
-                        <img className="rounded-t-3xl h-60 w-60 mt-[4.7rem] mb-7" src="/pacote_essencial.png" alt="" />
+                        <img className="rounded-t-3xl h-60 w-60 mt-14 mb-7" src="/pacote_essencial.png" alt="" />
                         <div className="p-5">
-                            <h5 className={`mb-2 text-3xl text-center font-bold tracking-tight text-color-logo ${cairo.className}`}>
+                            <h5 className={`mb-2 mt-[1.3rem] text-3xl text-center font-bold tracking-tight text-color-logo ${cairo.className}`}>
                                 Essencial Íris
                             </h5>
                             <p className={`text-sm text-center text-color-corp font-bold mt-8 mb-8 ${cairo.className}`}>
