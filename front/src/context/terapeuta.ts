@@ -24,7 +24,7 @@ const carregarTerapeutaDoStorage = (): TerapeutaZustandI => {
 }
 
 export const useTerapeutaStore = create<TerapeutaStore>((set) => ({
-    terapeuta: carregarTerapeutaDoStorage(),
+    terapeuta: {} as TerapeutaZustandI,
     logaTerapeuta: (terapeutaLogado) => {
         set({ terapeuta: terapeutaLogado });
         if (typeof window !== 'undefined') {

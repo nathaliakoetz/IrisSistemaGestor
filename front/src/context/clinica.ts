@@ -24,7 +24,7 @@ const carregarClinicaDoStorage = (): ClinicaZustandI => {
 }
 
 export const useClinicaStore = create<ClinicaStore>((set) => ({
-    clinica: carregarClinicaDoStorage(),
+    clinica: {} as ClinicaZustandI,
     logaClinica: (clinicaLogado) => {
         set({ clinica: clinicaLogado });
         if (typeof window !== 'undefined') {

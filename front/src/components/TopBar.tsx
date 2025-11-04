@@ -1,3 +1,5 @@
+'use client'
+
 import { inter, cairo } from "@/utils/fonts";
 import Link from "next/link";
 import { useState, useEffect } from 'react';
