@@ -15,6 +15,7 @@ import autoTable from 'jspdf-autotable';
 
 export default function RelatoriosCliente() {
     const [pacientes, setPacientes] = useState<DependenteI[]>([]);
+    const [isLogged, setIsLogged] = useState(true);
     const [terapeutas, setTerapeutas] = useState<TerapeutaI[]>([]);
     const [pacienteSelecionado, setPacienteSelecionado] = useState<string>("");
     const [terapeutaSelecionado, setTerapeutaSelecionado] = useState<string>("");
@@ -32,6 +33,16 @@ export default function RelatoriosCliente() {
     const dropdownRefTerapeuta = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        // Verificar login no cliente
+        if (typeof window !== 'undefined') {
+            const logged = sessionStorage.getItem("logged");
+            if (!logged) {
+                setIsLogged(false);
+                return;
+            }
+            setIsLogged(true);
+        }
+
         if (clinica.id) {
             buscaPacientes(clinica.id);
             buscaTerapeutas(clinica.id);
@@ -312,7 +323,7 @@ export default function RelatoriosCliente() {
     };
 
     useEffect(() => {
-        if (!sessionStorage.getItem("logged")) {
+        if (!isLogged) {
             const timer = setTimeout(() => {
                 router.push("/signin");
             }, 3000);
@@ -320,7 +331,7 @@ export default function RelatoriosCliente() {
         }
     }, [router]);
 
-    if (!sessionStorage.getItem("logged")) {
+    if (!isLogged) {
         return (
             <section className="bg-[url('/bg_login.jpeg')] bg-cover bg-no-repeat flex justify-center items-center h-[1080px]">
                 <div className="flex justify-center items-center mt-32 mb-32">

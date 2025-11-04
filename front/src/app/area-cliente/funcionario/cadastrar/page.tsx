@@ -6,7 +6,7 @@ import { cairo, inter } from "@/utils/fonts";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner"
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useClinicaStore } from "@/context/clinica";
 
@@ -26,6 +26,7 @@ export default function CadastrarFuncionario() {
     const { register, handleSubmit } = useForm<Inputs>()
     const { clinica } = useClinicaStore();
     const router = useRouter();
+    const [isLogged, setIsLogged] = useState(true);
 
     const formatarCPF = (cpf: string) => {
         return cpf
@@ -155,7 +156,17 @@ export default function CadastrarFuncionario() {
     }
 
     useEffect(() => {
-        if (!sessionStorage.getItem("logged")) {
+        // Verificar login no cliente
+        if (typeof window !== 'undefined') {
+            const logged = sessionStorage.getItem("logged");
+            if (!logged) {
+                setIsLogged(false);
+                return;
+            }
+            setIsLogged(true);
+        }
+
+        if (!isLogged) {
             const timer = setTimeout(() => {
                 router.push("/signin");
             }, 3000);
@@ -163,7 +174,7 @@ export default function CadastrarFuncionario() {
         }
     }, [router]);
 
-    if (!sessionStorage.getItem("logged")) {
+    if (!isLogged) {
         return (
             <section className="bg-[url('/bg_login.jpeg')] bg-cover bg-no-repeat flex justify-center items-center h-[1080px]">
                 <div className="flex justify-center items-center mt-32 mb-32">

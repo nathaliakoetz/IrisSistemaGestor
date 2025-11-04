@@ -32,6 +32,7 @@ export default function AreaAgenda() {
     const [isDesmarcarModalOpen, setIsDesmarcarModalOpen] = useState(false);
     const [consultaParaDesmarcar, setConsultaParaDesmarcar] = useState<ConsultaI | null>(null);
     const [dadosClinica, setDadosClinica] = useState<ClinicaI>();
+    const [isLogged, setIsLogged] = useState(true);
     const [formData, setFormData] = useState({
         pacienteId: '',
         terapeutaId: '',
@@ -149,6 +150,16 @@ export default function AreaAgenda() {
     }
 
     useEffect(() => {
+        // Verificar login no cliente
+        if (typeof window !== 'undefined') {
+            const logged = sessionStorage.getItem("logged");
+            if (!logged) {
+                setIsLogged(false);
+                return;
+            }
+            setIsLogged(true);
+        }
+
         async function buscaClinica(id: string) {
             const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/clinicas/${id}`, {
                 method: "GET"
@@ -168,13 +179,17 @@ export default function AreaAgenda() {
                 await buscaPacientes(id)
             } else if (response.status == 400) {
                 Cookies.remove('logged')
-                sessionStorage.removeItem("logged")
+                if (typeof window !== 'undefined') {
+                    sessionStorage.removeItem("logged")
+                }
                 router.push("/area-cliente/error")
             }
         }
 
         if (!clinica.id && !Cookies.get("authID")) {
-            sessionStorage.removeItem("logged")
+            if (typeof window !== 'undefined') {
+                sessionStorage.removeItem("logged")
+            }
             //router.push("/area-cliente/error")
         } else if (Cookies.get("authID")) {
             const authID = Cookies.get("authID") as string
@@ -341,13 +356,13 @@ export default function AreaAgenda() {
     };
 
     useEffect(() => {
-        if (!sessionStorage.getItem("logged")) {
+        if (!isLogged) {
             const timer = setTimeout(() => {
                 router.push("/signin");
             }, 3000);
             return () => clearTimeout(timer);
         }
-    }, [router]);
+    }, [router, isLogged]);
 
     // Função para renderizar as consultas em uma célula da tabela
     const renderConsultasCell = (data: Date, hora: number) => {
@@ -475,7 +490,7 @@ export default function AreaAgenda() {
         return `${formattedStart} - ${formattedEnd}`;
     };
 
-    if (!sessionStorage.getItem("logged")) {
+    if (!isLogged) {
         return (
             <section className="bg-[url('/bg_login.jpeg')] bg-cover bg-no-repeat flex justify-center items-center h-[1080px]">
                 <div className="flex justify-center items-center mt-32 mb-32">

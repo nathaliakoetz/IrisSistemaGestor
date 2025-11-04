@@ -22,8 +22,19 @@ export default function CadastrarDadosPaciente() {
     const { clinica } = useClinicaStore();
     const router = useRouter();
     const [responsavelId, setResponsavelId] = useState<string>("");
+    const [isLogged, setIsLogged] = useState(true);
 
     useEffect(() => {
+        // Verificar login no cliente
+        if (typeof window !== 'undefined') {
+            const logged = sessionStorage.getItem("logged");
+            if (!logged) {
+                setIsLogged(false);
+                return;
+            }
+            setIsLogged(true);
+        }
+
         // Verificar se há responsável selecionado
         const responsavel = sessionStorage.getItem('responsavelSelecionado');
         if (!responsavel) {
@@ -88,7 +99,7 @@ export default function CadastrarDadosPaciente() {
     }
 
     useEffect(() => {
-        if (!sessionStorage.getItem("logged")) {
+        if (!isLogged) {
             const timer = setTimeout(() => {
                 router.push("/signin");
             }, 3000);
@@ -96,7 +107,7 @@ export default function CadastrarDadosPaciente() {
         }
     }, [router]);
 
-    if (!sessionStorage.getItem("logged")) {
+    if (!isLogged) {
         return (
             <section className="bg-[url('/bg_login.jpeg')] bg-cover bg-no-repeat flex justify-center items-center h-[1080px]">
                 <div className="flex justify-center items-center mt-32 mb-32">

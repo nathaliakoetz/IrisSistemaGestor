@@ -13,6 +13,7 @@ import Link from "next/link";
 
 export default function AgendaMedica() {
     const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+    const [isLogged, setIsLogged] = useState(true);
     const [consultas, setConsultas] = useState<ConsultaI[]>([]);
     const { terapeuta } = useTerapeutaStore();
     const router = useRouter();
@@ -33,6 +34,16 @@ export default function AgendaMedica() {
     }
 
     useEffect(() => {
+        // Verificar login no cliente
+        if (typeof window !== 'undefined') {
+            const logged = sessionStorage.getItem("logged");
+            if (!logged) {
+                setIsLogged(false);
+                return;
+            }
+            setIsLogged(true);
+        }
+
         if (terapeuta.id && terapeuta.clinicaId) {
             buscaConsultas(terapeuta.id, terapeuta.clinicaId)
         }
@@ -82,7 +93,7 @@ export default function AgendaMedica() {
     };
 
     useEffect(() => {
-        if (!sessionStorage.getItem("logged")) {
+        if (!isLogged) {
             const timer = setTimeout(() => {
                 router.push("/signin");
             }, 3000);
@@ -90,7 +101,7 @@ export default function AgendaMedica() {
         }
     }, [router]);
 
-    if (!sessionStorage.getItem("logged")) {
+    if (!isLogged) {
         return (
             <section className="bg-[url('/bg_login.jpeg')] bg-cover bg-no-repeat flex justify-center items-center h-[1080px]">
                 <div className="flex justify-center items-center mt-32 mb-32">

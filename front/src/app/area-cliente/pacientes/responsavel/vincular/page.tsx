@@ -21,6 +21,7 @@ export default function VincularResponsavel() {
     const dependenteId = searchParams.get('dependenteId') as string;
     
     const [dependente, setDependente] = useState<Dependente | null>(null);
+    const [isLogged, setIsLogged] = useState(true);
     const [responsaveisDisponiveis, setResponsaveisDisponiveis] = useState<ResponsavelI[]>([]);
     const [selectedResponsavel, setSelectedResponsavel] = useState<string>("");
     const [loading, setLoading] = useState(true);
@@ -124,6 +125,16 @@ export default function VincularResponsavel() {
     };
 
     useEffect(() => {
+        // Verificar login no cliente
+        if (typeof window !== 'undefined') {
+            const logged = sessionStorage.getItem("logged");
+            if (!logged) {
+                setIsLogged(false);
+                return;
+            }
+            setIsLogged(true);
+        }
+
         if (dependenteId) {
             fetchData();
         }
@@ -157,7 +168,7 @@ export default function VincularResponsavel() {
     };
 
     useEffect(() => {
-        if (!sessionStorage.getItem("logged")) {
+        if (!isLogged) {
             const timer = setTimeout(() => {
                 router.push("/signin");
             }, 3000);
@@ -165,7 +176,7 @@ export default function VincularResponsavel() {
         }
     }, [router]);
 
-    if (!sessionStorage.getItem("logged")) {
+    if (!isLogged) {
         return (
             <section className="bg-[url('/bg_login.jpeg')] bg-cover bg-no-repeat flex justify-center items-center h-[1080px]">
                 <div className="flex justify-center items-center mt-32 mb-32">

@@ -21,6 +21,7 @@ export default function GestaoFuncionarios() {
     const router = useRouter();
     
     const [cards, setCards] = useState<CardTerapeuta[]>([]);
+    const [isLogged, setIsLogged] = useState(true);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -220,6 +221,16 @@ export default function GestaoFuncionarios() {
     };
 
     useEffect(() => {
+        // Verificar login no cliente
+        if (typeof window !== 'undefined') {
+            const logged = sessionStorage.getItem("logged");
+            if (!logged) {
+                setIsLogged(false);
+                return;
+            }
+            setIsLogged(true);
+        }
+
         // Carregar a clínica do storage e buscar terapeutas
         if (!clinica?.id) {
             carregaClinicaDaStorage();
@@ -312,7 +323,7 @@ export default function GestaoFuncionarios() {
     };
 
     useEffect(() => {
-        if (!sessionStorage.getItem("logged")) {
+        if (!isLogged) {
             const timer = setTimeout(() => {
                 router.push("/signin");
             }, 3000);
@@ -320,7 +331,7 @@ export default function GestaoFuncionarios() {
         }
     }, [router]);
 
-    if (!sessionStorage.getItem("logged")) {
+    if (!isLogged) {
         return (
             <section className="bg-[url('/bg_login.jpeg')] bg-cover bg-no-repeat flex justify-center items-center h-[1080px]">
                 <div className="flex justify-center items-center mt-32 mb-32">

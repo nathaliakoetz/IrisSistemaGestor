@@ -14,6 +14,7 @@ import autoTable from 'jspdf-autotable';
 
 export default function RelatoriosMedica() {
     const [pacientes, setPacientes] = useState<DependenteI[]>([]);
+    const [isLogged, setIsLogged] = useState(true);
     const [pacienteSelecionado, setPacienteSelecionado] = useState<string>("");
     const [searchTerm, setSearchTerm] = useState("");
     const [showDropdown, setShowDropdown] = useState(false);
@@ -26,6 +27,16 @@ export default function RelatoriosMedica() {
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        // Verificar login no cliente
+        if (typeof window !== 'undefined') {
+            const logged = sessionStorage.getItem("logged");
+            if (!logged) {
+                setIsLogged(false);
+                return;
+            }
+            setIsLogged(true);
+        }
+
         if (terapeuta.id && terapeuta.clinicaId) {
             buscaPacientes(terapeuta.clinicaId);
         }
@@ -209,7 +220,7 @@ export default function RelatoriosMedica() {
     };
 
     useEffect(() => {
-        if (!sessionStorage.getItem("logged")) {
+        if (!isLogged) {
             const timer = setTimeout(() => {
                 router.push("/signin");
             }, 3000);
@@ -217,7 +228,7 @@ export default function RelatoriosMedica() {
         }
     }, [router]);
 
-    if (!sessionStorage.getItem("logged")) {
+    if (!isLogged) {
         return (
             <section className="bg-[url('/bg_login.jpeg')] bg-cover bg-no-repeat flex justify-center items-center h-[1080px]">
                 <div className="flex justify-center items-center mt-32 mb-32">

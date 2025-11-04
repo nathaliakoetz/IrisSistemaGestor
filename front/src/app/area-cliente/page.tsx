@@ -31,6 +31,7 @@ type InputsAddHorario = {
 export default function AreaCliente() {
     const currentDate = new Date();
     const [selectedDate, setSelectedDate] = useState<Date | null>(currentDate);
+    const [isLogged, setIsLogged] = useState(true);
     const [horariosPorData, setHorariosPorData] = useState<string[]>([]);
     const [isAddConsultaOpen, setisAddConsultaOpen] = useState(false);
     const { clinica } = useClinicaStore();
@@ -75,6 +76,16 @@ export default function AreaCliente() {
     }
 
     useEffect(() => {
+        // Verificar login no cliente
+        if (typeof window !== 'undefined') {
+            const logged = sessionStorage.getItem("logged");
+            if (!logged) {
+                setIsLogged(false);
+                return;
+            }
+            setIsLogged(true);
+        }
+
         async function buscaClinica(id: string) {
             const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/clinicas/${id}`, {
                 method: "GET"
@@ -85,7 +96,7 @@ export default function AreaCliente() {
                 setDadosClinica(dados)
             } else if (response.status == 400) {
                 Cookies.remove('logged')
-                sessionStorage.removeItem("logged")
+                if (typeof window !== 'undefined') sessionStorage.removeItem("logged")
                 router.push("/area-cliente/error")
             }
         }
@@ -102,7 +113,7 @@ export default function AreaCliente() {
         }
 
         if (!clinica.id && !Cookies.get("authID")) {
-            sessionStorage.removeItem("logged");
+            if (typeof window !== 'undefined') sessionStorage.removeItem("logged");
         } else if (Cookies.get("authID")) {
             const authID = Cookies.get("authID") as string;
             buscaClinica(authID);
@@ -300,7 +311,7 @@ export default function AreaCliente() {
     };
 
     useEffect(() => {
-        if (!sessionStorage.getItem("logged")) {
+        if (!isLogged) {
             const timer = setTimeout(() => {
                 router.push("/signin");
             }, 3000);
@@ -308,7 +319,7 @@ export default function AreaCliente() {
         }
     }, [router]);
 
-    if (!sessionStorage.getItem("logged")) {
+    if (!isLogged) {
         return (
             <section className="bg-[url('/bg_login.jpeg')] bg-cover bg-no-repeat flex justify-center items-center h-[1080px]">
                 <div className="flex justify-center items-center mt-32 mb-32">
