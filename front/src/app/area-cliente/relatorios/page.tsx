@@ -12,7 +12,6 @@ import { DependenteI } from "@/utils/types/dependentes";
 import { TerapeutaI } from "@/utils/types/terapeutas";
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import Cookies from "js-cookie";
 
 export default function RelatoriosCliente() {
     const [pacientes, setPacientes] = useState<DependenteI[]>([]);
@@ -228,7 +227,10 @@ export default function RelatoriosCliente() {
         });
 
         // Detalhes das consultas (se houver)
-        let detalhesYPosition = (doc as any).lastAutoTable.finalY + 15;
+        interface JsPDFWithAutoTable extends jsPDF {
+            lastAutoTable: { finalY: number };
+        }
+        let detalhesYPosition = (doc as JsPDFWithAutoTable).lastAutoTable.finalY + 15;
         
         consultas.forEach((consulta, index) => {
             if (consulta.detalhes) {
@@ -607,7 +609,7 @@ export default function RelatoriosCliente() {
                         {!loading && !pacienteSelecionado && !terapeutaSelecionado && consultas.length === 0 && (
                             <div className="text-center py-10">
                                 <p className={`text-gray-500 ${inter.className}`}>
-                                    Selecione ao menos um profissional ou paciente e clique em "Buscar Atendimentos".
+                                    Selecione ao menos um profissional ou paciente e clique em &quot;Buscar Atendimentos&quot;.
                                 </p>
                             </div>
                         )}

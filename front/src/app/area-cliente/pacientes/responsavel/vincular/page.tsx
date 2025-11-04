@@ -47,7 +47,7 @@ export default function VincularResponsavel() {
             // Buscar responsáveis já vinculados ao dependente
             const responsaveisVinculadosResponse = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/responsaveisDependentes/dependente/${dependenteId}`);
             const responsaveisVinculados = responsaveisVinculadosResponse.ok ? await responsaveisVinculadosResponse.json() : [];
-            const idsVinculados = responsaveisVinculados.map((rv: any) => rv.responsavel.id);
+            const idsVinculados = responsaveisVinculados.map((rv: { responsavel: { id: string } }) => rv.responsavel.id);
 
             // Buscar todos os responsáveis da clínica
             const todosResponsaveisResponse = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/responsaveisClinicas`);
@@ -59,8 +59,8 @@ export default function VincularResponsavel() {
             // Filtrar responsáveis da clínica atual (assumindo que você tem acesso ao ID da clínica)
             const clinicaId = sessionStorage.getItem('clinica') ? JSON.parse(sessionStorage.getItem('clinica')!).id : null;
             const responsaveisClinicaAtual = responsaveisClinicas
-                .filter((rc: any) => rc.clinica.id === clinicaId)
-                .map((rc: any) => rc.responsavel);
+                .filter((rc: { clinica: { id: string }; responsavel: ResponsavelI }) => rc.clinica.id === clinicaId)
+                .map((rc: { clinica: { id: string }; responsavel: ResponsavelI }) => rc.responsavel);
 
             // Filtrar responsáveis que não estão vinculados ao dependente
             const responsaveisDisponiveis = responsaveisClinicaAtual.filter((resp: ResponsavelI) => 

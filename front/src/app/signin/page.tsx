@@ -1,13 +1,9 @@
 'use client'
 
-import { useClinicaStore } from "@/context/clinica";
 import { cairo, inter } from "@/utils/fonts";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 export default function SignIn() {
-    const router = useRouter();
 
     return (
         <section className="bg-[url('/bg_login.jpeg')] bg-cover bg-no-repeat flex justify-center items-center h-[1080px]">

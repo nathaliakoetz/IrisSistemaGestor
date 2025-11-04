@@ -5,7 +5,7 @@ import { TopBar } from "@/components/TopBar";
 import { cairo, inter } from "@/utils/fonts";
 import Link from "next/link";
 import { toast } from "sonner"
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useClinicaStore } from "@/context/clinica";
 import { useParams, useRouter } from "next/navigation";
@@ -19,13 +19,22 @@ type Inputs = {
     profissao: string;
 }
 
+type TerapeutaData = {
+    nome: string;
+    email: string;
+    cpfCnpj: string;
+    telefone1: string;
+    telefone2: string | null;
+    profissao: string;
+}
+
 export default function EditarFuncionario() {
-    const { register, handleSubmit, setValue, formState: { errors } } = useForm<Inputs>()
+    const { register, handleSubmit, setValue } = useForm<Inputs>()
     const { clinica } = useClinicaStore();
     const params = useParams();
     const router = useRouter();
     const [loading, setLoading] = useState(true);
-    const [terapeuta, setTerapeuta] = useState<any>(null);
+    const [terapeuta, setTerapeuta] = useState<TerapeutaData | null>(null);
 
     const terapeutaId = params.id as string;
 

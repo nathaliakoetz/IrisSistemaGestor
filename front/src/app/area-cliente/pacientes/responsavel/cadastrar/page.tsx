@@ -183,7 +183,7 @@ export default function CadastrarResponsavel() {
                                 router.push(`/area-cliente/pacientes/responsavel/vincular?dependenteId=${dependenteId}`);
                             }, 2000);
                         }
-                    } catch (error) {
+                    } catch {
                         toast.error("Responsável cadastrado, mas erro ao vincular ao paciente.");
                         setTimeout(() => {
                             router.push(`/area-cliente/pacientes/responsavel/vincular?dependenteId=${dependenteId}`);
@@ -200,7 +200,7 @@ export default function CadastrarResponsavel() {
             } else {
                 toast.error("Erro ao vincular responsável à clínica.");
             }
-        } catch (error) {
+        } catch {
             toast.error("Erro ao cadastrar responsável.");
         }
     }

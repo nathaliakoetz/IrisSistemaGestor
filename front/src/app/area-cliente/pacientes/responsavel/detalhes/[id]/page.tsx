@@ -4,7 +4,6 @@ import { SideBar } from "@/components/SideBar";
 import { TopBar } from "@/components/TopBar";
 import { cairo, inter } from "@/utils/fonts";
 import { ResponsavelI } from "@/utils/types/responsaveis";
-import { EnderecoI } from "@/utils/types/enderecos";
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
 import { useState, useEffect, ChangeEvent } from "react";

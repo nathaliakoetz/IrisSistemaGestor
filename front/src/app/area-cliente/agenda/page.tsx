@@ -19,7 +19,7 @@ import { DependenteI } from "@/utils/types/dependentes";
 
 export default function AreaAgenda() {
     const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
-    const [currentDate, setCurrentDate] = useState(new Date());
+    const currentDate = new Date();
     const [legendas, setLegendas] = useState<LegendaI[]>([]);
     const [consultas, setConsultas] = useState<ConsultaI[]>([]);
     const [terapeutas, setTerapeutas] = useState<TerapeutaI[]>([]);
@@ -96,7 +96,7 @@ export default function AreaAgenda() {
             if (response.status === 200) {
                 const dependentesClinicasData = await response.json()
                 // Extrair apenas os dependentes do array de dependenteClinica
-                const pacientesData = dependentesClinicasData.map((dc: any) => dc.dependente)
+                const pacientesData = dependentesClinicasData.map((dc: { dependente: DependenteI }) => dc.dependente)
                 setPacientes(pacientesData)
             }
         } catch (error) {
@@ -114,7 +114,7 @@ export default function AreaAgenda() {
             if (response.status === 200) {
                 const horariosData = await response.json()
                 // Encontrar horários para a data específica
-                const horarioParaData = horariosData.find((h: any) => {
+                const horarioParaData = horariosData.find((h: { data: string }) => {
                     const dataHorario = new Date(h.data).toISOString().split('T')[0]
                     return dataHorario === data
                 })
@@ -299,7 +299,7 @@ export default function AreaAgenda() {
             } else {
                 toast.error("Erro ao desmarcar consulta!");
             }
-        } catch (error) {
+        } catch {
             toast.error("Erro ao desmarcar consulta!");
         }
     };
@@ -435,9 +435,6 @@ export default function AreaAgenda() {
 
         const endOfWeek = new Date(startOfWeek);
         endOfWeek.setDate(endOfWeek.getDate() + 6); // Se a semana começa na segunda, termina no domingo
-
-        const formattedStart = startOfWeek.toLocaleDateString('pt-BR');
-        const formattedEnd = endOfWeek.toLocaleDateString('pt-BR');
 
         const startMonth = startOfWeek.toLocaleString('pt-BR', { month: 'long' });
         const endMonth = endOfWeek.toLocaleString('pt-BR', { month: 'long' });

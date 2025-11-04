@@ -62,7 +62,7 @@ export default function GestaoPacientes() {
             const dependentesClinicas = await response.json();
             
             // Converter para o formato dos cards
-            const cardsData: CardPaciente[] = dependentesClinicas.map((dependenteClinica: any) => ({
+            const cardsData: CardPaciente[] = dependentesClinicas.map((dependenteClinica: { dependente: { id: string; nome: string; genero: string } }) => ({
                 id: dependenteClinica.dependente.id,
                 title: dependenteClinica.dependente.nome,
                 description: dependenteClinica.dependente.genero,
@@ -85,7 +85,7 @@ export default function GestaoPacientes() {
     };
 
     const sortCards = (criteria: string) => {
-        let sorted = [...cards];
+        const sorted = [...cards];
 
         switch (criteria) {
             case "Nome A-Z":

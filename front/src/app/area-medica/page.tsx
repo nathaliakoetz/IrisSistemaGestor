@@ -5,10 +5,8 @@ import { TopBarMedico } from "@/components/TopBarMedico";
 import { cairo, inter } from "@/utils/fonts";
 import { useEffect, useState } from 'react';
 import { useTerapeutaStore } from "@/context/terapeuta";
-import Cookies from "js-cookie";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { ConsultaI } from "@/utils/types/consultas";
 
 export default function AreaMedica() {
@@ -63,14 +61,6 @@ export default function AreaMedica() {
 
     const openDetailsPage = (consultaId: number) => {
         router.push(`/area-medica/detalhes-consulta/${consultaId}`);
-    };
-
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
     };
 
     useEffect(() => {

@@ -11,7 +11,6 @@ import { ConsultaI } from "@/utils/types/consultas";
 import { DependenteI } from "@/utils/types/dependentes";
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import Cookies from "js-cookie";
 
 export default function RelatoriosMedica() {
     const [pacientes, setPacientes] = useState<DependenteI[]>([]);
@@ -158,7 +157,10 @@ export default function RelatoriosMedica() {
         });
 
         // Detalhes das consultas (se houver)
-        let yPosition = (doc as any).lastAutoTable.finalY + 15;
+        interface JsPDFWithAutoTable extends jsPDF {
+            lastAutoTable: { finalY: number };
+        }
+        let yPosition = (doc as JsPDFWithAutoTable).lastAutoTable.finalY + 15;
         
         consultas.forEach((consulta, index) => {
             if (consulta.detalhes) {
@@ -199,8 +201,6 @@ export default function RelatoriosMedica() {
     const pacientesFiltrados = pacientes.filter(paciente =>
         paciente.nome.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
-    const pacienteSelecionadoObj = pacientes.find(p => p.id === pacienteSelecionado);
 
     const handleSelectPaciente = (pacienteId: string) => {
         setPacienteSelecionado(pacienteId);
@@ -407,7 +407,7 @@ export default function RelatoriosMedica() {
                         {!loading && consultas.length === 0 && pacienteSelecionado && (
                             <div className="text-center py-10">
                                 <p className={`text-gray-500 ${inter.className}`}>
-                                    Nenhum atendimento encontrado. Clique em "Buscar Atendimentos" para carregar os dados.
+                                    Nenhum atendimento encontrado. Clique em &quot;Buscar Atendimentos&quot; para carregar os dados.
                                 </p>
                             </div>
                         )}

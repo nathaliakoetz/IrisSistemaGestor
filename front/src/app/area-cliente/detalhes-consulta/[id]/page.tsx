@@ -34,7 +34,7 @@ export default function DetalhesConsulta() {
                     toast.error("Erro ao carregar detalhes da consulta");
                     router.push("/area-cliente");
                 }
-            } catch (error) {
+            } catch {
                 toast.error("Erro ao carregar detalhes da consulta");
                 router.push("/area-cliente");
             } finally {
@@ -66,7 +66,7 @@ export default function DetalhesConsulta() {
             } else {
                 toast.error("Erro ao salvar detalhes");
             }
-        } catch (error) {
+        } catch {
             toast.error("Erro ao salvar detalhes");
         }
     };

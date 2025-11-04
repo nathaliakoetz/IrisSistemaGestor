@@ -122,7 +122,7 @@ export default function SignUp() {
                     } else {
                         toast.error("Erro ao cadastrar clínica.");
                     }
-                } catch (error) {
+                } catch {
                     toast.error("Erro ao cadastrar clínica.");
                 }
         }

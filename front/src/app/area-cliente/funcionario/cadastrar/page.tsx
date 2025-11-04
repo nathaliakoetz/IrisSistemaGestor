@@ -6,7 +6,7 @@ import { cairo, inter } from "@/utils/fonts";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner"
-import { ChangeEvent, FormEvent, useEffect } from "react";
+import { ChangeEvent, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useClinicaStore } from "@/context/clinica";
 

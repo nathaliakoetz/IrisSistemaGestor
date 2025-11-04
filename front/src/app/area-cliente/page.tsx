@@ -266,7 +266,7 @@ export default function AreaCliente() {
             } else {
                 toast.error("Erro ao desmarcar consulta!");
             }
-        } catch (error) {
+        } catch {
             toast.error("Erro ao desmarcar consulta!");
         }
     };

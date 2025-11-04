@@ -62,7 +62,7 @@ export default function GestaoFuncionarios() {
             const terapeutas = await response.json();
             
             // Converter para o formato dos cards
-            const cardsData: CardTerapeuta[] = terapeutas.map((terapeuta: any) => ({
+            const cardsData: CardTerapeuta[] = terapeutas.map((terapeuta: { id: string; nome: string; profissao: string }) => ({
                 id: terapeuta.id,
                 title: terapeuta.nome,
                 description: terapeuta.profissao,
@@ -85,7 +85,7 @@ export default function GestaoFuncionarios() {
     };
 
     const sortCards = (criteria: string) => {
-        let sorted = [...cards];
+        const sorted = [...cards];
 
         switch (criteria) {
             case "Nome A-Z":

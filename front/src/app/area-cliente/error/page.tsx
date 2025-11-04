@@ -1,6 +1,6 @@
 'use client'
 
-import { cairo, inter } from "@/utils/fonts";
+import { cairo } from "@/utils/fonts";
 import { pause } from "@/utils/functions/pause";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

@@ -10,7 +10,6 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { toast } from "sonner";
 import Link from "next/link";
 import { useTerapeutaStore } from "@/context/terapeuta";
-import Cookies from "js-cookie";
 
 export default function DetalhesConsulta() {
     const [consulta, setConsulta] = useState<ConsultaI | null>(null);
@@ -20,7 +19,6 @@ export default function DetalhesConsulta() {
     const router = useRouter();
     const params = useParams();
     const consultaId = params.id as string;
-    const { terapeuta } = useTerapeutaStore();
 
     useEffect(() => {
         async function buscaConsulta() {
@@ -37,7 +35,7 @@ export default function DetalhesConsulta() {
                     toast.error("Erro ao carregar detalhes da consulta");
                     router.push("/area-medica");
                 }
-            } catch (error) {
+            } catch {
                 toast.error("Erro ao carregar detalhes da consulta");
                 router.push("/area-medica");
             } finally {
@@ -69,7 +67,7 @@ export default function DetalhesConsulta() {
             } else {
                 toast.error("Erro ao salvar detalhes");
             }
-        } catch (error) {
+        } catch {
             toast.error("Erro ao salvar detalhes");
         }
     };
@@ -99,7 +97,7 @@ export default function DetalhesConsulta() {
             } else {
                 toast.error("Erro ao finalizar consulta");
             }
-        } catch (error) {
+        } catch {
             toast.error("Erro ao finalizar consulta");
         }
     };

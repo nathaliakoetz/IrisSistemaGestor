@@ -28,7 +28,7 @@ export default function CadastrarPaciente() {
             
             if (response.ok) {
                 const responsaveisClinicas = await response.json();
-                const responsaveisData = responsaveisClinicas.map((rc: any) => rc.responsavel);
+                const responsaveisData = responsaveisClinicas.map((rc: { responsavel: { id: string; nome: string; email: string } }) => rc.responsavel);
                 setResponsaveis(responsaveisData);
             }
         } catch (error) {

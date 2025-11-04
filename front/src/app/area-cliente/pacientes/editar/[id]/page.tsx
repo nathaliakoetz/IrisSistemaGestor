@@ -19,7 +19,6 @@ type Inputs = {
 
 export default function EditarPaciente() {
     const { register, handleSubmit, setValue } = useForm<Inputs>();
-    const { clinica } = useClinicaStore();
     const router = useRouter();
     const params = useParams();
     const pacienteId = params.id as string;

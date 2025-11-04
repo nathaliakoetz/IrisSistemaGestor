@@ -9,7 +9,6 @@ import { useEffect, useState } from 'react';
 import { useTerapeutaStore } from "@/context/terapeuta";
 import { useRouter } from "next/navigation";
 import { ConsultaI } from "@/utils/types/consultas";
-import Cookies from "js-cookie";
 import Link from "next/link";
 
 export default function AgendaMedica() {
