@@ -15,7 +15,7 @@ import responsaveisDependentesRoutes from "./routes/responsaveisDependentes"
 
 
 const app = express()
-const port = process.env.PORT || 3001
+const port = Number(process.env.PORT) || 3001
 
 app.use(express.json())
 app.use(cors({
@@ -40,6 +40,6 @@ app.get('/', (req, res) => {
   res.send('API: Íris Sistema Gestor')
 })
 
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
   console.log(`Servidor rodando na porta: ${port}`)
 })
