@@ -26,32 +26,52 @@ export default function SignIn() {
     }, [])
 
     async function verificaLogin(data: Inputs) {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/clinicas/login`, {
-            method: "POST",
-            headers: { "Content-type": "Application/json" },
-            body: JSON.stringify({ email: data.email, senha: data.senha })
-        })
-
-        if (response.status == 200) {
-            const { token, ...clinica } = await response.json()
-            logaClinica(clinica)
-            sessionStorage.setItem("logged", "true")
+        try {
+            console.log('Tentando login com:', data.email);
+            console.log('URL da API:', process.env.NEXT_PUBLIC_URL_API);
             
-            // Armazenar o token
-            if (token) {
-                sessionStorage.setItem("authToken", token)
-            }
+            const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/clinicas/login`, {
+                method: "POST",
+                headers: { "Content-type": "Application/json" },
+                body: JSON.stringify({ email: data.email, senha: data.senha })
+            })
 
-            if (rememberMe) {
-                Cookies.set("authID", clinica.id)
+            console.log('Status da resposta:', response.status);
+
+            if (response.status == 200) {
+                const dados = await response.json();
+                console.log('Login bem-sucedido:', dados);
+                
+                const { token, ...clinica } = dados;
+                logaClinica(clinica);
+                sessionStorage.setItem("logged", "true");
+                
+                // Armazenar o token
                 if (token) {
-                    Cookies.set("authToken", token)
+                    sessionStorage.setItem("authToken", token);
                 }
-            }
 
-            router.push("/signin/carregando")
-        } else if (response.status == 400) {
-            toast.error("Erro... Login ou senha incorretos")
+                if (rememberMe) {
+                    Cookies.set("authID", clinica.id);
+                    if (token) {
+                        Cookies.set("authToken", token);
+                    }
+                }
+
+                toast.success("Login realizado com sucesso!");
+                router.push("/signin/carregando");
+            } else if (response.status == 400) {
+                const errorData = await response.json().catch(() => ({}));
+                console.error('Erro 400:', errorData);
+                toast.error("Erro... Login ou senha incorretos");
+            } else {
+                const errorData = await response.json().catch(() => ({}));
+                console.error('Erro inesperado:', response.status, errorData);
+                toast.error(`Erro ao fazer login: ${errorData.message || response.statusText || 'Erro desconhecido'}`);
+            }
+        } catch (error) {
+            console.error('Erro na requisição de login:', error);
+            toast.error(`Erro ao conectar com servidor: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
         }
     }
 

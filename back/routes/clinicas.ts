@@ -273,7 +273,10 @@ router.post("/login", async (req, res) => {
 
     const mensaPadrao = "Login ou senha incorretos"
 
+    console.log('Tentativa de login:', email);
+
     if (!email || !senha) {
+        console.log('Campos vazios');
         res.status(400).json({ erro: mensaPadrao })
         return
     }
@@ -285,16 +288,27 @@ router.post("/login", async (req, res) => {
         })
 
         if (!dadosUsuario) {
+            console.log('Usuário não encontrado:', email);
             res.status(400).json({ erro: mensaPadrao })
             return
         }
 
         if (dadosUsuario.clinica && dadosUsuario.clinica.deletedAt) {
+            console.log('Conta desativada:', email);
             res.status(400).json({ erro: "Conta desativada" })
             return
         }
 
-        if (bcrypt.compareSync(senha, dadosUsuario.senha)) {
+        const senhaCorreta = bcrypt.compareSync(senha, dadosUsuario.senha);
+        console.log('Senha correta:', senhaCorreta);
+
+        if (senhaCorreta) {
+            // Verificar se JWT_KEY existe
+            if (!process.env.JWT_KEY) {
+                console.error('JWT_KEY não configurada!');
+                res.status(500).json({ erro: "Erro de configuração do servidor" })
+                return
+            }
 
             const token = jwt.sign({
                 admin_logado_id: dadosUsuario.clinica?.id,
@@ -304,8 +318,10 @@ router.post("/login", async (req, res) => {
                 { expiresIn: "12h" }
             )
 
+            console.log('Login bem-sucedido para:', email);
             res.status(200).json({ id: dadosUsuario.clinica?.id, nome: dadosUsuario.nome, token })
         } else {
+            console.log('Senha incorreta para:', email);
             res.status(400).json({ erro: mensaPadrao })
         }
     } catch (error) {
