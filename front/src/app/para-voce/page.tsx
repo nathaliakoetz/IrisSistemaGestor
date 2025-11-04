@@ -1,10 +1,27 @@
+'use client'
+
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header"
 import { cairo, inter } from "@/utils/fonts";
 import Link from "next/link";
+import { useEffect } from "react";
 
 export default function ParaVoce() {
     const activeLink = 'voce';
+
+    useEffect(() => {
+        // Verifica se há um hash na URL ou se veio de navegação
+        const hash = window.location.hash;
+        if (hash === '#pacotes-connect' || !hash) {
+            // Pequeno delay para garantir que o elemento foi renderizado
+            setTimeout(() => {
+                const element = document.getElementById('pacotes-connect');
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100);
+        }
+    }, []);
 
     return (
         <section>
