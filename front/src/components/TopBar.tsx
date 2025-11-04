@@ -11,7 +11,6 @@ export function TopBar() {
     const [currentDate, setCurrentDate] = useState('');
     const [currentDay, setCurrentDay] = useState('');
     const [dadosClinica, setDadosClinica] = useState<ClinicaI>();
-    const [logged, setLogged] = useState<boolean>(false);
 
     useEffect(() => {
 
@@ -26,10 +25,6 @@ export function TopBar() {
             } else if (response.status == 400) {
                 window.location.href = "/area-cliente/error"
             }
-        }
-
-        if (Cookies.get("logged")) {
-            setLogged(true)
         }
 
         if (!clinica.id && !Cookies.get("authID")) {
