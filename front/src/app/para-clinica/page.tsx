@@ -3,23 +3,12 @@ import { Header } from "@/components/Header"
 import { cairo, inter } from "@/utils/fonts";
 import Link from "next/link";
 
-interface ParaClinicaProps {
-    activeLink: string;
-}
-
-export default function ParaClinica({ activeLink }: ParaClinicaProps) {
-
-    let ativo
-
-    if (activeLink == "voce") {
-        ativo = activeLink
-    } else {
-        ativo = 'clinica'
-    }
+export default function ParaClinica() {
+    const activeLink = 'clinica';
 
     return (
         <section>
-            <Header activeLink={ativo} />
+            <Header activeLink={activeLink} />
             <div className="max-w-screen-xl mx-auto mt-20 mb-20">
                 <h1 className={`text-5xl font-bold ${cairo.className}`}>
                     Pacotes Íris
