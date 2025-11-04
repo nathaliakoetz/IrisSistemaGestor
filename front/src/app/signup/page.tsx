@@ -120,10 +120,14 @@ export default function SignUp() {
                         await pause(2)
                         router.push("/signin/iris/clinica");
                     } else {
-                        toast.error("Erro ao cadastrar clínica.");
+                        // Mostrar detalhes do erro
+                        const errorData = await response.json().catch(() => ({}));
+                        console.error('Erro no cadastro:', response.status, errorData);
+                        toast.error(`Erro ao cadastrar clínica: ${errorData.message || response.statusText || 'Erro desconhecido'}`);
                     }
-                } catch {
-                    toast.error("Erro ao cadastrar clínica.");
+                } catch (error) {
+                    console.error('Erro na requisição:', error);
+                    toast.error(`Erro ao conectar com servidor: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
                 }
         }
     }

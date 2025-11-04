@@ -18,7 +18,11 @@ const app = express()
 const port = process.env.PORT || 3001
 
 app.use(express.json())
-app.use(cors())
+app.use(cors({
+    origin: '*', // Permitir todas as origens (pode especificar domínios específicos depois)
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}))
 app.use("/clinicas", clinicaRoutes)
 app.use("/profissionais", profissionalRoutes)
 app.use("/dadosUsuarios", dadosUsuariosRoutes)
