@@ -23,7 +23,7 @@ const carregarClinicaDoStorage = (): ClinicaZustandI => {
     return {} as ClinicaZustandI;
 }
 
-export const useClinicaStore = create<ClinicaStore>((set, get) => ({
+export const useClinicaStore = create<ClinicaStore>((set) => ({
     clinica: carregarClinicaDoStorage(),
     logaClinica: (clinicaLogado) => {
         set({ clinica: clinicaLogado });

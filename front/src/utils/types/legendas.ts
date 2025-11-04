@@ -1,5 +1,4 @@
 import { ClinicaI } from "./clinicas"
-import { TerapeutaI } from "./terapeutas"
 
 export interface LegendaI {
     id: number,

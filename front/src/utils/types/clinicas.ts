@@ -1,6 +1,5 @@
 import { DadosUsuarioI } from "./dadosUsuarios"
 import { DependenteClinicaI } from "./dependenteClinicas"
-import { DependenteI } from "./dependentes"
 import { HorarioI } from "./horarios"
 import { LegendaI } from "./legendas"
 import { ResponsavelClinicaI } from "./responsavelClinicas"

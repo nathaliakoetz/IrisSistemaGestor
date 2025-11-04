@@ -23,7 +23,7 @@ const carregarTerapeutaDoStorage = (): TerapeutaZustandI => {
     return {} as TerapeutaZustandI;
 }
 
-export const useTerapeutaStore = create<TerapeutaStore>((set, get) => ({
+export const useTerapeutaStore = create<TerapeutaStore>((set) => ({
     terapeuta: carregarTerapeutaDoStorage(),
     logaTerapeuta: (terapeutaLogado) => {
         set({ terapeuta: terapeutaLogado });
