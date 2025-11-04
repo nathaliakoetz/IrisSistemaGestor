@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "dev": "npx ts-node-dev --respawn index.ts"
+    "dev": "npx ts-node-dev --respawn index.ts",
+    "start": "npx ts-node index.ts",
+    "build": "npx prisma generate"
   },
   "keywords": [],
   "author": "",
@@ -26,6 +28,7 @@
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
-    "nodemailer": "^6.9.15"
+    "nodemailer": "^6.9.15",
+    "ts-node": "^10.9.2"
   }
 }
