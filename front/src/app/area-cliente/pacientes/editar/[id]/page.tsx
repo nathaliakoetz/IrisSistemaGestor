@@ -8,7 +8,6 @@ import { useRouter, useParams } from "next/navigation";
 import { toast } from "sonner"
 import { ChangeEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useClinicaStore } from "@/context/clinica";
 
 type Inputs = {
     nome: string;

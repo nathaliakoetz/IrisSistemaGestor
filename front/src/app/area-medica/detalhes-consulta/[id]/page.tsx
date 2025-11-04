@@ -9,7 +9,6 @@ import { ConsultaI } from "@/utils/types/consultas";
 import TextareaAutosize from 'react-textarea-autosize';
 import { toast } from "sonner";
 import Link from "next/link";
-import { useTerapeutaStore } from "@/context/terapeuta";
 
 export default function DetalhesConsulta() {
     const [consulta, setConsulta] = useState<ConsultaI | null>(null);

@@ -19,22 +19,12 @@ type Inputs = {
     profissao: string;
 }
 
-type TerapeutaData = {
-    nome: string;
-    email: string;
-    cpfCnpj: string;
-    telefone1: string;
-    telefone2: string | null;
-    profissao: string;
-}
-
 export default function EditarFuncionario() {
     const { register, handleSubmit, setValue } = useForm<Inputs>()
     const { clinica } = useClinicaStore();
     const params = useParams();
     const router = useRouter();
     const [loading, setLoading] = useState(true);
-    const [terapeuta, setTerapeuta] = useState<TerapeutaData | null>(null);
 
     const terapeutaId = params.id as string;
 
@@ -107,7 +97,6 @@ export default function EditarFuncionario() {
                 }
                 
                 const data = await response.json();
-                setTerapeuta(data);
                 
                 // Preencher o formulário com os dados
                 setValue("nome", data.nome);
