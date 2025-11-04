@@ -6,7 +6,7 @@ import { cairo, inter } from "@/utils/fonts";
 import { ResponsavelI } from "@/utils/types/responsaveis";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { toast } from "sonner";
 
 interface Dependente {
@@ -15,7 +15,7 @@ interface Dependente {
     genero: string;
 }
 
-export default function VincularResponsavel() {
+function VincularResponsavelContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const dependenteId = searchParams.get('dependenteId') as string;
@@ -327,5 +327,13 @@ export default function VincularResponsavel() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function VincularResponsavel() {
+    return (
+        <Suspense fallback={<div>Carregando...</div>}>
+            <VincularResponsavelContent />
+        </Suspense>
     );
 }

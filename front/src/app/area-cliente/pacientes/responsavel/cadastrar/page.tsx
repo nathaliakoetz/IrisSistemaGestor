@@ -6,7 +6,7 @@ import { cairo, inter } from "@/utils/fonts";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner"
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState, Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { useClinicaStore } from "@/context/clinica";
 
@@ -29,7 +29,7 @@ type Inputs = {
     cep: string;
 }
 
-export default function CadastrarResponsavel() {
+function CadastrarResponsavelContent() {
 
     const { register, handleSubmit } = useForm<Inputs>()
     const { clinica } = useClinicaStore();
@@ -554,4 +554,12 @@ export default function CadastrarResponsavel() {
             </div>
         )
     }
+}
+
+export default function CadastrarResponsavel() {
+    return (
+        <Suspense fallback={<div>Carregando...</div>}>
+            <CadastrarResponsavelContent />
+        </Suspense>
+    );
 }
