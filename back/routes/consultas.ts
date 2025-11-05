@@ -7,6 +7,11 @@ const router = Router()
 router.get("/", async (req, res) => {
     try {
         const consultas = await prisma.consulta.findMany({
+            where: {
+                paciente: {
+                    deletedAt: null
+                }
+            },
             include: {
                 terapeuta: {
                     include: {
@@ -148,7 +153,10 @@ router.get("/:id", async (req, res) => {
     try {
         const consultas = await prisma.consulta.findMany({
             where: {
-                clinicaId: id
+                clinicaId: id,
+                paciente: {
+                    deletedAt: null
+                }
             },
             include: {
                 terapeuta: {
@@ -188,7 +196,10 @@ router.get("/terapeuta/:terapeutaId/:clinicaId", async (req, res) => {
         const consultas = await prisma.consulta.findMany({
             where: {
                 terapeutaId: terapeutaId,
-                clinicaId: clinicaId
+                clinicaId: clinicaId,
+                paciente: {
+                    deletedAt: null
+                }
             },
             include: {
                 terapeuta: true,
@@ -222,7 +233,10 @@ router.get("/paciente/:pacienteId", async (req, res) => {
     try {
         const consultas = await prisma.consulta.findMany({
             where: {
-                pacienteId: pacienteId
+                pacienteId: pacienteId,
+                paciente: {
+                    deletedAt: null
+                }
             },
             include: {
                 terapeuta: true,

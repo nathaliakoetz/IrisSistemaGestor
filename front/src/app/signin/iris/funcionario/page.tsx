@@ -26,6 +26,9 @@ export default function SignIn() {
     }, [])
 
     async function verificaLogin(data: Inputs) {
+
+        toast.info("Verificando informações... Aguarde.")
+
         const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/terapeutas/login`, {
             method: "POST",
             headers: { "Content-type": "Application/json" },
@@ -49,6 +52,7 @@ export default function SignIn() {
                 }
             }
 
+            toast.success("Login realizado com sucesso!");
             router.push("/signin/carregando-medico")
         } else if (response.status == 400) {
             toast.error("Erro... Login ou senha incorretos")

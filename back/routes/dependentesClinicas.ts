@@ -65,7 +65,10 @@ router.get("/:id", async (req, res) => {
     try {
         const dependentesClinicas = await prisma.dependenteClinica.findMany({
             where: {
-                clinicaId: id
+                clinicaId: id,
+                dependente: {
+                    deletedAt: null
+                }
             },
             include: {
                 dependente: true

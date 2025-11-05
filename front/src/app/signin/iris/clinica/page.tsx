@@ -29,6 +29,8 @@ export default function SignIn() {
         try {
             console.log('Tentando login com:', data.email);
             console.log('URL da API:', process.env.NEXT_PUBLIC_URL_API);
+
+            toast.info("Verificando informações... Aguarde.")
             
             const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/clinicas/login`, {
                 method: "POST",

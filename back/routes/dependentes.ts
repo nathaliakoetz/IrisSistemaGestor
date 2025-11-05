@@ -7,6 +7,9 @@ const router = Router()
 router.get("/", async (req, res) => {
     try {
         const dependentes = await prisma.dependente.findMany({
+            where: {
+                deletedAt: null
+            },
             include: {
                 ResponsavelDependente: {
                     include: {
@@ -173,7 +176,7 @@ router.get("/:id", async (req, res) => {
             }
         })
 
-        if (!dependente) {
+        if (!dependente || dependente.deletedAt !== null) {
             res.status(404).json({ erro: "Dependente não encontrado" })
             return
         }
