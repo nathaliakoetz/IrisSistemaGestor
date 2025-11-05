@@ -87,11 +87,13 @@ export default function AreaCliente() {
 
         if (response.status == 200) {
             const dados = await response.json()
+            console.log(dados)
             const horariosMap = dados.reduce((acc: { [key: string]: string[] }, horario: HorarioI) => {
                 const dateKey = toDateString(horario.data, false); // false = usar UTC (dados do banco)
                 acc[dateKey] = horario.horarios
                 return acc
             }, {})
+            console.log(horariosMap)
             setHorarios(horariosMap)
         }
     }

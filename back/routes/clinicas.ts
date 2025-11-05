@@ -369,6 +369,8 @@ router.get("/horarios/:id", async (req, res) => {
                 }
             }
         })
+
+        console.log(horarios)
         res.status(200).json(horarios)
     } catch (error) {
         res.status(400).json(error)
