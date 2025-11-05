@@ -48,6 +48,13 @@ export default function AreaCliente() {
     const [searchTerm, setSearchTerm] = useState("");
     const [terapeutaFiltro, setTerapeutaFiltro] = useState<string>("");
 
+    // Função auxiliar para converter data para GMT-3 (horário de Brasília)
+    const toGMT3DateString = (date: Date | string): string => {
+        const dateObj = typeof date === 'string' ? new Date(date) : date;
+        const dateGMT3 = new Date(dateObj.getTime() - (dateObj.getTimezoneOffset() * 60 * 1000));
+        return dateGMT3.toISOString().split('T')[0];
+    };
+
     async function buscaConsultas(id: string) {
         const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/consultas/${id}`, {
             method: "GET"
@@ -67,7 +74,7 @@ export default function AreaCliente() {
         if (response.status == 200) {
             const dados = await response.json()
             const horariosMap = dados.reduce((acc: { [key: string]: string[] }, horario: HorarioI) => {
-                const dateKey = new Date(horario.data).toISOString().split('T')[0]
+                const dateKey = toGMT3DateString(horario.data);
                 acc[dateKey] = horario.horarios
                 return acc
             }, {})
@@ -138,7 +145,8 @@ export default function AreaCliente() {
 
     useEffect(() => {
         if (selectedDate) {
-            const formattedSelectedDate = selectedDate ? new Date(selectedDate).toISOString().split('T')[0] : '';
+            const formattedSelectedDate = toGMT3DateString(selectedDate);
+            
             if (horarios[formattedSelectedDate]) {
                 if (consultas.length > 0) {
                     const horariosOcupados = consultas
@@ -171,7 +179,7 @@ export default function AreaCliente() {
     async function addConsulta(data: InputsAddConsulta) {
         setisAddConsultaOpen(!isAddConsultaOpen);
 
-        const formattedSelectedDate = selectedDate ? new Date(selectedDate).toISOString().split('T')[0] : '';
+        const formattedSelectedDate = selectedDate ? toGMT3DateString(selectedDate) : toGMT3DateString(new Date());
         const dataHora = String(formattedSelectedDate) + " " + String(data.hora);
 
         const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/consultas`, {
@@ -214,9 +222,10 @@ export default function AreaCliente() {
 
     const consultasDoDia = consultas
         .filter(consulta => {
-            const consultaDate = new Date(consulta.dataInicio).toISOString().split('T')[0]
-            const selectedDateString = selectedDate?.toISOString().split('T')[0]
-            const matchesDate = consultaDate === selectedDateString && !consulta.dataFim;
+            const consultaDateString = toGMT3DateString(consulta.dataInicio);
+            const selectedDateString = selectedDate ? toGMT3DateString(selectedDate) : null;
+            
+            const matchesDate = consultaDateString === selectedDateString && !consulta.dataFim;
             const matchesTerapeuta = !terapeutaFiltro || consulta.terapeutaId === terapeutaFiltro;
             return matchesDate && matchesTerapeuta;
         })
@@ -238,7 +247,7 @@ export default function AreaCliente() {
     async function addHorario(data: InputsAddHorario) {
         handleAddHorarioClosing();
 
-        const formattedSelectedDate = selectedDate ? new Date(selectedDate).toISOString().split('T')[0] : '';
+        const formattedSelectedDate = selectedDate ? toGMT3DateString(selectedDate) : toGMT3DateString(new Date());
 
         const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/clinicas/horario`, {
             method: "POST",
