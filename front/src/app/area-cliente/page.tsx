@@ -29,8 +29,8 @@ type InputsAddHorario = {
 
 
 export default function AreaCliente() {
-    const currentDate = new Date();
-    const [selectedDate, setSelectedDate] = useState<Date | null>(currentDate);
+    const [currentDate, setCurrentDate] = useState<Date>(new Date());
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [isLogged, setIsLogged] = useState(true);
     const [horariosPorData, setHorariosPorData] = useState<string[]>([]);
     const [isAddConsultaOpen, setisAddConsultaOpen] = useState(false);
@@ -74,6 +74,13 @@ export default function AreaCliente() {
             setHorarios(horariosMap)
         }
     }
+
+    useEffect(() => {
+        // Inicializar data atual
+        const today = new Date();
+        setCurrentDate(today);
+        setSelectedDate(today);
+    }, []);
 
     useEffect(() => {
         // Verificar login no cliente
