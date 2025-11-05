@@ -164,20 +164,12 @@ export default function AreaCliente() {
             const formattedSelectedDate = toDateString(selectedDate, true); // true = usar horário local
             
             if (horarios[formattedSelectedDate]) {
-                if (consultas.length > 0) {
-                    const horariosOcupados = consultas
-                        .filter(consulta => consulta.dataInicio.includes(formattedSelectedDate) && !consulta.dataFim)
-                        .map(consulta => consulta.dataInicio.split(' ')[1].slice(0, 5))
-                    const horariosDisponiveis = horarios[formattedSelectedDate].filter(horario => !horariosOcupados.includes(horario))
-                    setHorariosPorData(horariosDisponiveis);
-                } else {
-                    setHorariosPorData(horarios[formattedSelectedDate]);
-                }
+                setHorariosPorData(horarios[formattedSelectedDate]);
             } else {
                 setHorariosPorData([]);
             }
         }
-    }, [selectedDate, horarios, consultas]);
+    }, [selectedDate, horarios]);
 
     useEffect(() => {
         const filteredConsultas = consultas.filter(consulta => {

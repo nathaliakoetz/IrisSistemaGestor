@@ -148,22 +148,7 @@ export default function AreaAgenda() {
                 })
 
                 if (horarioParaData) {
-                    // Filtrar horários já ocupados por consultas
-                    if (consultas.length > 0) {
-                        const horariosOcupados = consultas
-                            .filter(consulta => {
-                                const consultaDate = toDateString(consulta.dataInicio, false);
-                                return consultaDate === data && !consulta.dataFim
-                            })
-                            .map(consulta => {
-                                const hora = new Date(consulta.dataInicio).toTimeString().slice(0, 5)
-                                return hora
-                            })
-                        const horariosDisponiveis = horarioParaData.horarios.filter((horario: string) => !horariosOcupados.includes(horario))
-                        setHorariosDisponiveis(horariosDisponiveis)
-                    } else {
-                        setHorariosDisponiveis(horarioParaData.horarios)
-                    }
+                    setHorariosDisponiveis(horarioParaData.horarios)
                 } else {
                     // Se não há horários cadastrados para essa data, não exibir nenhum horário
                     setHorariosDisponiveis([])
