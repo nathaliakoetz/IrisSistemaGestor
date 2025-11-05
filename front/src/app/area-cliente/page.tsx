@@ -30,7 +30,7 @@ type InputsAddHorario = {
 
 export default function AreaCliente() {
     const [currentDate, setCurrentDate] = useState<Date>(new Date());
-    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
     const [isLogged, setIsLogged] = useState(true);
     const [horariosPorData, setHorariosPorData] = useState<string[]>([]);
     const [isAddConsultaOpen, setisAddConsultaOpen] = useState(false);
@@ -199,11 +199,15 @@ export default function AreaCliente() {
 
     const tileClassName = ({ date, view }: { date: Date, view: string }) => {
         if (view === 'month') {
-
             const isSelected = selectedDate && date.toDateString() === selectedDate.toDateString();
             const isToday = date.toDateString() === currentDate.toDateString();
 
-            return isSelected ? 'highlight-selected' : (isToday ? 'remove-today-highlight' : '');
+            if (isSelected) {
+                return 'highlight-selected';
+            } else if (isToday) {
+                return 'remove-today-highlight';
+            }
+            return '';
         }
         return '';
     };
@@ -439,6 +443,7 @@ export default function AreaCliente() {
                             <div className="w-[365px] flex flex-col">
                                 <div className="w-auto bg-white rounded-lg shadow-lg p-3">
                                     <Calendar
+                                        key={selectedDate?.toISOString()}
                                         onChange={(value) => setSelectedDate(value as Date)}
                                         value={selectedDate || currentDate}
                                         tileClassName={tileClassName}
