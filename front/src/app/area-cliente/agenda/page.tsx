@@ -327,8 +327,10 @@ export default function AreaAgenda() {
 
             if (response.status === 200) {
                 toast.success("Consulta desmarcada com sucesso!");
+                console.log('dadosClinica:', dadosClinica?.id);
                 if (dadosClinica?.id) {
                     await buscaConsultas(dadosClinica.id);
+                    console.log('Atualizando horários');
                     // Atualizar horários disponíveis para a data selecionada
                     if (selectedDate) {
                         const dataFormatada = toDateString(selectedDate, true);
