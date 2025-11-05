@@ -347,7 +347,22 @@ router.delete("/desmarcar/:id", async (req, res) => {
         })
 
         if (horarioExistente) {
-            // Verifica se o horário já existe na lista antes de adicionar
+            // Se já existe horário para essa data, adiciona o horário de volta à lista (se ainda não estiver)
+            if (!horarioExistente.horarios.includes(horario)) {
+                await prisma.horario.update({
+                    where: {
+                        clinicaId_data: {
+                            clinicaId: consulta.clinicaId,
+                            data: new Date(data)
+                        }
+                    },
+                    data: {
+                        horarios: [...horarioExistente.horarios, horario]
+                    }
+                })
+            }
+        } else {
+            // Se não existe horário para essa data, cria um novo
             await prisma.horario.create({
                 data: {
                     clinicaId: consulta.clinicaId,
