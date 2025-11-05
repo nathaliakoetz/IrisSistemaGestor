@@ -85,7 +85,7 @@ export default function EditarFuncionario() {
                     return;
                 }
 
-                const response = await fetch(`http://localhost:3004/terapeutas/${terapeutaId}/${clinica.id}`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/terapeutas/${terapeutaId}/${clinica.id}`);
                 
                 if (!response.ok) {
                     if (response.status === 404) {
@@ -122,7 +122,7 @@ export default function EditarFuncionario() {
 
     async function efetuaEdicao(data: Inputs) {
         try {
-            const response = await fetch(`http://localhost:3004/terapeutas/${terapeutaId}/${clinica?.id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/terapeutas/${terapeutaId}/${clinica?.id}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json"

@@ -54,7 +54,7 @@ export default function GestaoFuncionarios() {
                 return;
             }
 
-            const response = await fetch(`http://localhost:3004/terapeutas/clinica/${clinicaAtual.id}`);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/terapeutas/clinica/${clinicaAtual.id}`);
             
             if (!response.ok) {
                 throw new Error('Erro ao buscar terapeutas');
@@ -174,7 +174,7 @@ export default function GestaoFuncionarios() {
                             return clinicaStorage ? JSON.parse(clinicaStorage) : null;
                         })();
 
-                        const response = await fetch(`http://localhost:3004/terapeutas`, {
+                        const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/terapeutas`, {
                             method: 'DELETE',
                             headers: {
                                 'Content-Type': 'application/json',
