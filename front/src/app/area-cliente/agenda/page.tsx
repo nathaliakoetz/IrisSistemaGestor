@@ -36,7 +36,6 @@ export default function AreaAgenda() {
     const [formData, setFormData] = useState({
         pacienteId: '',
         terapeutaId: '',
-        data: '',
         horario: ''
     });
     const { clinica } = useClinicaStore();
@@ -199,12 +198,13 @@ export default function AreaAgenda() {
         }
     }, [])
 
-    // useEffect para atualizar horários disponíveis quando consultas mudarem
+    // useEffect para atualizar horários disponíveis quando consultas ou data selecionada mudarem
     useEffect(() => {
-        if (formData.data && dadosClinica?.id) {
-            buscaHorariosDisponiveis(dadosClinica.id, formData.data);
+        if (selectedDate && dadosClinica?.id) {
+            const dataFormatada = selectedDate.toISOString().split('T')[0];
+            buscaHorariosDisponiveis(dadosClinica.id, dataFormatada);
         }
-    }, [consultas, formData.data, dadosClinica?.id]);
+    }, [consultas, selectedDate, dadosClinica?.id]);
 
     const handleAddConsultaOpening = () => {
         setisAddConsultaOpen(!isAddConsultaOpen);
@@ -213,10 +213,15 @@ export default function AreaAgenda() {
             setFormData({
                 pacienteId: '',
                 terapeutaId: '',
-                data: '',
                 horario: ''
             });
-            setHorariosDisponiveis([]);
+            // Carregar horários disponíveis para a data selecionada
+            if (selectedDate && dadosClinica?.id) {
+                const dataFormatada = selectedDate.toISOString().split('T')[0];
+                buscaHorariosDisponiveis(dadosClinica.id, dataFormatada);
+            } else {
+                setHorariosDisponiveis([]);
+            }
         }
     };
 
@@ -226,19 +231,20 @@ export default function AreaAgenda() {
             ...prev,
             [name]: value
         }));
-
-        // Se o campo alterado for a data, buscar horários disponíveis
-        if (name === 'data' && value && dadosClinica?.id) {
-            await buscaHorariosDisponiveis(dadosClinica.id, value);
-        }
     };
 
     const handleSubmitConsulta = async (e: React.FormEvent) => {
         e.preventDefault();
         
+        if (!selectedDate) {
+            toast.error('Por favor, selecione uma data no calendário.');
+            return;
+        }
+
         try {
-            // Combinar data e horário no mesmo formato da área-cliente
-            const dataHora = `${formData.data} ${formData.horario}`;
+            // Usar a data selecionada no calendário
+            const dataFormatada = selectedDate.toISOString().split('T')[0];
+            const dataHora = `${dataFormatada} ${formData.horario}`;
 
             const consultaData = {
                 clinicaId: dadosClinica?.id,
@@ -260,8 +266,9 @@ export default function AreaAgenda() {
                 if (dadosClinica?.id) {
                     await buscaConsultas(dadosClinica.id);
                     // Recarregar horários disponíveis para a data selecionada
-                    if (formData.data) {
-                        await buscaHorariosDisponiveis(dadosClinica.id, formData.data);
+                    if (selectedDate) {
+                        const dataFormatada = selectedDate.toISOString().split('T')[0];
+                        await buscaHorariosDisponiveis(dadosClinica.id, dataFormatada);
                     }
                 }
                 // Fechar modal e limpar formulário
@@ -269,7 +276,6 @@ export default function AreaAgenda() {
                 setFormData({
                     pacienteId: '',
                     terapeutaId: '',
-                    data: '',
                     horario: ''
                 });
                 toast.success('Consulta adicionada com sucesso!');
@@ -666,14 +672,9 @@ export default function AreaAgenda() {
                                         </option>
                                     ))}
                                 </select>
-                                <input
-                                    type="date"
-                                    name="data"
-                                    value={formData.data}
-                                    onChange={handleInputChange}
-                                    className="border-2 border-gray-300 bg-blue-100 rounded-lg p-2 w-full mb-4"
-                                    required
-                                />
+                                <div className="border-2 border-gray-300 bg-gray-100 rounded-lg p-2 w-full mb-4 text-gray-700">
+                                    <strong>Data selecionada:</strong> {selectedDate ? selectedDate.toLocaleDateString('pt-BR') : 'Nenhuma data selecionada'}
+                                </div>
                                 <select 
                                     name="horario"
                                     value={formData.horario}
@@ -684,9 +685,7 @@ export default function AreaAgenda() {
                                     <option value="">
                                         {horariosDisponiveis.length > 0 
                                             ? "Selecione o Horário" 
-                                            : formData.data 
-                                                ? "Nenhum horário disponível para esta data" 
-                                                : "Selecione primeiro uma data"
+                                            : "Nenhum horário disponível para esta data"
                                         }
                                     </option>
                                     {horariosDisponiveis.map((horario) => (
