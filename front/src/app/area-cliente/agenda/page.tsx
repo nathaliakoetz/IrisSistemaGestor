@@ -329,6 +329,11 @@ export default function AreaAgenda() {
                 toast.success("Consulta desmarcada com sucesso!");
                 if (dadosClinica?.id) {
                     await buscaConsultas(dadosClinica.id);
+                    // Atualizar horários disponíveis para a data selecionada
+                    if (selectedDate) {
+                        const dataFormatada = toDateString(selectedDate, true);
+                        await buscaHorariosDisponiveis(dadosClinica.id, dataFormatada);
+                    }
                 }
             } else {
                 toast.error("Erro ao desmarcar consulta!");
