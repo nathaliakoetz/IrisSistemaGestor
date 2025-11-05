@@ -51,8 +51,12 @@ export default function AreaCliente() {
     // Função auxiliar para converter data para GMT-3 (horário de Brasília)
     const toGMT3DateString = (date: Date | string): string => {
         const dateObj = typeof date === 'string' ? new Date(date) : date;
-        const dateGMT3 = new Date(dateObj.getTime() - (dateObj.getTimezoneOffset() * 60 * 1000));
-        return dateGMT3.toISOString().split('T')[0];
+        // Pega apenas a parte da data (YYYY-MM-DD) sem fazer conversão de timezone
+        // pois o backend já armazena em UTC
+        const year = dateObj.getUTCFullYear();
+        const month = String(dateObj.getUTCMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getUTCDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
     };
 
     async function buscaConsultas(id: string) {
