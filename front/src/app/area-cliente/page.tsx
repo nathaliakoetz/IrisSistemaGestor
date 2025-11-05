@@ -48,15 +48,25 @@ export default function AreaCliente() {
     const [searchTerm, setSearchTerm] = useState("");
     const [terapeutaFiltro, setTerapeutaFiltro] = useState<string>("");
 
-    // Função auxiliar para converter data para GMT-3 (horário de Brasília)
-    const toGMT3DateString = (date: Date | string): string => {
+    // Função auxiliar para converter data para string YYYY-MM-DD
+    // Usa horário local do navegador para datas selecionadas no calendário
+    // Usa UTC para datas vindas do banco de dados
+    const toDateString = (date: Date | string, useLocal: boolean = true): string => {
         const dateObj = typeof date === 'string' ? new Date(date) : date;
-        // Pega apenas a parte da data (YYYY-MM-DD) sem fazer conversão de timezone
-        // pois o backend já armazena em UTC
-        const year = dateObj.getUTCFullYear();
-        const month = String(dateObj.getUTCMonth() + 1).padStart(2, '0');
-        const day = String(dateObj.getUTCDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
+        
+        if (useLocal) {
+            // Para datas do calendário (seleção do usuário), usa horário local
+            const year = dateObj.getFullYear();
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const day = String(dateObj.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        } else {
+            // Para datas do banco (em UTC), usa UTC
+            const year = dateObj.getUTCFullYear();
+            const month = String(dateObj.getUTCMonth() + 1).padStart(2, '0');
+            const day = String(dateObj.getUTCDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
     };
 
     async function buscaConsultas(id: string) {
@@ -78,7 +88,7 @@ export default function AreaCliente() {
         if (response.status == 200) {
             const dados = await response.json()
             const horariosMap = dados.reduce((acc: { [key: string]: string[] }, horario: HorarioI) => {
-                const dateKey = toGMT3DateString(horario.data);
+                const dateKey = toDateString(horario.data, false); // false = usar UTC (dados do banco)
                 acc[dateKey] = horario.horarios
                 return acc
             }, {})
@@ -149,7 +159,7 @@ export default function AreaCliente() {
 
     useEffect(() => {
         if (selectedDate) {
-            const formattedSelectedDate = toGMT3DateString(selectedDate);
+            const formattedSelectedDate = toDateString(selectedDate, true); // true = usar horário local
             
             if (horarios[formattedSelectedDate]) {
                 if (consultas.length > 0) {
@@ -183,7 +193,7 @@ export default function AreaCliente() {
     async function addConsulta(data: InputsAddConsulta) {
         setisAddConsultaOpen(!isAddConsultaOpen);
 
-        const formattedSelectedDate = selectedDate ? toGMT3DateString(selectedDate) : toGMT3DateString(new Date());
+        const formattedSelectedDate = selectedDate ? toDateString(selectedDate, true) : toDateString(new Date(), true);
         const dataHora = String(formattedSelectedDate) + " " + String(data.hora);
 
         const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/consultas`, {
@@ -226,8 +236,8 @@ export default function AreaCliente() {
 
     const consultasDoDia = consultas
         .filter(consulta => {
-            const consultaDateString = toGMT3DateString(consulta.dataInicio);
-            const selectedDateString = selectedDate ? toGMT3DateString(selectedDate) : null;
+            const consultaDateString = toDateString(consulta.dataInicio, false); // false = UTC (dados do banco)
+            const selectedDateString = selectedDate ? toDateString(selectedDate, true) : null; // true = local (seleção do usuário)
             
             const matchesDate = consultaDateString === selectedDateString && !consulta.dataFim;
             const matchesTerapeuta = !terapeutaFiltro || consulta.terapeutaId === terapeutaFiltro;
@@ -251,7 +261,7 @@ export default function AreaCliente() {
     async function addHorario(data: InputsAddHorario) {
         handleAddHorarioClosing();
 
-        const formattedSelectedDate = selectedDate ? toGMT3DateString(selectedDate) : toGMT3DateString(new Date());
+        const formattedSelectedDate = selectedDate ? toDateString(selectedDate, true) : toDateString(new Date(), true);
 
         const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/clinicas/horario`, {
             method: "POST",
