@@ -19,7 +19,7 @@ import { DependenteI } from "@/utils/types/dependentes";
 
 export default function AreaAgenda() {
     const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
-    const currentDate = new Date();
+    const [currentDate, setCurrentDate] = useState<Date>(new Date());
     const [legendas, setLegendas] = useState<LegendaI[]>([]);
     const [consultas, setConsultas] = useState<ConsultaI[]>([]);
     const [terapeutas, setTerapeutas] = useState<TerapeutaI[]>([]);
@@ -40,6 +40,34 @@ export default function AreaAgenda() {
     });
     const { clinica } = useClinicaStore();
     const router = useRouter();
+
+    // Função auxiliar para converter data para string YYYY-MM-DD
+    // Usa horário local do navegador para datas selecionadas no calendário
+    // Usa UTC para datas vindas do banco de dados
+    const toDateString = (date: Date | string, useLocal: boolean = true): string => {
+        const dateObj = typeof date === 'string' ? new Date(date) : date;
+        
+        if (useLocal) {
+            // Para datas do calendário (seleção do usuário), usa horário local
+            const year = dateObj.getFullYear();
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const day = String(dateObj.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        } else {
+            // Para datas do banco (em UTC), usa UTC
+            const year = dateObj.getUTCFullYear();
+            const month = String(dateObj.getUTCMonth() + 1).padStart(2, '0');
+            const day = String(dateObj.getUTCDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+    };
+
+
+    useEffect(() => {
+        // Inicializar data atual
+        setCurrentDate(new Date());
+        setSelectedDate(new Date());
+    }, []);
 
     async function buscaLegendas(clinicaId: string) {
         try {
@@ -115,7 +143,7 @@ export default function AreaAgenda() {
                 const horariosData = await response.json()
                 // Encontrar horários para a data específica
                 const horarioParaData = horariosData.find((h: { data: string }) => {
-                    const dataHorario = new Date(h.data).toISOString().split('T')[0]
+                    const dataHorario = toDateString(h.data, false);
                     return dataHorario === data
                 })
 
@@ -124,7 +152,7 @@ export default function AreaAgenda() {
                     if (consultas.length > 0) {
                         const horariosOcupados = consultas
                             .filter(consulta => {
-                                const consultaDate = new Date(consulta.dataInicio).toISOString().split('T')[0]
+                                const consultaDate = toDateString(consulta.dataInicio, false);
                                 return consultaDate === data && !consulta.dataFim
                             })
                             .map(consulta => {
@@ -201,7 +229,7 @@ export default function AreaAgenda() {
     // useEffect para atualizar horários disponíveis quando consultas ou data selecionada mudarem
     useEffect(() => {
         if (selectedDate && dadosClinica?.id) {
-            const dataFormatada = selectedDate.toISOString().split('T')[0];
+            const dataFormatada = toDateString(selectedDate, true);
             buscaHorariosDisponiveis(dadosClinica.id, dataFormatada);
         }
     }, [consultas, selectedDate, dadosClinica?.id]);
@@ -217,7 +245,7 @@ export default function AreaAgenda() {
             });
             // Carregar horários disponíveis para a data selecionada
             if (selectedDate && dadosClinica?.id) {
-                const dataFormatada = selectedDate.toISOString().split('T')[0];
+                const dataFormatada = toDateString(selectedDate, true);
                 buscaHorariosDisponiveis(dadosClinica.id, dataFormatada);
             } else {
                 setHorariosDisponiveis([]);
@@ -243,7 +271,7 @@ export default function AreaAgenda() {
 
         try {
             // Usar a data selecionada no calendário
-            const dataFormatada = selectedDate.toISOString().split('T')[0];
+            const dataFormatada = toDateString(selectedDate, true);
             const dataHora = `${dataFormatada} ${formData.horario}`;
 
             const consultaData = {
@@ -267,7 +295,7 @@ export default function AreaAgenda() {
                     await buscaConsultas(dadosClinica.id);
                     // Recarregar horários disponíveis para a data selecionada
                     if (selectedDate) {
-                        const dataFormatada = selectedDate.toISOString().split('T')[0];
+                        const dataFormatada = toDateString(selectedDate, true);
                         await buscaHorariosDisponiveis(dadosClinica.id, dataFormatada);
                     }
                 }
@@ -338,9 +366,9 @@ export default function AreaAgenda() {
 
     // Função para obter consultas de um dia específico
     const getConsultasDoDia = (data: Date): ConsultaI[] => {
-        const dataString = data.toISOString().split('T')[0];
+        const dataString = toDateString(data, true);
         return consultas.filter(consulta => {
-            const consultaData = new Date(consulta.dataInicio).toISOString().split('T')[0];
+            const consultaData = toDateString(consulta.dataInicio, false);
             return consultaData === dataString;
         });
     };
@@ -440,7 +468,13 @@ export default function AreaAgenda() {
             const isSelected = selectedDate && date.toDateString() === selectedDate.toDateString();
             const isToday = date.toDateString() === currentDate.toDateString();
 
-            return isSelected ? 'highlight-selected' : (isToday ? 'remove-today-highlight' : '');
+            if (isSelected) {
+                return 'highlight-selected';
+            } else if (isToday) {
+                return 'remove-today-highlight';
+            } else {
+                return '';
+            }
         }
         return '';
     };
@@ -533,6 +567,7 @@ export default function AreaAgenda() {
                                 value={selectedDate}
                                 tileClassName={tileClassName}
                                 locale="pt-BR"
+                                key={selectedDate?.toISOString()}
                             />
                             <div className="mt-4">
                                 <div className="flex justify-start gap-2 text-xl items-center">
