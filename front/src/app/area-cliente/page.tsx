@@ -29,8 +29,23 @@ type InputsAddHorario = {
 
 
 export default function AreaCliente() {
-    const [currentDate, setCurrentDate] = useState<Date>(new Date());
-    const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+    // Função helper para normalizar datas (remover timezone)
+    const normalizeDate = (date: Date) => {
+        const normalized = new Date(date);
+        normalized.setHours(0, 0, 0, 0);
+        return normalized;
+    };
+
+    // Função helper para formatar data no formato YYYY-MM-DD sem timezone
+    const formatDateLocal = (date: Date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    const [currentDate, setCurrentDate] = useState<Date>(() => normalizeDate(new Date()));
+    const [selectedDate, setSelectedDate] = useState<Date | null>(() => normalizeDate(new Date()));
     const [isLogged, setIsLogged] = useState(true);
     const [horariosPorData, setHorariosPorData] = useState<string[]>([]);
     const [isAddConsultaOpen, setisAddConsultaOpen] = useState(false);
@@ -67,7 +82,9 @@ export default function AreaCliente() {
         if (response.status == 200) {
             const dados = await response.json()
             const horariosMap = dados.reduce((acc: { [key: string]: string[] }, horario: HorarioI) => {
-                const dateKey = new Date(horario.data).toISOString().split('T')[0]
+                // Usa formatação local ao invés de toISOString para evitar problemas de timezone
+                const date = new Date(horario.data);
+                const dateKey = formatDateLocal(date);
                 acc[dateKey] = horario.horarios
                 return acc
             }, {})
@@ -76,8 +93,8 @@ export default function AreaCliente() {
     }
 
     useEffect(() => {
-        // Inicializar data atual
-        const today = new Date();
+        // Inicializar data atual normalizada
+        const today = normalizeDate(new Date());
         setCurrentDate(today);
         setSelectedDate(today);
     }, []);
@@ -138,7 +155,8 @@ export default function AreaCliente() {
 
     useEffect(() => {
         if (selectedDate) {
-            const formattedSelectedDate = selectedDate ? new Date(selectedDate).toISOString().split('T')[0] : '';
+            // Usa formatação local ao invés de toISOString
+            const formattedSelectedDate = formatDateLocal(selectedDate);
             if (horarios[formattedSelectedDate]) {
                 if (consultas.length > 0) {
                     const horariosOcupados = consultas
@@ -171,7 +189,8 @@ export default function AreaCliente() {
     async function addConsulta(data: InputsAddConsulta) {
         setisAddConsultaOpen(!isAddConsultaOpen);
 
-        const formattedSelectedDate = selectedDate ? new Date(selectedDate).toISOString().split('T')[0] : '';
+        // Usa formatação local ao invés de toISOString
+        const formattedSelectedDate = selectedDate ? formatDateLocal(selectedDate) : '';
         const dataHora = String(formattedSelectedDate) + " " + String(data.hora);
 
         const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/consultas`, {
@@ -214,8 +233,8 @@ export default function AreaCliente() {
 
     const consultasDoDia = consultas
         .filter(consulta => {
-            const consultaDate = new Date(consulta.dataInicio).toISOString().split('T')[0]
-            const selectedDateString = selectedDate?.toISOString().split('T')[0]
+            const consultaDate = consulta.dataInicio.split(' ')[0]; // Pega apenas a data YYYY-MM-DD
+            const selectedDateString = selectedDate ? formatDateLocal(selectedDate) : '';
             const matchesDate = consultaDate === selectedDateString && !consulta.dataFim;
             const matchesTerapeuta = !terapeutaFiltro || consulta.terapeutaId === terapeutaFiltro;
             return matchesDate && matchesTerapeuta;
@@ -238,7 +257,8 @@ export default function AreaCliente() {
     async function addHorario(data: InputsAddHorario) {
         handleAddHorarioClosing();
 
-        const formattedSelectedDate = selectedDate ? new Date(selectedDate).toISOString().split('T')[0] : '';
+        // Usa formatação local ao invés de toISOString
+        const formattedSelectedDate = selectedDate ? formatDateLocal(selectedDate) : '';
 
         const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/clinicas/horario`, {
             method: "POST",
