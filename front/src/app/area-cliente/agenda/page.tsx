@@ -148,7 +148,11 @@ export default function AreaAgenda() {
                 })
 
                 if (horarioParaData) {
-                    setHorariosDisponiveis(horarioParaData.horarios)
+                    // Ordenar horários de forma crescente (00:00, 01:00, 02:00, etc.)
+                    const horariosOrdenados = [...horarioParaData.horarios].sort((a: string, b: string) => {
+                        return a.localeCompare(b);
+                    });
+                    setHorariosDisponiveis(horariosOrdenados)
                 } else {
                     // Se não há horários cadastrados para essa data, não exibir nenhum horário
                     setHorariosDisponiveis([])

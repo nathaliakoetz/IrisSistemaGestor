@@ -164,7 +164,11 @@ export default function AreaCliente() {
             const formattedSelectedDate = toDateString(selectedDate, true); // true = usar horário local
             
             if (horarios[formattedSelectedDate]) {
-                setHorariosPorData(horarios[formattedSelectedDate]);
+                // Ordenar horários de forma crescente (00:00, 01:00, 02:00, etc.)
+                const horariosOrdenados = [...horarios[formattedSelectedDate]].sort((a, b) => {
+                    return a.localeCompare(b);
+                });
+                setHorariosPorData(horariosOrdenados);
             } else {
                 setHorariosPorData([]);
             }
