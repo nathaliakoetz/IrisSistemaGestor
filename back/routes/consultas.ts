@@ -59,6 +59,39 @@ router.post("/", async (req, res) => {
     console.log(clinicaId, terapeutaId, pacienteId, dataInicio, dataFim, detalhes)
 
     try {
+        // Verificar se o terapeuta já tem consulta no mesmo horário
+        const consultaTerapeutaExistente = await prisma.consulta.findFirst({
+            where: {
+                terapeutaId: terapeutaId,
+                dataInicio: dataInicio,
+                dataFim: null // Apenas consultas não finalizadas
+            }
+        })
+
+        if (consultaTerapeutaExistente) {
+            res.status(400).json({ 
+                erro: "Este terapeuta já possui uma consulta agendada neste horário" 
+            })
+            return
+        }
+
+        // Verificar se o paciente já tem consulta no mesmo horário (se pacienteId foi fornecido)
+        if (pacienteId) {
+            const consultaPacienteExistente = await prisma.consulta.findFirst({
+                where: {
+                    pacienteId: pacienteId,
+                    dataInicio: dataInicio,
+                    dataFim: null // Apenas consultas não finalizadas
+                }
+            })
+
+            if (consultaPacienteExistente) {
+                res.status(400).json({ 
+                    erro: "Este paciente já possui uma consulta agendada neste horário" 
+                })
+                return
+            }
+        }
 
         const consulta = await prisma.consulta.create({
             data: {
