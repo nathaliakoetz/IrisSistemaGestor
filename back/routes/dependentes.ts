@@ -46,7 +46,8 @@ router.get("/", async (req, res) => {
         })
         res.status(200).json(dependentes)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao buscar dependentes:', error)
+        res.status(400).json({ erro: "Não foi possível carregar os pacientes. Tente novamente" })
     }
 })
 
@@ -56,7 +57,7 @@ router.post("/", async (req, res) => {
     console.log(nome, cpf, responsavelId, clinicaId, genero, dataNascimento)
 
     if (!nome || !cpf || !responsavelId || !genero || !dataNascimento) {
-        res.status(400).json({ erro: "Informe nome, cpf, responsavelId, genero, dataNascimento" })
+        res.status(400).json({ erro: "Por favor, preencha todos os campos obrigatórios (nome, CPF, responsável, gênero e data de nascimento)" })
         return
     }
 
@@ -131,7 +132,8 @@ router.post("/", async (req, res) => {
 
         res.status(201).json(dependenteCriado)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao criar dependente:', error)
+        res.status(400).json({ erro: "Não foi possível cadastrar o paciente. Tente novamente" })
     }
 })
 
@@ -177,13 +179,14 @@ router.get("/:id", async (req, res) => {
         })
 
         if (!dependente || dependente.deletedAt !== null) {
-            res.status(404).json({ erro: "Dependente não encontrado" })
+            res.status(404).json({ erro: "Paciente não encontrado" })
             return
         }
 
         res.status(200).json(dependente)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao buscar dependente:', error)
+        res.status(400).json({ erro: "Não foi possível carregar os dados do paciente. Tente novamente" })
     }
 })
 
@@ -216,7 +219,8 @@ router.get("/clinica/:clinicaId", async (req, res) => {
 
         res.status(200).json(dependentes)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao buscar dependentes da clínica:', error)
+        res.status(400).json({ erro: "Não foi possível carregar os pacientes da clínica. Tente novamente" })
     }
 })
 
@@ -242,7 +246,8 @@ router.delete("/:id", async (req, res) => {
 
         res.status(200).json(dependente)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao deletar dependente:', error)
+        res.status(400).json({ erro: "Não foi possível excluir o paciente. Tente novamente" })
     }
 })
 
@@ -251,7 +256,7 @@ router.put("/:id", async (req, res) => {
     const { nome, cpf, genero, dataNascimento, responsavelId } = req.body
 
     if (!nome || !cpf || !genero || !dataNascimento) {
-        res.status(400).json({ erro: "Informe nome, cpf, genero, dataNascimento" })
+        res.status(400).json({ erro: "Por favor, preencha todos os campos obrigatórios (nome, CPF, gênero e data de nascimento)" })
         return
     }
 
@@ -262,7 +267,7 @@ router.put("/:id", async (req, res) => {
         })
 
         if (!dependenteExistente) {
-            res.status(404).json({ erro: "Dependente não encontrado" })
+            res.status(404).json({ erro: "Paciente não encontrado" })
             return
         }
 
@@ -353,7 +358,8 @@ router.put("/:id", async (req, res) => {
 
         res.status(200).json(dependenteAtualizado)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao atualizar dependente:', error)
+        res.status(400).json({ erro: "Não foi possível atualizar os dados do paciente. Tente novamente" })
     }
 })
 

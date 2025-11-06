@@ -55,7 +55,11 @@ export default function SignIn() {
             toast.success("Login realizado com sucesso!");
             router.push("/signin/carregando-medico")
         } else if (response.status == 400) {
-            toast.error("Erro... Login ou senha incorretos")
+            const errorData = await response.json().catch(() => ({}));
+            toast.error(errorData.erro || "Login ou senha incorretos");
+        } else {
+            const errorData = await response.json().catch(() => ({}));
+            toast.error(errorData.erro || 'Erro ao fazer login. Tente novamente.');
         }
     }
 

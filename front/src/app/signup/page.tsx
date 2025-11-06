@@ -123,11 +123,11 @@ export default function SignUp() {
                         // Mostrar detalhes do erro
                         const errorData = await response.json().catch(() => ({}));
                         console.error('Erro no cadastro:', response.status, errorData);
-                        toast.error(`Erro ao cadastrar clínica: ${errorData.message || response.statusText || 'Erro desconhecido'}`);
+                        toast.error(errorData.erro || 'Erro ao cadastrar clínica. Tente novamente.');
                     }
                 } catch (error) {
                     console.error('Erro na requisição:', error);
-                    toast.error(`Erro ao conectar com servidor: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+                    toast.error('Erro ao conectar com o servidor. Verifique sua conexão.');
                 }
         }
     }

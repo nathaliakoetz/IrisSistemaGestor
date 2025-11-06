@@ -52,7 +52,7 @@ router.post("/", async (req, res) => {
     console.log('####################')
 
     if (!clinicaId || !terapeutaId || !dataInicio) {
-        res.status(400).json({ erro: "Informe clinicaId, terapeutaId, pacienteId" })
+        res.status(400).json({ erro: "Por favor, preencha todos os campos obrigatórios para agendar a consulta" })
         return
     }
 
@@ -134,7 +134,8 @@ router.post("/", async (req, res) => {
 
         res.status(201).json(consulta)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao criar consulta:', error)
+        res.status(400).json({ erro: "Não foi possível agendar a consulta. Tente novamente" })
     }
 })
 
@@ -160,7 +161,8 @@ router.delete("/:id", async (req, res) => {
 
         res.status(200).json(consulta)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao deletar consulta:', error)
+        res.status(400).json({ erro: "Não foi possível excluir a consulta. Tente novamente" })
     }
 })
 
@@ -176,7 +178,8 @@ router.patch("/finalizar/:id", async (req, res) => {
 
         res.status(200).json(consulta)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao finalizar consulta:', error)
+        res.status(400).json({ erro: "Não foi possível finalizar a consulta. Tente novamente" })
     }
 })
 
@@ -218,7 +221,8 @@ router.get("/:id", async (req, res) => {
         })
         res.status(200).json(consultas)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao buscar consultas:', error)
+        res.status(400).json({ erro: "Não foi possível carregar as consultas. Tente novamente" })
     }
 })
 
@@ -256,7 +260,8 @@ router.get("/terapeuta/:terapeutaId/:clinicaId", async (req, res) => {
         })
         res.status(200).json(consultas)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao buscar consultas do terapeuta:', error)
+        res.status(400).json({ erro: "Não foi possível carregar as consultas. Tente novamente" })
     }
 })
 
@@ -281,7 +286,8 @@ router.get("/paciente/:pacienteId", async (req, res) => {
         })
         res.status(200).json(consultas)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao buscar consultas do paciente:', error)
+        res.status(400).json({ erro: "Não foi possível carregar as consultas. Tente novamente" })
     }
 })
 
@@ -316,7 +322,8 @@ router.get("/detalhes/:id", async (req, res) => {
 
         res.status(200).json(consulta)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao buscar detalhes da consulta:', error)
+        res.status(400).json({ erro: "Não foi possível carregar os detalhes da consulta. Tente novamente" })
     }
 })
 
@@ -345,7 +352,8 @@ router.put("/detalhes/:id", async (req, res) => {
 
         res.status(200).json(consultaAtualizada)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao atualizar detalhes da consulta:', error)
+        res.status(400).json({ erro: "Não foi possível atualizar os detalhes da consulta. Tente novamente" })
     }
 })
 
@@ -407,7 +415,8 @@ router.delete("/desmarcar/:id", async (req, res) => {
 
         res.status(200).json({ mensagem: "Consulta desmarcada com sucesso" })
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao desmarcar consulta:', error)
+        res.status(400).json({ erro: "Não foi possível desmarcar a consulta. Tente novamente" })
     }
 })
 

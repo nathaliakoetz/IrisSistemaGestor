@@ -54,7 +54,8 @@ router.get("/", async (req, res) => {
         })
         res.status(200).json(terapeutas)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao buscar terapeutas:', error)
+        res.status(400).json({ erro: "Não foi possível carregar os terapeutas. Tente novamente" })
     }
 })
 
@@ -76,7 +77,8 @@ router.get("/clinica/:clinicaId", async (req, res) => {
         })
         res.status(200).json(terapeutas)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao buscar terapeutas da clínica:', error)
+        res.status(400).json({ erro: "Não foi possível carregar os funcionários. Tente novamente" })
     }
 })
 
@@ -104,13 +106,14 @@ router.get("/:id/:clinicaId", async (req, res) => {
         })
         
         if (!terapeuta) {
-            res.status(404).json({ erro: "Terapeuta não encontrado" })
+            res.status(404).json({ erro: "Funcionário não encontrado" })
             return
         }
         
         res.status(200).json(terapeuta)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao buscar terapeuta:', error)
+        res.status(400).json({ erro: "Não foi possível carregar os dados do funcionário. Tente novamente" })
     }
 })
 
@@ -120,7 +123,7 @@ function validaSenha(senha: string) {
 
     // .length: retorna o tamanho da string (da senha)
     if (senha.length < 8) {
-        mensa.push("Erro... senha deve possuir, no mínimo, 8 caracteres")
+        mensa.push("A senha deve possuir no mínimo 8 caracteres")
     }
 
     // contadores
@@ -149,7 +152,7 @@ function validaSenha(senha: string) {
     }
 
     if (pequenas == 0 || grandes == 0 || numeros == 0 || simbolos == 0) {
-        mensa.push("Erro... senha deve possuir letras minúsculas, maiúsculas, números e símbolos")
+        mensa.push("A senha deve conter letras minúsculas, maiúsculas, números e símbolos")
     }
 
     return mensa
@@ -159,7 +162,7 @@ router.post("/", async (req, res) => {
     const { nome, email, senha, cpfCnpj, telefone1, telefone2, profissao, clinicaId } = req.body
 
     if (!nome || !email || !senha || !cpfCnpj || !telefone1 || !profissao || !clinicaId) {
-        res.status(400).json({ "erro": "Informe nome, email, senha, cnpfCnpj, telefone1, profissao e clinicaId" })
+        res.status(400).json({ "erro": "Por favor, preencha todos os campos obrigatórios (nome, email, senha, CPF/CNPJ, telefone e profissão)" })
         return
     }
 
@@ -241,7 +244,8 @@ router.post("/", async (req, res) => {
 
         res.status(201).json(resultado.terapeuta)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao criar terapeuta:', error)
+        res.status(400).json({ erro: "Não foi possível cadastrar o funcionário. Tente novamente" })
     }
 })
 
@@ -250,7 +254,7 @@ router.patch("/:id/:clinicaId", async (req, res) => {
     const { nome, email, cpfCnpj, telefone1, telefone2, profissao } = req.body
 
     if (!nome && !email && !cpfCnpj && !telefone1 && !profissao) {
-        res.status(400).json({ "erro": "Informe pelo menos 1 dos dados: nome, email, cpfCnpj, telefone1, telefone2, profissao" })
+        res.status(400).json({ "erro": "Por favor, informe pelo menos um campo para atualizar" })
         return
     }
 
@@ -312,7 +316,8 @@ router.patch("/:id/:clinicaId", async (req, res) => {
 
         res.status(200).json(terapeuta)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao atualizar terapeuta:', error)
+        res.status(400).json({ erro: "Não foi possível atualizar os dados do funcionário. Tente novamente" })
     }
 })
 
@@ -320,7 +325,7 @@ router.delete("/", async (req, res) => {
     const { id, clinicaId } = req.body;
 
     if (!id || !clinicaId) {
-        res.status(400).json({ "erro": "Informe id e clinicaId" });
+        res.status(400).json({ "erro": "Por favor, forneça o ID do funcionário e da clínica" });
         return;
     }
 
@@ -371,7 +376,8 @@ router.delete("/", async (req, res) => {
 
         res.status(200).json(resultado)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao deletar terapeuta:', error)
+        res.status(400).json({ erro: "Não foi possível excluir o funcionário. Tente novamente" })
     }
 })
 
@@ -417,7 +423,8 @@ router.post("/login", async (req, res) => {
 
         res.status(200).json({ ...terapeutaSemSenha, token })
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao fazer login:', error)
+        res.status(400).json({ erro: "Erro ao fazer login. Tente novamente" })
     }
 })
 

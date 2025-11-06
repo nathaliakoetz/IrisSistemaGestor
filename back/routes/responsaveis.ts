@@ -27,7 +27,8 @@ router.get("/", async (req, res) => {
         })
         res.status(200).json(responsaveis)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao buscar responsáveis:', error)
+        res.status(400).json({ erro: "Não foi possível carregar os responsáveis. Tente novamente" })
     }
 })
 
@@ -35,7 +36,7 @@ router.post("/", async (req, res) => {
     const { nome, email, cpf, telefone1, telefone2, enderecoId, genero, estadoCivil, dataNascimento } = req.body
 
     if (!nome || !email || !cpf || !telefone1 || !enderecoId || !genero || !estadoCivil || !dataNascimento) {
-        res.status(400).json({ erro: "Informe nome, email, cpf, telefone1, telefone2, enderecoId, genero, estadoCivil, dataNascimento" })
+        res.status(400).json({ erro: "Por favor, preencha todos os campos obrigatórios" })
         return
     }
 
@@ -82,7 +83,8 @@ router.post("/", async (req, res) => {
 
         res.status(201).json(responsavel)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao criar responsável:', error)
+        res.status(400).json({ erro: "Não foi possível cadastrar o responsável. Tente novamente" })
     }
 })
 

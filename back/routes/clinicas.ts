@@ -45,7 +45,8 @@ router.get("/", async (req, res) => {
         })
         res.status(200).json(clinicas)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao buscar clínicas:', error)
+        res.status(400).json({ erro: "Não foi possível carregar as clínicas. Tente novamente" })
     }
 })
 
@@ -55,7 +56,7 @@ function validaSenha(senha: string) {
 
     // .length: retorna o tamanho da string (da senha)
     if (senha.length < 8) {
-        mensa.push("Erro... senha deve possuir, no mínimo, 8 caracteres")
+        mensa.push("A senha deve possuir no mínimo 8 caracteres")
     }
 
     // contadores
@@ -84,7 +85,7 @@ function validaSenha(senha: string) {
     }
 
     if (pequenas == 0 || grandes == 0 || numeros == 0 || simbolos == 0) {
-        mensa.push("Erro... senha deve possuir letras minúsculas, maiúsculas, números e símbolos")
+        mensa.push("A senha deve conter letras minúsculas, maiúsculas, números e símbolos")
     }
 
     return mensa
@@ -94,7 +95,7 @@ router.post("/", async (req, res) => {
     const { nome, email, senha, cpfCnpj, telefone1, telefone2 } = req.body
 
     if (!nome || !email || !senha || !cpfCnpj || !telefone1) {
-        res.status(400).json({ erro: "Informe nome, email, senha, cpfCnpj e telefones" })
+        res.status(400).json({ erro: "Por favor, preencha todos os campos obrigatórios (nome, email, senha, CPF/CNPJ e telefone)" })
         return
     }
 
@@ -127,7 +128,8 @@ router.post("/", async (req, res) => {
 
         res.status(201).json(clinica)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao criar clínica:', error)
+        res.status(400).json({ erro: "Não foi possível criar a conta. Verifique se o email já está cadastrado" })
     }
 })
 
@@ -153,7 +155,8 @@ router.delete("/:id", async (req, res) => {
 
         res.status(200).json(clinica)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao deletar clínica:', error)
+        res.status(400).json({ erro: "Não foi possível desativar a conta. Tente novamente" })
     }
 })
 
@@ -162,7 +165,7 @@ router.patch("/:id", async (req, res) => {
     const { nome, email, cpfCnpj, telefone1, telefone2, foto } = req.body
 
     if (!nome && !email && !cpfCnpj && !telefone1 && !telefone2 && !foto) {
-        res.status(400).json({ erro: "Informe pelo menos 1 dos dados: nome, email, cpfCnpj, telefone1, telefone2, foto" })
+        res.status(400).json({ erro: "Por favor, informe pelo menos um campo para atualizar" })
         return
     }
 
@@ -190,7 +193,8 @@ router.patch("/:id", async (req, res) => {
 
         res.status(200).json(clinica)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao atualizar clínica:', error)
+        res.status(400).json({ erro: "Não foi possível atualizar os dados. Tente novamente" })
     }
 })
 
@@ -216,7 +220,8 @@ router.patch("/reativar/:id", async (req, res) => {
 
         res.status(200).json(clinica)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao reativar clínica:', error)
+        res.status(400).json({ erro: "Não foi possível reativar a conta. Tente novamente" })
     }
 })
 
@@ -232,7 +237,8 @@ router.get("/ativas", async (req, res) => {
         })
         res.status(200).json(clinicas)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao buscar clínicas ativas:', error)
+        res.status(400).json({ erro: "Não foi possível carregar as clínicas ativas. Tente novamente" })
     }
 })
 
@@ -264,7 +270,8 @@ router.get("/:id", async (req, res) => {
         })
         res.status(200).json(clinicas)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao buscar clínica:', error)
+        res.status(400).json({ erro: "Não foi possível carregar os dados da clínica. Tente novamente" })
     }
 })
 
@@ -373,7 +380,8 @@ router.get("/horarios/:id", async (req, res) => {
         console.log(horarios)
         res.status(200).json(horarios)
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao buscar horários:', error)
+        res.status(400).json({ erro: "Não foi possível carregar os horários. Tente novamente" })
     }
 })
 
@@ -381,7 +389,7 @@ router.post("/horario", async (req, res) => {
     const { clinicaId, data, horario } = req.body
 
     if (!clinicaId || !data || !horario) {
-        res.status(400).json({ erro: "Informe clinicaId, data, horario" })
+        res.status(400).json({ erro: "Por favor, preencha todos os campos obrigatórios (clínica, data e horário)" })
         return
     }
 
@@ -425,7 +433,8 @@ router.post("/horario", async (req, res) => {
             res.status(201).json(horarios)
         }
     } catch (error) {
-        res.status(400).json(error)
+        console.error('Erro ao criar/atualizar horário:', error)
+        res.status(400).json({ erro: "Não foi possível cadastrar o horário. Tente novamente" })
     }
 })
 
@@ -517,7 +526,8 @@ router.patch("/alterar-senha", async (req, res) => {
 
         res.status(200).json({ mensagem: "Senha alterada com sucesso!" });
     } catch (error) {
-        res.status(400).json({ erro: "Erro ao alterar senha" });
+        console.error('Erro ao alterar senha:', error)
+        res.status(400).json({ erro: "Não foi possível alterar a senha. Tente novamente" });
     }
 });
 
