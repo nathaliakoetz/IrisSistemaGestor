@@ -298,7 +298,7 @@ export default function AreaAgenda() {
                 toast.success('Consulta adicionada com sucesso!');
             } else {
                 const errorData = await response.json();
-                toast.error(`Erro ao adicionar consulta: ${errorData.message || 'Erro desconhecido'}`);
+                toast.error(errorData.erro || errorData.message || 'Erro ao adicionar consulta');
             }
         } catch (error) {
             console.error('Erro ao adicionar consulta:', error);

@@ -212,6 +212,9 @@ export default function AreaCliente() {
             await buscaConsultas(dadosClinica!.id);
             await buscaHorarios(dadosClinica!.id);
             reset()
+        } else if (response.status == 400) {
+            const errorData = await response.json();
+            toast.error(errorData.erro || "Erro ao adicionar consulta!");
         } else {
             toast.error("Erro ao adicionar consulta!")
         }
