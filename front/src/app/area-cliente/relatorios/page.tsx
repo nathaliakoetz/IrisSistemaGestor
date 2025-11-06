@@ -27,7 +27,7 @@ export default function RelatoriosCliente() {
     const [dataFim, setDataFim] = useState("");
     const [consultas, setConsultas] = useState<ConsultaI[]>([]);
     const [loading, setLoading] = useState(false);
-    const { clinica } = useClinicaStore();
+    const { clinica, carregaClinicaDaStorage } = useClinicaStore();
     const router = useRouter();
     const dropdownRefPaciente = useRef<HTMLDivElement>(null);
     const dropdownRefTerapeuta = useRef<HTMLDivElement>(null);
@@ -41,6 +41,11 @@ export default function RelatoriosCliente() {
                 return;
             }
             setIsLogged(true);
+        }
+
+        // Carregar clínica do storage se não estiver no estado
+        if (!clinica.id) {
+            carregaClinicaDaStorage();
         }
 
         if (clinica.id) {

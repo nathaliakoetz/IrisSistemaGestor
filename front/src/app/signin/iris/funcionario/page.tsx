@@ -27,7 +27,7 @@ export default function SignIn() {
 
     async function verificaLogin(data: Inputs) {
 
-        toast.info("Verificando informações... Aguarde.")
+        toast.info("Verificando credenciais... Aguarde.")
 
         const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/terapeutas/login`, {
             method: "POST",
