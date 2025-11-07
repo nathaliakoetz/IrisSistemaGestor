@@ -76,7 +76,7 @@ export default function AreaMedica() {
         .sort((a, b) => new Date(a.dataInicio).getTime() - new Date(b.dataInicio).getTime());
 
     const openDetailsPage = (consultaId: number) => {
-        router.push(`/area-medica/detalhes-consulta/${consultaId}`);
+        router.push(`/area-medica/detalhes-consulta/${consultaId}?origem=geral`);
     };
 
     useEffect(() => {

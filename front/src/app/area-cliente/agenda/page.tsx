@@ -433,21 +433,32 @@ export default function AreaAgenda() {
                                             <div className="text-[12px] mb-2">
                                                 Horário: {new Date(consulta.dataInicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                                             </div>
-                                            {consulta.dataFim ? (
-                                                <div className="text-[10px] text-green-600 font-semibold">
-                                                    ✓ Finalizada
-                                                </div>
-                                            ) : (
+                                            <div className="flex gap-2">
                                                 <button
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        openDesmarcarModal(consulta);
+                                                        router.push(`/area-cliente/detalhes-consulta/${consulta.id}?origem=agenda`);
                                                     }}
-                                                    className="text-[10px] bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition-colors"
+                                                    className="text-[10px] bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition-colors"
                                                 >
-                                                    Desmarcar
+                                                    Ver Detalhes
                                                 </button>
-                                            )}
+                                                {consulta.dataFim ? (
+                                                    <div className="text-[10px] text-green-600 font-semibold flex items-center">
+                                                        ✓ Finalizada
+                                                    </div>
+                                                ) : (
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            openDesmarcarModal(consulta);
+                                                        }}
+                                                        className="text-[10px] bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition-colors"
+                                                    >
+                                                        Desmarcar
+                                                    </button>
+                                                )}
+                                            </div>
                                         </div>
                                     )}
                                 </div>

@@ -4,7 +4,7 @@ import { SideBar } from "@/components/SideBar";
 import { TopBar } from "@/components/TopBar";
 import { cairo, inter } from "@/utils/fonts";
 import { useEffect, useState } from 'react';
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { ConsultaI } from "@/utils/types/consultas";
 import TextareaAutosize from 'react-textarea-autosize';
 import { toast } from "sonner";
@@ -17,7 +17,9 @@ export default function DetalhesConsulta() {
     const [editando, setEditando] = useState(false);
     const router = useRouter();
     const params = useParams();
+    const searchParams = useSearchParams();
     const consultaId = params.id as string;
+    const origem = searchParams.get('origem') || 'geral';
 
     useEffect(() => {
         async function buscaConsulta() {
@@ -108,7 +110,7 @@ export default function DetalhesConsulta() {
                         {/* Header */}
                         <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-4">
-                                <Link href="/area-cliente" className="flex items-center text-[#252d39] hover:text-blue-600 btn-voltar">
+                                <Link href={origem === 'agenda' ? '/area-cliente/agenda' : '/area-cliente'} className="flex items-center text-[#252d39] hover:text-blue-600 btn-voltar">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20v-2z" fill="currentColor"/>
                                     </svg>

@@ -4,7 +4,7 @@ import { SideBarMedico } from "@/components/SideBarMedico";
 import { TopBarMedico } from "@/components/TopBarMedico";
 import { cairo, inter } from "@/utils/fonts";
 import { useEffect, useState } from 'react';
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { ConsultaI } from "@/utils/types/consultas";
 import TextareaAutosize from 'react-textarea-autosize';
 import { toast } from "sonner";
@@ -17,7 +17,9 @@ export default function DetalhesConsulta() {
     const [editando, setEditando] = useState(false);
     const router = useRouter();
     const params = useParams();
+    const searchParams = useSearchParams();
     const consultaId = params.id as string;
+    const origem = searchParams.get('origem') || 'geral';
 
     useEffect(() => {
         async function buscaConsulta() {
@@ -92,7 +94,8 @@ export default function DetalhesConsulta() {
 
             if (response.status === 200) {
                 toast.success("Consulta finalizada com sucesso!");
-                router.push("/area-medica");
+                const destino = origem === 'agenda' ? '/area-medica/agenda' : '/area-medica';
+                router.push(destino);
             } else {
                 toast.error("Erro ao finalizar consulta");
             }
@@ -176,7 +179,7 @@ export default function DetalhesConsulta() {
                     <div className="max-w-4xl mx-auto">
                         <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center">
-                                <Link href="/area-medica">
+                                <Link href={origem === 'agenda' ? '/area-medica/agenda' : '/area-medica'}>
                                     <button className="mr-4 text-gray-600 hover:text-gray-800">
                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

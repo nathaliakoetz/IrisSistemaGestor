@@ -94,7 +94,7 @@ export default function AgendaMedica() {
     };
 
     const openDetailsPage = (consultaId: number) => {
-        router.push(`/area-medica/detalhes-consulta/${consultaId}`);
+        router.push(`/area-medica/detalhes-consulta/${consultaId}?origem=agenda`);
     };
 
     useEffect(() => {

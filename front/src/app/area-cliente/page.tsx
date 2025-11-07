@@ -247,7 +247,7 @@ export default function AreaCliente() {
         .sort((a, b) => new Date(a.dataInicio).getTime() - new Date(b.dataInicio).getTime());
 
     const openDetailsPage = (consultaId: number) => {
-        router.push(`/area-cliente/detalhes-consulta/${consultaId}`);
+        router.push(`/area-cliente/detalhes-consulta/${consultaId}?origem=geral`);
     };
 
     const handleAddHorarioOpening = () => {
