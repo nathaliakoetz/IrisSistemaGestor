@@ -69,6 +69,8 @@ export default function AgendaMedica() {
 
         if (!terapeuta.id && !Cookies.get("authID")) {
             if (typeof window !== 'undefined') sessionStorage.removeItem("logged");
+            setIsLogged(false);
+            router.push("/area-medica/error");
         } else if (Cookies.get("authID")) {
             const authID = Cookies.get("authID") as string;
             const authClinicaId = Cookies.get("authClinicaId") as string;
@@ -82,7 +84,7 @@ export default function AgendaMedica() {
         if (terapeuta.id && terapeuta.clinicaId) {
             buscaConsultas(terapeuta.id, terapeuta.clinicaId)
         }
-    }, [terapeuta])
+    }, [terapeuta, router, carregaTerapeutaDaStorage])
 
     const tileClassName = ({ date, view }: { date: Date, view: string }) => {
         if (view === 'month') {

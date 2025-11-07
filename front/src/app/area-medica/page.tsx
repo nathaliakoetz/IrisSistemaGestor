@@ -64,6 +64,8 @@ export default function AreaMedica() {
 
         if (!terapeuta.id && !Cookies.get("authID")) {
             if (typeof window !== 'undefined') sessionStorage.removeItem("logged");
+            setIsLogged(false);
+            router.push("/area-medica/error");
         } else if (Cookies.get("authID")) {
             const authID = Cookies.get("authID") as string;
             const authClinicaId = Cookies.get("authClinicaId") as string;
@@ -75,7 +77,7 @@ export default function AreaMedica() {
         }
 
         setIsClient(true);
-    }, []);
+    }, [terapeuta, router, carregaTerapeutaDaStorage]);
 
     // Consultas de HOJE (pendentes)
     const consultasHoje = consultas

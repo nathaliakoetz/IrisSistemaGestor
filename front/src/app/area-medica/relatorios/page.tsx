@@ -62,6 +62,8 @@ export default function RelatoriosMedica() {
 
         if (!terapeuta.id && !Cookies.get("authID")) {
             if (typeof window !== 'undefined') sessionStorage.removeItem("logged");
+            setIsLogged(false);
+            router.push("/area-medica/error");
         } else if (Cookies.get("authID")) {
             const authID = Cookies.get("authID") as string;
             const authClinicaId = Cookies.get("authClinicaId") as string;
@@ -71,7 +73,7 @@ export default function RelatoriosMedica() {
             buscaTerapeuta(terapeuta.id, terapeuta.clinicaId);
             buscaPacientes(terapeuta.clinicaId);
         }
-    }, [terapeuta]);
+    }, [terapeuta, router, carregaTerapeutaDaStorage]);
 
     // Fechar dropdown ao clicar fora
     useEffect(() => {
