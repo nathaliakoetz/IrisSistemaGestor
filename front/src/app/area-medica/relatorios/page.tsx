@@ -12,7 +12,6 @@ import { DependenteI } from "@/utils/types/dependentes";
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import Cookies from "js-cookie";
-import { TerapeutaI } from "@/utils/types/terapeutas";
 
 export default function RelatoriosMedica() {
     const [pacientes, setPacientes] = useState<DependenteI[]>([]);
@@ -27,7 +26,6 @@ export default function RelatoriosMedica() {
     const { terapeuta, carregaTerapeutaDaStorage } = useTerapeutaStore();
     const router = useRouter();
     const dropdownRef = useRef<HTMLDivElement>(null);
-    const [dadosTerapeuta, setDadosTerapeuta] = useState<TerapeutaI>();
 
     async function buscaTerapeuta(id: string, clinicaId: string) {
         const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/terapeutas/${id}/${clinicaId}`, {
@@ -35,8 +33,8 @@ export default function RelatoriosMedica() {
         })
 
         if (response.status == 200) {
-            const dados = await response.json()
-            setDadosTerapeuta(dados)
+            // Terapeuta validado com sucesso
+            await response.json()
         } else if (response.status == 400) {
             Cookies.remove('authID')
             Cookies.remove('authToken')

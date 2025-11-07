@@ -9,7 +9,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ConsultaI } from "@/utils/types/consultas";
 import Cookies from "js-cookie";
-import { TerapeutaI } from "@/utils/types/terapeutas";
 
 export default function AreaMedica() {
     const currentDate = new Date();
@@ -18,7 +17,6 @@ export default function AreaMedica() {
     const [isLogged, setIsLogged] = useState(true);
     const router = useRouter();
     const [isClient, setIsClient] = useState(false);
-    const [dadosTerapeuta, setDadosTerapeuta] = useState<TerapeutaI>();
 
     async function buscaConsultas(terapeutaId: string, clinicaId: string) {
         const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/consultas/terapeuta/${terapeutaId}/${clinicaId}`, {
@@ -37,11 +35,12 @@ export default function AreaMedica() {
         })
 
         if (response.status == 200) {
-            const dados = await response.json()
-            setDadosTerapeuta(dados)
+            // Terapeuta validado com sucesso
+            await response.json()
         } else if (response.status == 400) {
             Cookies.remove('authID')
             Cookies.remove('authToken')
+            Cookies.remove('authClinicaId')
             if (typeof window !== 'undefined') sessionStorage.removeItem("logged")
             router.push("/area-medica/error")
         }

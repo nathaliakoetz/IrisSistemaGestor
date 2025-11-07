@@ -11,7 +11,6 @@ import { useRouter } from "next/navigation";
 import { ConsultaI } from "@/utils/types/consultas";
 import Link from "next/link";
 import Cookies from "js-cookie";
-import { TerapeutaI } from "@/utils/types/terapeutas";
 
 export default function AgendaMedica() {
     const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
@@ -19,7 +18,6 @@ export default function AgendaMedica() {
     const [consultas, setConsultas] = useState<ConsultaI[]>([]);
     const { terapeuta, carregaTerapeutaDaStorage } = useTerapeutaStore();
     const router = useRouter();
-    const [dadosTerapeuta, setDadosTerapeuta] = useState<TerapeutaI>();
 
     async function buscaConsultas(terapeutaId: string, clinicaId: string) {
         try {
@@ -42,8 +40,8 @@ export default function AgendaMedica() {
         })
 
         if (response.status == 200) {
-            const dados = await response.json()
-            setDadosTerapeuta(dados)
+            // Terapeuta validado com sucesso
+            await response.json()
         } else if (response.status == 400) {
             Cookies.remove('authID')
             Cookies.remove('authToken')
