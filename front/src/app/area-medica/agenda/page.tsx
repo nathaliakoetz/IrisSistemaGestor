@@ -10,6 +10,8 @@ import { useTerapeutaStore } from "@/context/terapeuta";
 import { useRouter } from "next/navigation";
 import { ConsultaI } from "@/utils/types/consultas";
 import Link from "next/link";
+import Cookies from "js-cookie";
+import { TerapeutaI } from "@/utils/types/terapeutas";
 
 export default function AgendaMedica() {
     const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
@@ -17,6 +19,7 @@ export default function AgendaMedica() {
     const [consultas, setConsultas] = useState<ConsultaI[]>([]);
     const { terapeuta, carregaTerapeutaDaStorage } = useTerapeutaStore();
     const router = useRouter();
+    const [dadosTerapeuta, setDadosTerapeuta] = useState<TerapeutaI>();
 
     async function buscaConsultas(terapeutaId: string, clinicaId: string) {
         try {
@@ -30,6 +33,23 @@ export default function AgendaMedica() {
             }
         } catch (error) {
             console.error('Erro ao buscar consultas:', error)
+        }
+    }
+
+    async function buscaTerapeuta(id: string, clinicaId: string) {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/terapeutas/${id}/${clinicaId}`, {
+            method: "GET"
+        })
+
+        if (response.status == 200) {
+            const dados = await response.json()
+            setDadosTerapeuta(dados)
+        } else if (response.status == 400) {
+            Cookies.remove('authID')
+            Cookies.remove('authToken')
+            Cookies.remove('authClinicaId')
+            if (typeof window !== 'undefined') sessionStorage.removeItem("logged")
+            router.push("/area-medica/error")
         }
     }
 
@@ -47,6 +67,18 @@ export default function AgendaMedica() {
         // Recarregar terapeuta do storage se estiver vazio
         if (!terapeuta.id) {
             carregaTerapeutaDaStorage();
+        }
+
+        if (!terapeuta.id && !Cookies.get("authID")) {
+            if (typeof window !== 'undefined') sessionStorage.removeItem("logged");
+        } else if (Cookies.get("authID")) {
+            const authID = Cookies.get("authID") as string;
+            const authClinicaId = Cookies.get("authClinicaId") as string;
+            buscaTerapeuta(authID, authClinicaId);
+            buscaConsultas(authID, authClinicaId);
+        } else {
+            buscaTerapeuta(terapeuta.id, terapeuta.clinicaId);
+            buscaConsultas(terapeuta.id, terapeuta.clinicaId);
         }
 
         if (terapeuta.id && terapeuta.clinicaId) {

@@ -11,6 +11,8 @@ import { ConsultaI } from "@/utils/types/consultas";
 import { DependenteI } from "@/utils/types/dependentes";
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import Cookies from "js-cookie";
+import { TerapeutaI } from "@/utils/types/terapeutas";
 
 export default function RelatoriosMedica() {
     const [pacientes, setPacientes] = useState<DependenteI[]>([]);
@@ -25,6 +27,24 @@ export default function RelatoriosMedica() {
     const { terapeuta, carregaTerapeutaDaStorage } = useTerapeutaStore();
     const router = useRouter();
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const [dadosTerapeuta, setDadosTerapeuta] = useState<TerapeutaI>();
+
+    async function buscaTerapeuta(id: string, clinicaId: string) {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/terapeutas/${id}/${clinicaId}`, {
+            method: "GET"
+        })
+
+        if (response.status == 200) {
+            const dados = await response.json()
+            setDadosTerapeuta(dados)
+        } else if (response.status == 400) {
+            Cookies.remove('authID')
+            Cookies.remove('authToken')
+            Cookies.remove('authClinicaId')
+            if (typeof window !== 'undefined') sessionStorage.removeItem("logged")
+            router.push("/area-medica/error")
+        }
+    }
 
     useEffect(() => {
         // Verificar login no cliente
@@ -42,7 +62,15 @@ export default function RelatoriosMedica() {
             carregaTerapeutaDaStorage();
         }
 
-        if (terapeuta.id && terapeuta.clinicaId) {
+        if (!terapeuta.id && !Cookies.get("authID")) {
+            if (typeof window !== 'undefined') sessionStorage.removeItem("logged");
+        } else if (Cookies.get("authID")) {
+            const authID = Cookies.get("authID") as string;
+            const authClinicaId = Cookies.get("authClinicaId") as string;
+            buscaTerapeuta(authID, authClinicaId);
+            buscaPacientes(authClinicaId);
+        } else {
+            buscaTerapeuta(terapeuta.id, terapeuta.clinicaId);
             buscaPacientes(terapeuta.clinicaId);
         }
     }, [terapeuta]);

@@ -8,6 +8,8 @@ import { useTerapeutaStore } from "@/context/terapeuta";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ConsultaI } from "@/utils/types/consultas";
+import Cookies from "js-cookie";
+import { TerapeutaI } from "@/utils/types/terapeutas";
 
 export default function AreaMedica() {
     const currentDate = new Date();
@@ -16,6 +18,7 @@ export default function AreaMedica() {
     const [isLogged, setIsLogged] = useState(true);
     const router = useRouter();
     const [isClient, setIsClient] = useState(false);
+    const [dadosTerapeuta, setDadosTerapeuta] = useState<TerapeutaI>();
 
     async function buscaConsultas(terapeutaId: string, clinicaId: string) {
         const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/consultas/terapeuta/${terapeutaId}/${clinicaId}`, {
@@ -25,6 +28,22 @@ export default function AreaMedica() {
         if (response.status == 200) {
             const dados = await response.json()
             setConsultas(dados)
+        }
+    }
+
+    async function buscaTerapeuta(id: string, clinicaId: string) {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/terapeutas/${id}/${clinicaId}`, {
+            method: "GET"
+        })
+
+        if (response.status == 200) {
+            const dados = await response.json()
+            setDadosTerapeuta(dados)
+        } else if (response.status == 400) {
+            Cookies.remove('authID')
+            Cookies.remove('authToken')
+            if (typeof window !== 'undefined') sessionStorage.removeItem("logged")
+            router.push("/area-medica/error")
         }
     }
 
@@ -44,10 +63,19 @@ export default function AreaMedica() {
             carregaTerapeutaDaStorage();
         }
 
-        setIsClient(true);
-        if (terapeuta.id && terapeuta.clinicaId) {
+        if (!terapeuta.id && !Cookies.get("authID")) {
+            if (typeof window !== 'undefined') sessionStorage.removeItem("logged");
+        } else if (Cookies.get("authID")) {
+            const authID = Cookies.get("authID") as string;
+            const authClinicaId = Cookies.get("authClinicaId") as string;
+            buscaTerapeuta(authID, authClinicaId);
+            buscaConsultas(authID, authClinicaId);
+        } else {
+            buscaTerapeuta(terapeuta.id, terapeuta.clinicaId);
             buscaConsultas(terapeuta.id, terapeuta.clinicaId);
         }
+
+        setIsClient(true);
     }, []);
 
     // Consultas de HOJE (pendentes)
@@ -122,7 +150,7 @@ export default function AreaMedica() {
                         Olá{isClient && terapeuta?.nome ? `, ${terapeuta.nome}` : ''}!
                     </h1>
                     <p className={`text-base text-gray-600 mt-1 ${inter.className}`}>
-                        Aqui estão suas consultas agendadas
+                        Aqui esta o resumo das consultas de hoje
                     </p>
 
                     <div className="flex gap-8 mt-8">

@@ -47,6 +47,7 @@ export default function SignIn() {
 
             if (rememberMe) {
                 Cookies.set("authID", terapeuta.id)
+                Cookies.set("authClinicaId", terapeuta.clinicaId)
                 if (token) {
                     Cookies.set("authToken", token)
                 }
