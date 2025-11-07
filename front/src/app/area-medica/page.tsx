@@ -11,7 +11,7 @@ import { ConsultaI } from "@/utils/types/consultas";
 
 export default function AreaMedica() {
     const currentDate = new Date();
-    const { terapeuta } = useTerapeutaStore();
+    const { terapeuta, carregaTerapeutaDaStorage } = useTerapeutaStore();
     const [consultas, setConsultas] = useState<ConsultaI[]>([]);
     const [isLogged, setIsLogged] = useState(true);
     const router = useRouter();
@@ -37,6 +37,11 @@ export default function AreaMedica() {
                 return;
             }
             setIsLogged(true);
+        }
+
+        // Recarregar terapeuta do storage se estiver vazio
+        if (!terapeuta.id) {
+            carregaTerapeutaDaStorage();
         }
 
         setIsClient(true);

@@ -22,7 +22,7 @@ export default function RelatoriosMedica() {
     const [dataFim, setDataFim] = useState("");
     const [consultas, setConsultas] = useState<ConsultaI[]>([]);
     const [loading, setLoading] = useState(false);
-    const { terapeuta } = useTerapeutaStore();
+    const { terapeuta, carregaTerapeutaDaStorage } = useTerapeutaStore();
     const router = useRouter();
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -35,6 +35,11 @@ export default function RelatoriosMedica() {
                 return;
             }
             setIsLogged(true);
+        }
+
+        // Recarregar terapeuta do storage se estiver vazio
+        if (!terapeuta.id) {
+            carregaTerapeutaDaStorage();
         }
 
         if (terapeuta.id && terapeuta.clinicaId) {

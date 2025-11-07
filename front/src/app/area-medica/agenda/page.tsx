@@ -15,7 +15,7 @@ export default function AgendaMedica() {
     const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
     const [isLogged, setIsLogged] = useState(true);
     const [consultas, setConsultas] = useState<ConsultaI[]>([]);
-    const { terapeuta } = useTerapeutaStore();
+    const { terapeuta, carregaTerapeutaDaStorage } = useTerapeutaStore();
     const router = useRouter();
 
     async function buscaConsultas(terapeutaId: string, clinicaId: string) {
@@ -42,6 +42,11 @@ export default function AgendaMedica() {
                 return;
             }
             setIsLogged(true);
+        }
+
+        // Recarregar terapeuta do storage se estiver vazio
+        if (!terapeuta.id) {
+            carregaTerapeutaDaStorage();
         }
 
         if (terapeuta.id && terapeuta.clinicaId) {
