@@ -110,12 +110,9 @@ export default function AreaMedica() {
 
     useEffect(() => {
         if (!isLogged) {
-            const timer = setTimeout(() => {
-                router.push("/signin");
-            }, 3000);
-            return () => clearTimeout(timer);
+            router.push("/area-medica/error")
         }
-    }, [router]);
+    }, [router, isLogged]);
 
     if (!isLogged) {
         return (
