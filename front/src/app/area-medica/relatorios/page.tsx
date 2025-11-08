@@ -173,8 +173,7 @@ export default function RelatoriosMedica() {
             return;
         }
 
-        const paciente = pacientes.find(p => p.id === pacienteSelecionado);
-        if (!paciente) return;
+        const paciente = pacienteSelecionado ? pacientes.find(p => p.id === pacienteSelecionado) : null;
 
         const doc = new jsPDF();
         
@@ -182,9 +181,14 @@ export default function RelatoriosMedica() {
         doc.setFontSize(18);
         doc.text('Relatório de Atendimentos', 14, 20);
         
-        // Informações do Paciente
+        // Informações do Filtro
         doc.setFontSize(12);
-        doc.text(`Paciente: ${paciente.nome}`, 14, 35);
+        let yPos = 35;
+        
+        if (paciente) {
+            doc.text(`Paciente: ${paciente.nome}`, 14, yPos);
+            yPos += 7;
+        }
         
         if (dataInicio || dataFim) {
             const periodo = dataInicio && dataFim 
@@ -192,10 +196,12 @@ export default function RelatoriosMedica() {
                 : dataInicio 
                 ? `A partir de ${formatDate(dataInicio)}`
                 : `Até ${formatDate(dataFim)}`;
-            doc.text(`Período: ${periodo}`, 14, 42);
+            doc.text(`Período: ${periodo}`, 14, yPos);
+            yPos += 7;
         }
         
-        doc.text(`Total de Atendimentos: ${consultas.length}`, 14, 49);
+        doc.text(`Total de Atendimentos: ${consultas.length}`, 14, yPos);
+        yPos += 7;
         
         // Tabela de consultas
         const tableData = consultas.map((consulta, index) => [
@@ -208,7 +214,7 @@ export default function RelatoriosMedica() {
         ]);
 
         autoTable(doc, {
-            startY: 56,
+            startY: yPos,
             head: [['Nº', 'Data/Hora Início', 'Terapeuta', 'Profissão', 'Data/Hora Fim', 'Status']],
             body: tableData,
             theme: 'grid',
@@ -275,7 +281,12 @@ export default function RelatoriosMedica() {
         });
 
         // Salvar PDF
-        const nomeArquivo = `relatorio_${paciente.nome.replace(/\s/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+        let nomeArquivo = 'relatorio';
+        if (paciente) {
+            nomeArquivo += `_${paciente.nome.replace(/\s/g, '_')}`;
+        }
+        nomeArquivo += `_${new Date().toISOString().split('T')[0]}.pdf`;
+        
         doc.save(nomeArquivo);
         toast.success("Relatório gerado com sucesso!");
     }
