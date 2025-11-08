@@ -27,7 +27,7 @@ export default function SignIn() {
 
     async function verificaLogin(data: Inputs) {
 
-        toast.info("Verificando credenciais... Aguarde.", { duration: 2000 })
+        toast.info("Verificando credenciais... Aguarde.", { duration: Number(process.env.NEXT_PUBLIC_URL_API) })
 
         const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/terapeutas/login`, {
             method: "POST",
@@ -53,14 +53,14 @@ export default function SignIn() {
                 }
             }
 
-            toast.success("Login realizado com sucesso!", { duration: 2000 });
+            toast.success("Login realizado com sucesso!", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
             router.push("/signin/carregando-medico")
         } else if (response.status == 400) {
             const errorData = await response.json().catch(() => ({}));
-            toast.error(errorData.erro || "Login ou senha incorretos", { duration: 2000 });
+            toast.error(errorData.erro || "Login ou senha incorretos", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
         } else {
             const errorData = await response.json().catch(() => ({}));
-            toast.error(errorData.erro || 'Erro ao fazer login. Tente novamente.', { duration: 2000 });
+            toast.error(errorData.erro || 'Erro ao fazer login. Tente novamente.', { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
         }
     }
 

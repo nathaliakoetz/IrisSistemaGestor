@@ -81,7 +81,7 @@ function VincularResponsavelContent() {
     // Vincular responsável ao paciente
     const handleVincularResponsavel = async () => {
         if (!selectedResponsavel) {
-            toast.error("Selecione um responsável para vincular.", { duration: 2000 });
+            toast.error("Selecione um responsável para vincular.", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
             return;
         }
 
@@ -100,20 +100,20 @@ function VincularResponsavelContent() {
             });
 
             if (response.status === 201) {
-                toast.success("Responsável vinculado com sucesso!", { duration: 2000 });
+                toast.success("Responsável vinculado com sucesso!", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
                 router.push(`/area-cliente/pacientes/responsavel/${dependenteId}`);
             } else if (response.status === 409) {
                 // Erro de duplicação (responsável já vinculado)
                 const errorData = await response.json();
-                toast.error(errorData.erro || "Este responsável já está vinculado a este paciente.", { duration: 2000 });
+                toast.error(errorData.erro || "Este responsável já está vinculado a este paciente.", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
             } else {
                 const errorData = await response.json();
-                toast.error(errorData.erro || 'Erro ao vincular responsável', { duration: 2000 });
+                toast.error(errorData.erro || 'Erro ao vincular responsável', { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
             }
 
         } catch (error) {
             console.error('Erro ao vincular responsável:', error);
-            toast.error(error instanceof Error ? error.message : "Erro ao vincular responsável. Tente novamente.", { duration: 2000 });
+            toast.error(error instanceof Error ? error.message : "Erro ao vincular responsável. Tente novamente.", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
         } finally {
             setVinculando(false);
         }

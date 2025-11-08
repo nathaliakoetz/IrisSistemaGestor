@@ -47,12 +47,12 @@ export default function EditarPaciente() {
                         }
                     }
                 } else {
-                    toast.error('Paciente não encontrado', { duration: 2000 });
+                    toast.error('Paciente não encontrado', { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
                     router.push("/area-cliente/pacientes");
                 }
             } catch (error) {
                 console.error('Erro ao buscar dados:', error);
-                toast.error('Erro ao carregar dados', { duration: 2000 });
+                toast.error('Erro ao carregar dados', { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
             } finally {
                 setLoading(false);
             }
@@ -92,21 +92,21 @@ export default function EditarPaciente() {
             });
 
             if (response.status === 200) {
-                toast.success("Paciente editado com sucesso!", { duration: 2000 });
+                toast.success("Paciente editado com sucesso!", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
                 setTimeout(() => {
                     router.push("/area-cliente/pacientes");
                 }, 2000);
             } else if (response.status === 409) {
                 // Erro de duplicação (CPF já existente)
                 const errorData = await response.json();
-                toast.error(errorData.erro || "Já existe um paciente cadastrado com este CPF.", { duration: 2000 });
+                toast.error(errorData.erro || "Já existe um paciente cadastrado com este CPF.", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
             } else {
                 const errorData = await response.json();
-                toast.error(errorData.erro || "Erro ao editar paciente", { duration: 2000 });
+                toast.error(errorData.erro || "Erro ao editar paciente", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
             }
         } catch (error) {
             console.error('Erro ao editar paciente:', error);
-            toast.error("Erro ao editar Paciente. Verifique sua conexão.", { duration: 2000 });
+            toast.error("Erro ao editar Paciente. Verifique sua conexão.", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
         }
     }
 

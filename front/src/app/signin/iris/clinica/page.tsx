@@ -30,7 +30,7 @@ export default function SignIn() {
             console.log('Tentando login com:', data.email);
             console.log('URL da API:', process.env.NEXT_PUBLIC_URL_API);
 
-            toast.info("Verificando credenciais... Aguarde.", { duration: 2000 })
+            toast.info("Verificando credenciais... Aguarde.", { duration: Number(process.env.NEXT_PUBLIC_URL_API) })
             
             const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/clinicas/login`, {
                 method: "POST",
@@ -60,20 +60,20 @@ export default function SignIn() {
                     }
                 }
 
-                toast.success("Login realizado com sucesso!", { duration: 2000 });
+                toast.success("Login realizado com sucesso!", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
                 router.push("/signin/carregando");
             } else if (response.status == 400) {
                 const errorData = await response.json().catch(() => ({}));
                 console.error('Erro 400:', errorData);
-                toast.error(errorData.erro || "Login ou senha incorretos", { duration: 2000 });
+                toast.error(errorData.erro || "Login ou senha incorretos", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
             } else {
                 const errorData = await response.json().catch(() => ({}));
                 console.error('Erro inesperado:', response.status, errorData);
-                toast.error(errorData.erro || 'Erro ao fazer login. Tente novamente.', { duration: 2000 });
+                toast.error(errorData.erro || 'Erro ao fazer login. Tente novamente.', { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
             }
         } catch (error) {
             console.error('Erro na requisição de login:', error);
-            toast.error('Erro ao conectar com o servidor. Verifique sua conexão.', { duration: 2000 });
+            toast.error('Erro ao conectar com o servidor. Verifique sua conexão.', { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
         }
     }
 

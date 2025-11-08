@@ -58,7 +58,7 @@ export default function CadastrarFuncionario() {
     function validaSenha(senha: string, senha2: string) {
 
         if (senha.length < 8) {
-            toast.error("Erro... senha deve possuir, no mínimo, 8 caracteres", { duration: 2000 })
+            toast.error("Erro... senha deve possuir, no mínimo, 8 caracteres", { duration: Number(process.env.NEXT_PUBLIC_URL_API) })
             return false
         }
 
@@ -82,12 +82,12 @@ export default function CadastrarFuncionario() {
         }
 
         if (pequenas == 0 || grandes == 0 || numeros == 0 || simbolos == 0) {
-            toast.error("Erro... senha deve possuir letras minúsculas, maiúsculas, números e símbolos", { duration: 2000 })
+            toast.error("Erro... senha deve possuir letras minúsculas, maiúsculas, números e símbolos", { duration: Number(process.env.NEXT_PUBLIC_URL_API) })
             return false
         }
 
         if (senha !== senha2) {
-            toast.error("Erro... as senhas não conferem", { duration: 2000 })
+            toast.error("Erro... as senhas não conferem", { duration: Number(process.env.NEXT_PUBLIC_URL_API) })
             return false
         }
 
@@ -136,21 +136,21 @@ export default function CadastrarFuncionario() {
                 });
 
                 if (response.status === 201) {
-                    toast.success("Cadastro de Funcionário realizado com sucesso.", { duration: 2000 });
+                    toast.success("Cadastro de Funcionário realizado com sucesso.", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
                     setTimeout(() => {
                         router.push("/area-cliente/funcionario");
                     }, 2000);
                 } else if (response.status === 409) {
                     // Erro de duplicação (CPF/CNPJ ou e-mail já existente)
                     const errorData = await response.json();
-                    toast.error(errorData.erro || "Funcionário já cadastrado com estes dados.", { duration: 2000 });
+                    toast.error(errorData.erro || "Funcionário já cadastrado com estes dados.", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
                 } else {
                     const errorData = await response.json();
-                    toast.error(errorData.erro || "Erro ao cadastrar Funcionário.", { duration: 2000 });
+                    toast.error(errorData.erro || "Erro ao cadastrar Funcionário.", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
                 }
             } catch (error) {
                 console.error("Erro na requisição:", error);
-                toast.error("Erro ao cadastrar Funcionário. Verifique sua conexão.", { duration: 2000 });
+                toast.error("Erro ao cadastrar Funcionário. Verifique sua conexão.", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
             }
         }
     }
