@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { ConsultaI } from "@/utils/types/consultas";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
+import { JogoMemoria } from "@/components/JogoMemoria";
 
 export default function MundoEmocoes() {
     const currentDate = new Date();
@@ -16,6 +17,10 @@ export default function MundoEmocoes() {
     const [consultas, setConsultas] = useState<ConsultaI[]>([]);
     const [isLogged, setIsLogged] = useState(true);
     const [loading, setLoading] = useState(true);
+    const [jogoAberto, setJogoAberto] = useState(false);
+    const [consultaSelecionada, setConsultaSelecionada] = useState<ConsultaI | null>(null);
+    const [modalConfigAberto, setModalConfigAberto] = useState(false);
+    const [tempoLimite, setTempoLimite] = useState(10); // em minutos
     const router = useRouter();
 
     async function buscaConsultas(terapeutaId: string, clinicaId: string) {
@@ -109,10 +114,26 @@ export default function MundoEmocoes() {
         return idade;
     };
 
-    const iniciarJogo = (consultaId: number) => {
-        // Futuramente será implementado o redirecionamento para o jogo
-        console.log("Iniciar jogo para consulta:", consultaId);
-        toast.info("Jogo de memória será implementado em breve!", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
+    const iniciarJogo = (consulta: ConsultaI) => {
+        setConsultaSelecionada(consulta);
+        setModalConfigAberto(true);
+    };
+
+    const confirmarInicioJogo = () => {
+        setModalConfigAberto(false);
+        setJogoAberto(true);
+    };
+
+    const fecharJogo = () => {
+        setJogoAberto(false);
+        setConsultaSelecionada(null);
+        setTempoLimite(10); // Resetar para padrão
+    };
+
+    const cancelarConfig = () => {
+        setModalConfigAberto(false);
+        setConsultaSelecionada(null);
+        setTempoLimite(10);
     };
 
     if (!isLogged) {
@@ -173,7 +194,7 @@ export default function MundoEmocoes() {
                                                     key={consulta.id}
                                                     className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200"
                                                 >
-                                                    <div className="bg-gradient-to-r from-[#192333] to-[#252d39] p-4">
+                                                    <div className="bg-gradient-to-r bg-[#252d39] p-4">
                                                         <div className="flex items-center justify-between text-white">
                                                             <div className="flex items-center gap-2">
                                                                 <span className="text-2xl">🕐</span>
@@ -215,8 +236,8 @@ export default function MundoEmocoes() {
                                                         )}
 
                                                         <button
-                                                            onClick={() => iniciarJogo(consulta.id)}
-                                                            className={`w-full bg-gradient-to-r from-[#6d9ce3] to-[#4a7bc0] hover:from-[#5a8bd3] hover:to-[#3a6bb0] text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 ${inter.className}`}
+                                                            onClick={() => iniciarJogo(consulta)}
+                                                            className={`w-full bg-gradient-to-r bg-[#6D9CE3] hover:from-[#5a8bd3] hover:to-[#3a6bb0] text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 ${inter.className}`}
                                                         >
                                                             <span className="text-xl">🎮</span>
                                                             <span>Iniciar Atividade</span>
@@ -268,6 +289,88 @@ export default function MundoEmocoes() {
                         </div>
                     </div>
                 </div>
+
+                {/* Modal de Configuração do Tempo Limite */}
+                {modalConfigAberto && consultaSelecionada && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+                        <div className="bg-white rounded-lg shadow-xl p-8 max-w-md w-full mx-4">
+                            <h2 className={`text-2xl font-bold text-gray-800 mb-4 ${cairo.className}`}>
+                                ⏱️ Configurar Sessão
+                            </h2>
+                            <p className={`text-gray-600 mb-6 ${inter.className}`}>
+                                Defina o tempo limite para a sessão de atividades com <strong>{consultaSelecionada.paciente?.nome || "o paciente"}</strong>
+                            </p>
+                            
+                            <div className="mb-6">
+                                <label className={`block text-sm font-medium text-gray-700 mb-3 ${inter.className}`}>
+                                    Tempo Limite (minutos):
+                                </label>
+                                <div className="flex items-center gap-4">
+                                    <button
+                                        onClick={() => setTempoLimite(prev => Math.max(1, prev - 1))}
+                                        className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold w-12 h-12 rounded-lg transition-all"
+                                    >
+                                        -
+                                    </button>
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        max="60"
+                                        value={tempoLimite}
+                                        onChange={(e) => setTempoLimite(Math.max(1, Math.min(60, parseInt(e.target.value) || 1)))}
+                                        className={`w-24 text-center text-2xl font-bold border-2 border-gray-300 rounded-lg py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 ${cairo.className}`}
+                                    />
+                                    <button
+                                        onClick={() => setTempoLimite(prev => Math.min(60, prev + 1))}
+                                        className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold w-12 h-12 rounded-lg transition-all"
+                                    >
+                                        +
+                                    </button>
+                                </div>
+                                <div className="flex gap-2 mt-4 flex-wrap">
+                                    {[5, 10, 15, 20, 30].map(tempo => (
+                                        <button
+                                            key={tempo}
+                                            onClick={() => setTempoLimite(tempo)}
+                                            className={`px-4 py-2 rounded-lg transition-all ${
+                                                tempoLimite === tempo
+                                                    ? 'bg-[#6d9ce3] text-white'
+                                                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                            } ${inter.className}`}
+                                        >
+                                            {tempo} min
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={cancelarConfig}
+                                    className={`flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg transition-all ${inter.className}`}
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    onClick={confirmarInicioJogo}
+                                    className={`flex-1 bg-gradient-to-r from-[#6d9ce3] to-[#4a7bc0] hover:from-[#5a8bd3] hover:to-[#3a6bb0] text-white font-semibold py-3 px-6 rounded-lg transition-all ${inter.className}`}
+                                >
+                                    Iniciar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Componente do Jogo */}
+                {jogoAberto && consultaSelecionada && (
+                    <JogoMemoria
+                        consultaId={consultaSelecionada.id}
+                        pacienteNome={consultaSelecionada.paciente?.nome || "Paciente"}
+                        tempoLimiteMinutos={tempoLimite}
+                        onClose={fecharJogo}
+                    />
+                )}
             </div>
         )
     };
