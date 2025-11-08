@@ -207,7 +207,11 @@ export default function RelatoriosMedica() {
         let yPosition = (doc as JsPDFWithAutoTable).lastAutoTable.finalY + 15;
         
         consultas.forEach((consulta, index) => {
-            if (consulta.detalhes) {
+            // Adicionar título do atendimento se houver detalhes ou relatório
+            const terapeutaLogadoId = terapeuta.id || Cookies.get("authID");
+            const temRelatorio = consulta.relatorio && consulta.terapeutaId === terapeutaLogadoId;
+            
+            if (consulta.detalhes || temRelatorio) {
                 if (yPosition > 270) {
                     doc.addPage();
                     yPosition = 20;
@@ -216,11 +220,32 @@ export default function RelatoriosMedica() {
                 doc.setFontSize(11);
                 doc.text(`Atendimento ${index + 1} - ${formatDateTime(consulta.dataInicio)}`, 14, yPosition);
                 yPosition += 7;
-                
+            }
+            
+            // Adicionar detalhes
+            if (consulta.detalhes) {
                 doc.setFontSize(9);
                 const detalhesLines = doc.splitTextToSize(`Detalhes: ${consulta.detalhes}`, 180);
                 doc.text(detalhesLines, 14, yPosition);
-                yPosition += (detalhesLines.length * 5) + 5;
+                yPosition += (detalhesLines.length * 4);
+                
+                // Se houver relatório também, praticamente sem espaço entre eles
+                if (!temRelatorio) {
+                    yPosition += 5;
+                }
+            }
+
+            // Adicionar relatório apenas se o terapeuta logado for o mesmo que realizou a consulta
+            if (temRelatorio) {
+                if (yPosition > 270) {
+                    doc.addPage();
+                    yPosition = 20;
+                }
+                
+                doc.setFontSize(9);
+                const relatorioLines = doc.splitTextToSize(`Relatório: ${consulta.relatorio}`, 180);
+                doc.text(relatorioLines, 14, yPosition);
+                yPosition += (relatorioLines.length * 4) + 5;
             }
         });
 
@@ -430,6 +455,16 @@ export default function RelatoriosMedica() {
                                                             </p>
                                                             <p className={`text-sm text-gray-600 mt-1 ${inter.className}`}>
                                                                 {consulta.detalhes}
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                                    {consulta.relatorio && consulta.terapeutaId === (terapeuta.id || Cookies.get("authID")) && (
+                                                        <div className="mt-2">
+                                                            <p className={`text-sm font-medium text-gray-700 ${inter.className}`}>
+                                                                Relatório:
+                                                            </p>
+                                                            <p className={`text-sm text-gray-600 mt-1 ${inter.className}`}>
+                                                                {consulta.relatorio}
                                                             </p>
                                                         </div>
                                                     )}

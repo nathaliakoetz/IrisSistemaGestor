@@ -6,15 +6,12 @@ import { cairo, inter } from "@/utils/fonts";
 import { useEffect, useState } from 'react';
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { ConsultaI } from "@/utils/types/consultas";
-import TextareaAutosize from 'react-textarea-autosize';
 import { toast } from "sonner";
 import Link from "next/link";
 
 export default function DetalhesConsulta() {
     const [consulta, setConsulta] = useState<ConsultaI | null>(null);
-    const [detalhes, setDetalhes] = useState("");
     const [loading, setLoading] = useState(true);
-    const [editando, setEditando] = useState(false);
     const router = useRouter();
     const params = useParams();
     const searchParams = useSearchParams();
@@ -31,7 +28,6 @@ export default function DetalhesConsulta() {
                 if (response.status === 200) {
                     const dados = await response.json();
                     setConsulta(dados);
-                    setDetalhes(dados.detalhes || '');
                 } else {
                     toast.error("Erro ao carregar detalhes da consulta");
                     router.push("/area-cliente");
@@ -48,30 +44,6 @@ export default function DetalhesConsulta() {
             buscaConsulta();
         }
     }, [consultaId, router]);
-
-    const salvarDetalhes = async () => {
-        try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/consultas/detalhes/${consultaId}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ detalhes })
-            });
-
-            if (response.status === 200) {
-                toast.success("Detalhes salvos com sucesso!");
-                setEditando(false);
-                if (consulta) {
-                    setConsulta({ ...consulta, detalhes });
-                }
-            } else {
-                toast.error("Erro ao salvar detalhes");
-            }
-        } catch {
-            toast.error("Erro ao salvar detalhes");
-        }
-    };
 
     if (loading) {
         return (
@@ -200,56 +172,15 @@ export default function DetalhesConsulta() {
                                         <h3 className={`text-lg font-semibold text-[#252d39] ${cairo.className}`}>
                                             Detalhes da Consulta
                                         </h3>
-                                        {!editando && (
-                                            <button
-                                                onClick={() => setEditando(true)}
-                                                className="flex items-center gap-2 bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors"
-                                            >
-                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/>
-                                                </svg>
-                                                Editar
-                                            </button>
-                                        )}
                                     </div>
                                     
-                                    {editando ? (
-                                        <div>
-                                            <TextareaAutosize
-                                                className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 detalhes-textarea"
-                                                minRows={8}
-                                                maxRows={20}
-                                                value={detalhes}
-                                                onChange={(e) => setDetalhes(e.target.value)}
-                                                placeholder="Digite os detalhes da consulta..."
-                                            />
-                                            <div className="flex items-center justify-end gap-3 mt-4">
-                                                <button
-                                                    onClick={() => {
-                                                        setEditando(false);
-                                                        setDetalhes(consulta.detalhes || '');
-                                                    }}
-                                                    className="bg-gray-300 text-black px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors"
-                                                >
-                                                    Cancelar
-                                                </button>
-                                                <button
-                                                    onClick={salvarDetalhes}
-                                                    className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
-                                                >
-                                                    Salvar
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="min-h-[200px] p-3 bg-white border border-gray-200 rounded-lg">
-                                            {consulta.detalhes ? (
-                                                <div className="whitespace-pre-wrap">{consulta.detalhes}</div>
-                                            ) : (
-                                                <div className="text-gray-500 italic">Nenhum detalhe registrado para esta consulta.</div>
-                                            )}
-                                        </div>
-                                    )}
+                                    <div className="min-h-[200px] p-3 bg-white border border-gray-200 rounded-lg">
+                                        {consulta.detalhes ? (
+                                            <div className="whitespace-pre-wrap">{consulta.detalhes}</div>
+                                        ) : (
+                                            <div className="text-gray-500 italic">Nenhum detalhe registrado para esta consulta.</div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>

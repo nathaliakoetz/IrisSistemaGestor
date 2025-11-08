@@ -262,7 +262,7 @@ export default function RelatoriosCliente() {
                 doc.setFontSize(9);
                 const detalhesLines = doc.splitTextToSize(`Detalhes: ${consulta.detalhes}`, 180);
                 doc.text(detalhesLines, 14, detalhesYPosition);
-                detalhesYPosition += (detalhesLines.length * 5) + 5;
+                detalhesYPosition += (detalhesLines.length * 4) + 5;
             }
         });
 

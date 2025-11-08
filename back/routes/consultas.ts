@@ -357,6 +357,36 @@ router.put("/detalhes/:id", async (req, res) => {
     }
 })
 
+router.put("/relatorio/:id", async (req, res) => {
+    const { id } = req.params
+    const { relatorio } = req.body
+
+    try {
+        const consulta = await prisma.consulta.findUnique({
+            where: { id: Number(id) }
+        })
+
+        if (!consulta) {
+            res.status(404).json({ erro: "Consulta não encontrada" })
+            return
+        }
+
+        const consultaAtualizada = await prisma.consulta.update({
+            where: { id: Number(id) },
+            data: { relatorio },
+            include: {
+                terapeuta: true,
+                paciente: true
+            }
+        })
+
+        res.status(200).json(consultaAtualizada)
+    } catch (error) {
+        console.error('Erro ao atualizar relatório da consulta:', error)
+        res.status(400).json({ erro: "Não foi possível atualizar o relatório da consulta. Tente novamente" })
+    }
+})
+
 router.delete("/desmarcar/:id", async (req, res) => {
     const { id } = req.params
 

@@ -10,5 +10,6 @@ export interface ConsultaI {
     pacienteId: string | null,
     dataInicio: string,
     dataFim: string | null,
-    detalhes: string | null
+    detalhes: string | null,
+    relatorio: string | null
 }

@@ -13,8 +13,10 @@ import Link from "next/link";
 export default function DetalhesConsulta() {
     const [consulta, setConsulta] = useState<ConsultaI | null>(null);
     const [detalhes, setDetalhes] = useState("");
+    const [relatorio, setRelatorio] = useState("");
     const [loading, setLoading] = useState(true);
     const [editando, setEditando] = useState(false);
+    const [editandoRelatorio, setEditandoRelatorio] = useState(false);
     const router = useRouter();
     const params = useParams();
     const searchParams = useSearchParams();
@@ -32,6 +34,7 @@ export default function DetalhesConsulta() {
                     const dados = await response.json();
                     setConsulta(dados);
                     setDetalhes(dados.detalhes || '');
+                    setRelatorio(dados.relatorio || '');
                 } else {
                     toast.error("Erro ao carregar detalhes da consulta");
                     router.push("/area-medica");
@@ -70,6 +73,30 @@ export default function DetalhesConsulta() {
             }
         } catch {
             toast.error("Erro ao salvar detalhes");
+        }
+    };
+
+    const salvarRelatorio = async () => {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/consultas/relatorio/${consultaId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ relatorio })
+            });
+
+            if (response.status === 200) {
+                toast.success("Relatório salvo com sucesso!");
+                setEditandoRelatorio(false);
+                if (consulta) {
+                    setConsulta({ ...consulta, relatorio });
+                }
+            } else {
+                toast.error("Erro ao salvar relatório");
+            }
+        } catch {
+            toast.error("Erro ao salvar relatório");
         }
     };
 
@@ -300,6 +327,59 @@ export default function DetalhesConsulta() {
                                         <p className="whitespace-pre-wrap">{detalhes}</p>
                                     ) : (
                                         <p className="text-gray-400 italic">Nenhuma anotação adicionada</p>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="bg-white rounded-2xl shadow-md p-8 mt-6">
+                            <div className="flex items-center justify-between mb-4">
+                                <h2 className={`text-xl font-bold text-color-logo ${cairo.className}`}>
+                                    Relatório da Consulta
+                                </h2>
+                                {!editandoRelatorio && !consulta.dataFim && (
+                                    <button 
+                                        onClick={() => setEditandoRelatorio(true)}
+                                        className="text-blue-600 hover:text-blue-800 font-semibold"
+                                    >
+                                        Editar
+                                    </button>
+                                )}
+                                {editandoRelatorio && (
+                                    <div className="flex gap-2">
+                                        <button 
+                                            onClick={() => {
+                                                setEditandoRelatorio(false);
+                                                setRelatorio(consulta.relatorio || '');
+                                            }}
+                                            className="text-gray-600 hover:text-gray-800 font-semibold"
+                                        >
+                                            Cancelar
+                                        </button>
+                                        <button 
+                                            onClick={salvarRelatorio}
+                                            className="text-green-600 hover:text-green-800 font-semibold"
+                                        >
+                                            Salvar
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
+                            {editandoRelatorio ? (
+                                <TextareaAutosize
+                                    value={relatorio}
+                                    onChange={(e) => setRelatorio(e.target.value)}
+                                    placeholder="Adicione o relatório detalhado da consulta..."
+                                    className={`w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${inter.className}`}
+                                    minRows={10}
+                                />
+                            ) : (
+                                <div className={`p-4 bg-gray-50 rounded-lg min-h-[300px] ${inter.className}`}>
+                                    {relatorio ? (
+                                        <p className="whitespace-pre-wrap">{relatorio}</p>
+                                    ) : (
+                                        <p className="text-gray-400 italic">Nenhum relatório adicionado</p>
                                     )}
                                 </div>
                             )}
