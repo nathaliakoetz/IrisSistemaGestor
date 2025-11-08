@@ -8,7 +8,6 @@ import { useTerapeutaStore } from "@/context/terapeuta";
 import { useRouter } from "next/navigation";
 import { ConsultaI } from "@/utils/types/consultas";
 import Cookies from "js-cookie";
-import { toast } from "sonner";
 import { JogoMemoria } from "@/components/JogoMemoria";
 
 export default function MundoEmocoes() {
@@ -327,12 +326,12 @@ export default function MundoEmocoes() {
                                         +
                                     </button>
                                 </div>
-                                <div className="flex gap-2 mt-4 flex-wrap">
+                                <div className="flex gap-2 mt-4">
                                     {[5, 10, 15, 20, 30].map(tempo => (
                                         <button
                                             key={tempo}
                                             onClick={() => setTempoLimite(tempo)}
-                                            className={`px-4 py-2 rounded-lg transition-all ${
+                                            className={`px-3 py-2 rounded-lg transition-all text-sm ${
                                                 tempoLimite === tempo
                                                     ? 'bg-[#6d9ce3] text-white'
                                                     : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
