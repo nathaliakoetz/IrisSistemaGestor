@@ -78,7 +78,7 @@ export default function CadastrarDadosPaciente() {
             });
 
             if (response.status === 201) {
-                toast.success("Cadastro de Paciente realizado com sucesso.", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                toast.success("Cadastro de Paciente realizado com sucesso.", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
                 // Limpar responsável selecionado do sessionStorage
                 sessionStorage.removeItem('responsavelSelecionado');
                 setTimeout(() => {
@@ -87,14 +87,14 @@ export default function CadastrarDadosPaciente() {
             } else if (response.status === 409) {
                 // Erro de duplicação (CPF já existente)
                 const errorData = await response.json();
-                toast.error(errorData.erro || "Já existe um paciente cadastrado com este CPF.", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                toast.error(errorData.erro || "Já existe um paciente cadastrado com este CPF.", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
             } else {
                 const errorData = await response.json();
-                toast.error(errorData.erro || "Erro ao cadastrar Paciente.", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                toast.error(errorData.erro || "Erro ao cadastrar Paciente.", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
             }
         } catch (error) {
             console.error("Erro na requisição:", error);
-            toast.error("Erro ao cadastrar Paciente. Verifique sua conexão.", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+            toast.error("Erro ao cadastrar Paciente. Verifique sua conexão.", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
         }
     }
 

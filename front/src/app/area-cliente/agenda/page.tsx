@@ -254,7 +254,7 @@ export default function AreaAgenda() {
         e.preventDefault();
         
         if (!selectedDate) {
-            toast.error('Por favor, selecione uma data no calendário.', { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+            toast.error('Por favor, selecione uma data no calendário.', { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
             return;
         }
 
@@ -295,14 +295,14 @@ export default function AreaAgenda() {
                     terapeutaId: '',
                     horario: ''
                 });
-                toast.success('Consulta adicionada com sucesso!', { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                toast.success('Consulta adicionada com sucesso!', { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
             } else {
                 const errorData = await response.json();
-                toast.error(errorData.erro || errorData.message || 'Erro ao adicionar consulta', { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                toast.error(errorData.erro || errorData.message || 'Erro ao adicionar consulta', { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
             }
         } catch (error) {
             console.error('Erro ao adicionar consulta:', error);
-            toast.error('Erro ao adicionar consulta. Tente novamente.', { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+            toast.error('Erro ao adicionar consulta. Tente novamente.', { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
         }
     };
 
@@ -330,7 +330,7 @@ export default function AreaAgenda() {
             });
 
             if (response.status === 200) {
-                toast.success("Consulta desmarcada com sucesso!", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                toast.success("Consulta desmarcada com sucesso!", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
                 console.log('dadosClinica:', dadosClinica?.id);
                 if (dadosClinica?.id) {
                     await buscaConsultas(dadosClinica.id);
@@ -342,10 +342,10 @@ export default function AreaAgenda() {
                     }
                 }
             } else {
-                toast.error("Erro ao desmarcar consulta!", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                toast.error("Erro ao desmarcar consulta!", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
             }
         } catch {
-            toast.error("Erro ao desmarcar consulta!", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+            toast.error("Erro ao desmarcar consulta!", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
         }
     };
 

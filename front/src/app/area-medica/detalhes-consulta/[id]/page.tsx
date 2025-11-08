@@ -36,11 +36,11 @@ export default function DetalhesConsulta() {
                     setDetalhes(dados.detalhes || '');
                     setRelatorio(dados.relatorio || '');
                 } else {
-                    toast.error("Erro ao carregar detalhes da consulta", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                    toast.error("Erro ao carregar detalhes da consulta", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
                     router.push("/area-medica");
                 }
             } catch {
-                toast.error("Erro ao carregar detalhes da consulta", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                toast.error("Erro ao carregar detalhes da consulta", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
                 router.push("/area-medica");
             } finally {
                 setLoading(false);
@@ -63,16 +63,16 @@ export default function DetalhesConsulta() {
             });
 
             if (response.status === 200) {
-                toast.success("Detalhes salvos com sucesso!", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                toast.success("Detalhes salvos com sucesso!", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
                 setEditando(false);
                 if (consulta) {
                     setConsulta({ ...consulta, detalhes });
                 }
             } else {
-                toast.error("Erro ao salvar detalhes", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                toast.error("Erro ao salvar detalhes", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
             }
         } catch {
-            toast.error("Erro ao salvar detalhes", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+            toast.error("Erro ao salvar detalhes", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
         }
     };
 
@@ -87,16 +87,16 @@ export default function DetalhesConsulta() {
             });
 
             if (response.status === 200) {
-                toast.success("Relatório salvo com sucesso!", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                toast.success("Relatório salvo com sucesso!", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
                 setEditandoRelatorio(false);
                 if (consulta) {
                     setConsulta({ ...consulta, relatorio });
                 }
             } else {
-                toast.error("Erro ao salvar relatório", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                toast.error("Erro ao salvar relatório", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
             }
         } catch {
-            toast.error("Erro ao salvar relatório", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+            toast.error("Erro ao salvar relatório", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
         }
     };
 
@@ -120,14 +120,14 @@ export default function DetalhesConsulta() {
             });
 
             if (response.status === 200) {
-                toast.success("Consulta finalizada com sucesso!", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                toast.success("Consulta finalizada com sucesso!", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
                 const destino = origem === 'agenda' ? '/area-medica/agenda' : '/area-medica';
                 router.push(destino);
             } else {
-                toast.error("Erro ao finalizar consulta", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                toast.error("Erro ao finalizar consulta", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
             }
         } catch {
-            toast.error("Erro ao finalizar consulta", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+            toast.error("Erro ao finalizar consulta", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
         }
     };
 

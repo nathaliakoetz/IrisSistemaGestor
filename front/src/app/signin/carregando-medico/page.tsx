@@ -18,7 +18,7 @@ export default function CarregandoMedico() {
 
         async function redireciona() {
             if (!terapeuta.id) {
-                toast.error("Erro... Login ou senha incorretos", { duration: Number(process.env.NEXT_PUBLIC_URL_API) })
+                toast.error("Erro... Login ou senha incorretos", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) })
                 await pause(2)
                 router.push("/signin")
             } else {

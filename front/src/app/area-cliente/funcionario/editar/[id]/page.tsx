@@ -81,7 +81,7 @@ export default function EditarFuncionario() {
                 setLoading(true);
                 
                 if (!clinica?.id || !terapeutaId) {
-                    toast.error("Dados necessários não encontrados", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                    toast.error("Dados necessários não encontrados", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
                     return;
                 }
 
@@ -89,7 +89,7 @@ export default function EditarFuncionario() {
                 
                 if (!response.ok) {
                     if (response.status === 404) {
-                        toast.error("Funcionário não encontrado", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                        toast.error("Funcionário não encontrado", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
                         router.push('/area-cliente/funcionario');
                         return;
                     }
@@ -108,7 +108,7 @@ export default function EditarFuncionario() {
                 
             } catch (error) {
                 console.error('Erro ao buscar terapeuta:', error);
-                toast.error('Erro ao carregar dados do funcionário', { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                toast.error('Erro ao carregar dados do funcionário', { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
                 router.push('/area-cliente/funcionario');
             } finally {
                 setLoading(false);
@@ -138,19 +138,19 @@ export default function EditarFuncionario() {
             });
 
             if (response.status === 200) {
-                toast.success("Dados do funcionário atualizados com sucesso.", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                toast.success("Dados do funcionário atualizados com sucesso.", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
                 router.push('/area-cliente/funcionario');
             } else if (response.status === 409) {
                 // Erro de duplicação (CPF/CNPJ ou e-mail já existente)
                 const errorData = await response.json();
-                toast.error(errorData.erro || "Já existe um funcionário cadastrado com estes dados.", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                toast.error(errorData.erro || "Já existe um funcionário cadastrado com estes dados.", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
             } else {
                 const errorData = await response.json();
-                toast.error(errorData.erro || "Erro ao atualizar dados do funcionário.", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                toast.error(errorData.erro || "Erro ao atualizar dados do funcionário.", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
             }
         } catch (error) {
             console.error("Erro ao editar funcionário:", error);
-            toast.error("Erro ao atualizar dados do funcionário. Verifique sua conexão.", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+            toast.error("Erro ao atualizar dados do funcionário. Verifique sua conexão.", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
         }
     }
 

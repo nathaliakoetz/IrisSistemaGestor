@@ -208,15 +208,15 @@ export default function AreaCliente() {
         })
 
         if (response.status == 201) {
-            toast.success("Consulta adicionada com sucesso!", { duration: Number(process.env.NEXT_PUBLIC_URL_API) })
+            toast.success("Consulta adicionada com sucesso!", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) })
             await buscaConsultas(dadosClinica!.id);
             await buscaHorarios(dadosClinica!.id);
             reset()
         } else if (response.status == 400) {
             const errorData = await response.json();
-            toast.error(errorData.erro || "Erro ao adicionar consulta!", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+            toast.error(errorData.erro || "Erro ao adicionar consulta!", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
         } else {
-            toast.error("Erro ao adicionar consulta!", { duration: Number(process.env.NEXT_PUBLIC_URL_API) })
+            toast.error("Erro ao adicionar consulta!", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) })
         }
     };
 
@@ -277,12 +277,12 @@ export default function AreaCliente() {
         })
 
         if (response.status == 201) {
-            toast.success("Horário adicionado com sucesso!", { duration: Number(process.env.NEXT_PUBLIC_URL_API) })
+            toast.success("Horário adicionado com sucesso!", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) })
             await buscaConsultas(dadosClinica!.id);
             await buscaHorarios(dadosClinica!.id);
             reset()
         } else {
-            toast.error("Erro ao adicionar horário!", { duration: Number(process.env.NEXT_PUBLIC_URL_API) })
+            toast.error("Erro ao adicionar horário!", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) })
         }
     };
 
@@ -306,14 +306,14 @@ export default function AreaCliente() {
             });
 
             if (response.status === 200) {
-                toast.success("Consulta desmarcada com sucesso!", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                toast.success("Consulta desmarcada com sucesso!", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
                 await buscaConsultas(dadosClinica!.id);
                 await buscaHorarios(dadosClinica!.id);
             } else {
-                toast.error("Erro ao desmarcar consulta!", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                toast.error("Erro ao desmarcar consulta!", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
             }
         } catch {
-            toast.error("Erro ao desmarcar consulta!", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+            toast.error("Erro ao desmarcar consulta!", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
         }
     };
 

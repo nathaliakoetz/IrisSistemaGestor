@@ -104,7 +104,7 @@ export default function DetalhesResponsavel() {
             
             if (response.status === 409) {
                 const errorData = await response.json();
-                toast.error(errorData.erro || 'Já existe um responsável com estes dados.', { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                toast.error(errorData.erro || 'Já existe um responsável com estes dados.', { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
                 return;
             }
             
@@ -119,7 +119,7 @@ export default function DetalhesResponsavel() {
             
         } catch (error) {
             console.error('Erro ao salvar:', error);
-            toast.error('Erro ao salvar alterações. Tente novamente.', { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+            toast.error('Erro ao salvar alterações. Tente novamente.', { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
         } finally {
             setSaving(false);
         }

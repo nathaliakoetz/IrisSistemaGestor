@@ -203,11 +203,11 @@ export default function GestaoFuncionarios() {
                             setCurrentPage(newTotalPages);
                         }
                         
-                        toast.success("Funcionário excluído com sucesso!", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                        toast.success("Funcionário excluído com sucesso!", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
                         
                     } catch (error) {
                         console.error('Erro ao excluir terapeuta:', error);
-                        toast.error("Erro ao excluir funcionário. Tente novamente.", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                        toast.error("Erro ao excluir funcionário. Tente novamente.", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
                     }
                 },
             },

@@ -29,11 +29,11 @@ export default function DetalhesConsulta() {
                     const dados = await response.json();
                     setConsulta(dados);
                 } else {
-                    toast.error("Erro ao carregar detalhes da consulta", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                    toast.error("Erro ao carregar detalhes da consulta", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
                     router.push("/area-cliente");
                 }
             } catch {
-                toast.error("Erro ao carregar detalhes da consulta", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                toast.error("Erro ao carregar detalhes da consulta", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
                 router.push("/area-cliente");
             } finally {
                 setLoading(false);

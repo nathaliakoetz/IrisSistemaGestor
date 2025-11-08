@@ -112,7 +112,7 @@ export default function MundoEmocoes() {
     const iniciarJogo = (consultaId: number) => {
         // Futuramente será implementado o redirecionamento para o jogo
         console.log("Iniciar jogo para consulta:", consultaId);
-        toast.info("Jogo de memória será implementado em breve!", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+        toast.info("Jogo de memória será implementado em breve!", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
     };
 
     if (!isLogged) {

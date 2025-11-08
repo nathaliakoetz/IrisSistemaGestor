@@ -57,7 +57,7 @@ export default function SignUp() {
     function validaSenha(senha: string, senha2: string) {
 
         if (senha.length < 8) {
-            toast.error("Erro... senha deve possuir, no mínimo, 8 caracteres", { duration: Number(process.env.NEXT_PUBLIC_URL_API) })
+            toast.error("Erro... senha deve possuir, no mínimo, 8 caracteres", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) })
             return false
         }
 
@@ -81,12 +81,12 @@ export default function SignUp() {
         }
 
         if (pequenas == 0 || grandes == 0 || numeros == 0 || simbolos == 0) {
-            toast.error("Erro... senha deve possuir letras minúsculas, maiúsculas, números e símbolos", { duration: Number(process.env.NEXT_PUBLIC_URL_API) })
+            toast.error("Erro... senha deve possuir letras minúsculas, maiúsculas, números e símbolos", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) })
             return false
         }
 
         if (senha !== senha2) {
-            toast.error("Erro... as senhas não conferem", { duration: Number(process.env.NEXT_PUBLIC_URL_API) })
+            toast.error("Erro... as senhas não conferem", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) })
             return false
         }
 
@@ -95,9 +95,9 @@ export default function SignUp() {
 
     async function efetuaRegistro(data: Inputs) {
         if (!isChecked) {
-            toast.error("Você precisa concordar com os Termos, Política de Privacidade e Política de Cookies para continuar.", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+            toast.error("Você precisa concordar com os Termos, Política de Privacidade e Política de Cookies para continuar.", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
         } else if (tipoUsuario === 'profissional') {
-            toast.info("Cadastro de Profissional em desenvolvimento.", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+            toast.info("Cadastro de Profissional em desenvolvimento.", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
         } else if (validaSenha(data.senha, data.confirmaSenha)) {
                 try {
                     const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/clinicas`, {
@@ -116,18 +116,18 @@ export default function SignUp() {
                     });
 
                     if (response.status === 201) {
-                        toast.success("Cadastro de Clínica realizado com sucesso.", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                        toast.success("Cadastro de Clínica realizado com sucesso.", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
                         await pause(2)
                         router.push("/signin/iris/clinica");
                     } else {
                         // Mostrar detalhes do erro
                         const errorData = await response.json().catch(() => ({}));
                         console.error('Erro no cadastro:', response.status, errorData);
-                        toast.error(errorData.erro || 'Erro ao cadastrar clínica. Tente novamente.', { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                        toast.error(errorData.erro || 'Erro ao cadastrar clínica. Tente novamente.', { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
                     }
                 } catch (error) {
                     console.error('Erro na requisição:', error);
-                    toast.error('Erro ao conectar com o servidor. Verifique sua conexão.', { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                    toast.error('Erro ao conectar com o servidor. Verifique sua conexão.', { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
                 }
         }
     }

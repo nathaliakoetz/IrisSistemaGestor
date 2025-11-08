@@ -101,7 +101,7 @@ export default function RelatoriosMedica() {
             }
         } catch (error) {
             console.error('Erro ao buscar pacientes:', error);
-            toast.error("Erro ao carregar pacientes", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+            toast.error("Erro ao carregar pacientes", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
         }
     }
 
@@ -155,13 +155,13 @@ export default function RelatoriosMedica() {
             setConsultas(dados);
             
             if (dados.length === 0) {
-                toast.info("Nenhuma consulta encontrada para os filtros selecionados", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                toast.info("Nenhuma consulta encontrada para os filtros selecionados", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
             } else {
-                toast.success(`${dados.length} atendimento(s) encontrado(s)`, { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+                toast.success(`${dados.length} atendimento(s) encontrado(s)`, { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
             }
         } catch (error) {
             console.error('Erro ao buscar consultas:', error);
-            toast.error("Erro ao buscar consultas", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+            toast.error("Erro ao buscar consultas", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
         } finally {
             setLoading(false);
         }
@@ -169,7 +169,7 @@ export default function RelatoriosMedica() {
 
     function gerarPDF() {
         if (consultas.length === 0) {
-            toast.error("Não há consultas para gerar o relatório", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+            toast.error("Não há consultas para gerar o relatório", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
             return;
         }
 
@@ -288,7 +288,7 @@ export default function RelatoriosMedica() {
         nomeArquivo += `_${new Date().toISOString().split('T')[0]}.pdf`;
         
         doc.save(nomeArquivo);
-        toast.success("Relatório gerado com sucesso!", { duration: Number(process.env.NEXT_PUBLIC_URL_API) });
+        toast.success("Relatório gerado com sucesso!", { duration: Number(process.env.NEXT_PUBLIC_TOAST_DURATION) });
     }
 
     const formatDate = (dateString: string) => {
