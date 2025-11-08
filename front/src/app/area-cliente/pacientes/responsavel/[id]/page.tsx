@@ -66,7 +66,7 @@ export default function ResponsaveisPaciente() {
     // Remover responsável do paciente
     const handleRemoveResponsavel = async (responsavelId: string) => {
         if (responsaveisDependente.length <= 1) {
-            toast.error("Não é possível remover o último responsável do paciente.");
+            toast.error("Não é possível remover o último responsável do paciente.", { duration: 2000 });
             return;
         }
 
@@ -103,14 +103,14 @@ export default function ResponsaveisPaciente() {
                 throw new Error('Erro ao remover responsável');
             }
 
-            toast.success("Responsável removido com sucesso!");
+            toast.success("Responsável removido com sucesso!", { duration: 2000 });
             
             // Recarregar os dados
             await fetchData();
 
         } catch (error) {
             console.error('Erro ao remover responsável:', error);
-            toast.error("Erro ao remover responsável. Tente novamente.");
+            toast.error("Erro ao remover responsável. Tente novamente.", { duration: 2000 });
         } finally {
             setRemovingId(null);
         }

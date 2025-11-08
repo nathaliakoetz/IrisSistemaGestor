@@ -81,7 +81,7 @@ function VincularResponsavelContent() {
     // Vincular responsável ao paciente
     const handleVincularResponsavel = async () => {
         if (!selectedResponsavel) {
-            toast.error("Selecione um responsável para vincular.");
+            toast.error("Selecione um responsável para vincular.", { duration: 2000 });
             return;
         }
 
@@ -100,20 +100,20 @@ function VincularResponsavelContent() {
             });
 
             if (response.status === 201) {
-                toast.success("Responsável vinculado com sucesso!");
+                toast.success("Responsável vinculado com sucesso!", { duration: 2000 });
                 router.push(`/area-cliente/pacientes/responsavel/${dependenteId}`);
             } else if (response.status === 409) {
                 // Erro de duplicação (responsável já vinculado)
                 const errorData = await response.json();
-                toast.error(errorData.erro || "Este responsável já está vinculado a este paciente.");
+                toast.error(errorData.erro || "Este responsável já está vinculado a este paciente.", { duration: 2000 });
             } else {
                 const errorData = await response.json();
-                toast.error(errorData.erro || 'Erro ao vincular responsável');
+                toast.error(errorData.erro || 'Erro ao vincular responsável', { duration: 2000 });
             }
 
         } catch (error) {
             console.error('Erro ao vincular responsável:', error);
-            toast.error(error instanceof Error ? error.message : "Erro ao vincular responsável. Tente novamente.");
+            toast.error(error instanceof Error ? error.message : "Erro ao vincular responsável. Tente novamente.", { duration: 2000 });
         } finally {
             setVinculando(false);
         }

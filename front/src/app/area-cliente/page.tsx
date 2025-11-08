@@ -208,15 +208,15 @@ export default function AreaCliente() {
         })
 
         if (response.status == 201) {
-            toast.success("Consulta adicionada com sucesso!")
+            toast.success("Consulta adicionada com sucesso!", { duration: 2000 })
             await buscaConsultas(dadosClinica!.id);
             await buscaHorarios(dadosClinica!.id);
             reset()
         } else if (response.status == 400) {
             const errorData = await response.json();
-            toast.error(errorData.erro || "Erro ao adicionar consulta!");
+            toast.error(errorData.erro || "Erro ao adicionar consulta!", { duration: 2000 });
         } else {
-            toast.error("Erro ao adicionar consulta!")
+            toast.error("Erro ao adicionar consulta!", { duration: 2000 })
         }
     };
 
@@ -277,12 +277,12 @@ export default function AreaCliente() {
         })
 
         if (response.status == 201) {
-            toast.success("Horário adicionado com sucesso!")
+            toast.success("Horário adicionado com sucesso!", { duration: 2000 })
             await buscaConsultas(dadosClinica!.id);
             await buscaHorarios(dadosClinica!.id);
             reset()
         } else {
-            toast.error("Erro ao adicionar horário!")
+            toast.error("Erro ao adicionar horário!", { duration: 2000 })
         }
     };
 
@@ -306,14 +306,14 @@ export default function AreaCliente() {
             });
 
             if (response.status === 200) {
-                toast.success("Consulta desmarcada com sucesso!");
+                toast.success("Consulta desmarcada com sucesso!", { duration: 2000 });
                 await buscaConsultas(dadosClinica!.id);
                 await buscaHorarios(dadosClinica!.id);
             } else {
-                toast.error("Erro ao desmarcar consulta!");
+                toast.error("Erro ao desmarcar consulta!", { duration: 2000 });
             }
         } catch {
-            toast.error("Erro ao desmarcar consulta!");
+            toast.error("Erro ao desmarcar consulta!", { duration: 2000 });
         }
     };
 

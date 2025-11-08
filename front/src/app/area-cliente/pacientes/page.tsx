@@ -204,11 +204,11 @@ export default function GestaoPacientes() {
                 setCurrentPage(newTotalPages);
             }
             
-            toast.success("Paciente excluído com sucesso!");
+            toast.success("Paciente excluído com sucesso!", { duration: 2000 });
             
         } catch (error) {
             console.error('Erro ao excluir paciente:', error);
-            toast.error("Erro ao excluir paciente. Tente novamente.");
+            toast.error("Erro ao excluir paciente. Tente novamente.", { duration: 2000 });
         }
     };
 

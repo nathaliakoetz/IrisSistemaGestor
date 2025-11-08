@@ -94,7 +94,7 @@ export default function RelatoriosCliente() {
             }
         } catch (error) {
             console.error('Erro ao buscar pacientes:', error);
-            toast.error("Erro ao carregar pacientes");
+            toast.error("Erro ao carregar pacientes", { duration: 2000 });
         }
     }
 
@@ -110,7 +110,7 @@ export default function RelatoriosCliente() {
             }
         } catch (error) {
             console.error('Erro ao buscar terapeutas:', error);
-            toast.error("Erro ao carregar profissionais");
+            toast.error("Erro ao carregar profissionais", { duration: 2000 });
         }
     }
 
@@ -176,13 +176,13 @@ export default function RelatoriosCliente() {
             setConsultas(consultas);
             
             if (consultas.length === 0) {
-                toast.info("Nenhuma consulta encontrada para os filtros selecionados");
+                toast.info("Nenhuma consulta encontrada para os filtros selecionados", { duration: 2000 });
             } else {
-                toast.success(`${consultas.length} atendimento(s) encontrado(s)`);
+                toast.success(`${consultas.length} atendimento(s) encontrado(s)`, { duration: 2000 });
             }
         } catch (error) {
             console.error('Erro ao buscar consultas:', error);
-            toast.error("Erro ao buscar consultas");
+            toast.error("Erro ao buscar consultas", { duration: 2000 });
         } finally {
             setLoading(false);
         }
@@ -190,7 +190,7 @@ export default function RelatoriosCliente() {
 
     function gerarPDF() {
         if (consultas.length === 0) {
-            toast.error("Não há consultas para gerar o relatório");
+            toast.error("Não há consultas para gerar o relatório", { duration: 2000 });
             return;
         }
 
@@ -293,7 +293,7 @@ export default function RelatoriosCliente() {
         nomeArquivo += `_${new Date().toISOString().split('T')[0]}.pdf`;
         
         doc.save(nomeArquivo);
-        toast.success("Relatório gerado com sucesso!");
+        toast.success("Relatório gerado com sucesso!", { duration: 2000 });
     }
 
     const formatDate = (dateString: string) => {

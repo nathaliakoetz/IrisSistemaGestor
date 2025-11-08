@@ -29,11 +29,11 @@ export default function DetalhesConsulta() {
                     const dados = await response.json();
                     setConsulta(dados);
                 } else {
-                    toast.error("Erro ao carregar detalhes da consulta");
+                    toast.error("Erro ao carregar detalhes da consulta", { duration: 2000 });
                     router.push("/area-cliente");
                 }
             } catch {
-                toast.error("Erro ao carregar detalhes da consulta");
+                toast.error("Erro ao carregar detalhes da consulta", { duration: 2000 });
                 router.push("/area-cliente");
             } finally {
                 setLoading(false);

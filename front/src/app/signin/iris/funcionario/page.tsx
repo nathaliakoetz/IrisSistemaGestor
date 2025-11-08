@@ -27,7 +27,7 @@ export default function SignIn() {
 
     async function verificaLogin(data: Inputs) {
 
-        toast.info("Verificando credenciais... Aguarde.")
+        toast.info("Verificando credenciais... Aguarde.", { duration: 2000 })
 
         const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/terapeutas/login`, {
             method: "POST",
@@ -53,14 +53,14 @@ export default function SignIn() {
                 }
             }
 
-            toast.success("Login realizado com sucesso!");
+            toast.success("Login realizado com sucesso!", { duration: 2000 });
             router.push("/signin/carregando-medico")
         } else if (response.status == 400) {
             const errorData = await response.json().catch(() => ({}));
-            toast.error(errorData.erro || "Login ou senha incorretos");
+            toast.error(errorData.erro || "Login ou senha incorretos", { duration: 2000 });
         } else {
             const errorData = await response.json().catch(() => ({}));
-            toast.error(errorData.erro || 'Erro ao fazer login. Tente novamente.');
+            toast.error(errorData.erro || 'Erro ao fazer login. Tente novamente.', { duration: 2000 });
         }
     }
 

@@ -36,11 +36,11 @@ export default function DetalhesConsulta() {
                     setDetalhes(dados.detalhes || '');
                     setRelatorio(dados.relatorio || '');
                 } else {
-                    toast.error("Erro ao carregar detalhes da consulta");
+                    toast.error("Erro ao carregar detalhes da consulta", { duration: 2000 });
                     router.push("/area-medica");
                 }
             } catch {
-                toast.error("Erro ao carregar detalhes da consulta");
+                toast.error("Erro ao carregar detalhes da consulta", { duration: 2000 });
                 router.push("/area-medica");
             } finally {
                 setLoading(false);
@@ -63,16 +63,16 @@ export default function DetalhesConsulta() {
             });
 
             if (response.status === 200) {
-                toast.success("Detalhes salvos com sucesso!");
+                toast.success("Detalhes salvos com sucesso!", { duration: 2000 });
                 setEditando(false);
                 if (consulta) {
                     setConsulta({ ...consulta, detalhes });
                 }
             } else {
-                toast.error("Erro ao salvar detalhes");
+                toast.error("Erro ao salvar detalhes", { duration: 2000 });
             }
         } catch {
-            toast.error("Erro ao salvar detalhes");
+            toast.error("Erro ao salvar detalhes", { duration: 2000 });
         }
     };
 
@@ -87,16 +87,16 @@ export default function DetalhesConsulta() {
             });
 
             if (response.status === 200) {
-                toast.success("Relatório salvo com sucesso!");
+                toast.success("Relatório salvo com sucesso!", { duration: 2000 });
                 setEditandoRelatorio(false);
                 if (consulta) {
                     setConsulta({ ...consulta, relatorio });
                 }
             } else {
-                toast.error("Erro ao salvar relatório");
+                toast.error("Erro ao salvar relatório", { duration: 2000 });
             }
         } catch {
-            toast.error("Erro ao salvar relatório");
+            toast.error("Erro ao salvar relatório", { duration: 2000 });
         }
     };
 
@@ -120,14 +120,14 @@ export default function DetalhesConsulta() {
             });
 
             if (response.status === 200) {
-                toast.success("Consulta finalizada com sucesso!");
+                toast.success("Consulta finalizada com sucesso!", { duration: 2000 });
                 const destino = origem === 'agenda' ? '/area-medica/agenda' : '/area-medica';
                 router.push(destino);
             } else {
-                toast.error("Erro ao finalizar consulta");
+                toast.error("Erro ao finalizar consulta", { duration: 2000 });
             }
         } catch {
-            toast.error("Erro ao finalizar consulta");
+            toast.error("Erro ao finalizar consulta", { duration: 2000 });
         }
     };
 

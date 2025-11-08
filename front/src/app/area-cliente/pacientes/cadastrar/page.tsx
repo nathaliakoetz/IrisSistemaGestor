@@ -75,7 +75,7 @@ export default function CadastrarPaciente() {
             sessionStorage.setItem('responsavelSelecionado', selectedResponsavel);
             router.push('/area-cliente/pacientes/cadastrar/dados');
         } else {
-            toast.error("Por favor, selecione um responsável.");
+            toast.error("Por favor, selecione um responsável.", { duration: 2000 });
         }
     };
 

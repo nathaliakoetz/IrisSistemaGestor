@@ -18,7 +18,7 @@ export default function SignIn() {
 
         async function redireciona() {
             if (!clinica.id) {
-                toast.error("Erro... Login ou senha incorretos")
+                toast.error("Erro... Login ou senha incorretos", { duration: 2000 })
                 await pause(2)
                 router.push("/signin")
             } else {

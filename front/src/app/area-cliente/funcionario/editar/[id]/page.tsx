@@ -81,7 +81,7 @@ export default function EditarFuncionario() {
                 setLoading(true);
                 
                 if (!clinica?.id || !terapeutaId) {
-                    toast.error("Dados necessários não encontrados");
+                    toast.error("Dados necessários não encontrados", { duration: 2000 });
                     return;
                 }
 
@@ -89,7 +89,7 @@ export default function EditarFuncionario() {
                 
                 if (!response.ok) {
                     if (response.status === 404) {
-                        toast.error("Funcionário não encontrado");
+                        toast.error("Funcionário não encontrado", { duration: 2000 });
                         router.push('/area-cliente/funcionario');
                         return;
                     }
@@ -108,7 +108,7 @@ export default function EditarFuncionario() {
                 
             } catch (error) {
                 console.error('Erro ao buscar terapeuta:', error);
-                toast.error('Erro ao carregar dados do funcionário');
+                toast.error('Erro ao carregar dados do funcionário', { duration: 2000 });
                 router.push('/area-cliente/funcionario');
             } finally {
                 setLoading(false);
@@ -138,19 +138,19 @@ export default function EditarFuncionario() {
             });
 
             if (response.status === 200) {
-                toast.success("Dados do funcionário atualizados com sucesso.");
+                toast.success("Dados do funcionário atualizados com sucesso.", { duration: 2000 });
                 router.push('/area-cliente/funcionario');
             } else if (response.status === 409) {
                 // Erro de duplicação (CPF/CNPJ ou e-mail já existente)
                 const errorData = await response.json();
-                toast.error(errorData.erro || "Já existe um funcionário cadastrado com estes dados.");
+                toast.error(errorData.erro || "Já existe um funcionário cadastrado com estes dados.", { duration: 2000 });
             } else {
                 const errorData = await response.json();
-                toast.error(errorData.erro || "Erro ao atualizar dados do funcionário.");
+                toast.error(errorData.erro || "Erro ao atualizar dados do funcionário.", { duration: 2000 });
             }
         } catch (error) {
             console.error("Erro ao editar funcionário:", error);
-            toast.error("Erro ao atualizar dados do funcionário. Verifique sua conexão.");
+            toast.error("Erro ao atualizar dados do funcionário. Verifique sua conexão.", { duration: 2000 });
         }
     }
 
