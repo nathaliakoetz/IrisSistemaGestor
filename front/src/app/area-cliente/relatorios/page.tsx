@@ -115,11 +115,6 @@ export default function RelatoriosCliente() {
     }
 
     async function buscaConsultas() {
-        if (!pacienteSelecionado && !terapeutaSelecionado) {
-            toast.error("Selecione ao menos um paciente ou profissional");
-            return;
-        }
-
         setLoading(true);
         try {
             let consultas: ConsultaI[] = [];
@@ -142,6 +137,18 @@ export default function RelatoriosCliente() {
 
                 if (response.status === 200) {
                     consultas = await response.json();
+                }
+            }
+            // Buscar todas as consultas da clínica
+            else if (clinica.id) {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/consultas`, {
+                    method: "GET"
+                });
+
+                if (response.status === 200) {
+                    const todasConsultas: ConsultaI[] = await response.json();
+                    // Filtrar apenas consultas da clínica logada
+                    consultas = todasConsultas.filter(c => c.clinicaId === clinica.id);
                 }
             }
 
@@ -370,7 +377,7 @@ export default function RelatoriosCliente() {
                         Relatórios de Atendimentos
                     </h1>
                     <p className={`text-base text-gray-600 mt-1 mb-8 ${inter.className}`}>
-                        Gere relatórios detalhados filtrando por profissional, paciente ou ambos
+                        Gere relatórios detalhados filtrando por profissional, paciente, período ou combine os filtros
                     </p>
 
                     <div className="bg-white rounded-2xl shadow p-6">
