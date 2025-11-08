@@ -173,7 +173,7 @@ export default function MundoEmocoes() {
                                                 key={consulta.id}
                                                 className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200"
                                             >
-                                                <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-4">
+                                                <div className="bg-gradient-to-r bg-[#6D9CE3] p-4">
                                                     <div className="flex items-center justify-between text-white">
                                                         <div className="flex items-center gap-2">
                                                             <span className="text-2xl">🕐</span>
@@ -216,7 +216,7 @@ export default function MundoEmocoes() {
 
                                                     <button
                                                         onClick={() => iniciarJogo(consulta.id)}
-                                                        className={`w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 ${inter.className}`}
+                                                        className={`w-full bg-gradient-to-r bg-[#6D9CE3] hover:from-[#5a8bd3] hover:to-[#3a6bb0] text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 ${inter.className}`}
                                                     >
                                                         <span className="text-xl">🎮</span>
                                                         <span>Iniciar Atividade</span>
@@ -231,18 +231,18 @@ export default function MundoEmocoes() {
                                 {consultasAgendadasHoje.length > 0 && (
                                     <div className="mt-8 bg-white rounded-lg shadow-md p-6">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div className="text-center p-4 bg-blue-50 rounded-lg">
+                                            <div className="text-center p-4 bg-[#e8f0fa] rounded-lg">
                                                 <div className="text-3xl mb-2">📊</div>
-                                                <p className={`text-2xl font-bold text-blue-600 ${cairo.className}`}>
+                                                <p className={`text-2xl font-bold text-[#6d9ce3] ${cairo.className}`}>
                                                     {consultasAgendadasHoje.length}
                                                 </p>
                                                 <p className={`text-sm text-gray-600 ${inter.className}`}>
                                                     Atendimentos Agendados
                                                 </p>
                                             </div>
-                                            <div className="text-center p-4 bg-green-50 rounded-lg">
+                                            <div className="text-center p-4 bg-[#f0f4f8] rounded-lg">
                                                 <div className="text-3xl mb-2">⏰</div>
-                                                <p className={`text-2xl font-bold text-green-600 ${cairo.className}`}>
+                                                <p className={`text-2xl font-bold text-[#252d39] ${cairo.className}`}>
                                                     {consultasAgendadasHoje.length > 0
                                                         ? formatarHorario(consultasAgendadasHoje[0].dataInicio)
                                                         : '--:--'}
