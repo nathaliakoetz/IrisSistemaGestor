@@ -66,7 +66,12 @@ router.post("/", async (req, res) => {
         const dependenteExistenteCpf = await prisma.dependente.findFirst({
             where: {
                 cpf: cpf,
-                deletedAt: null
+                deletedAt: null,
+                DependenteClinica: {
+                    some: {
+                        clinicaId: clinicaId
+                    }
+                }
             }
         })
 
@@ -253,7 +258,7 @@ router.delete("/:id", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
     const { id } = req.params
-    const { nome, cpf, genero, dataNascimento, responsavelId } = req.body
+    const { nome, cpf, genero, dataNascimento, responsavelId, clinicaId } = req.body
 
     if (!nome || !cpf || !genero || !dataNascimento) {
         res.status(400).json({ erro: "Por favor, preencha todos os campos obrigatórios (nome, CPF, gênero e data de nascimento)" })
@@ -272,13 +277,18 @@ router.put("/:id", async (req, res) => {
         }
 
         // Se estiver atualizando o CPF, verificar se já existe outro dependente com o mesmo CPF
-        if (cpf && cpf !== dependenteExistente.cpf) {
+        if (cpf && cpf !== dependenteExistente.cpf && clinicaId) {
             const dependenteExistenteCpf = await prisma.dependente.findFirst({
                 where: {
                     cpf: cpf,
                     deletedAt: null,
                     NOT: {
                         id: id
+                    },
+                    DependenteClinica: {
+                        some: {
+                            clinicaId: clinicaId
+                        }
                     }
                 }
             })

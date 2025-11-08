@@ -4,6 +4,7 @@ import { SideBar } from "@/components/SideBar";
 import { TopBar } from "@/components/TopBar";
 import { cairo, inter } from "@/utils/fonts";
 import { ResponsavelI } from "@/utils/types/responsaveis";
+import { useClinicaStore } from "@/context/clinica";
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
 import { useState, useEffect, ChangeEvent } from "react";
@@ -13,6 +14,7 @@ export default function DetalhesResponsavel() {
     const router = useRouter();
     const params = useParams();
     const responsavelId = params.id as string;
+    const { clinica } = useClinicaStore();
     
     const [responsavel, setResponsavel] = useState<ResponsavelI | null>(null);
     const [loading, setLoading] = useState(true);
@@ -94,8 +96,17 @@ export default function DetalhesResponsavel() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(editForm),
+                body: JSON.stringify({
+                    ...editForm,
+                    clinicaId: clinica.id
+                }),
             });
+            
+            if (response.status === 409) {
+                const errorData = await response.json();
+                toast.error(errorData.erro || 'Já existe um responsável com estes dados.');
+                return;
+            }
             
             if (!response.ok) {
                 throw new Error('Erro ao salvar alterações');

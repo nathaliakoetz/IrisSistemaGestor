@@ -3,6 +3,7 @@
 import { SideBar } from "@/components/SideBar";
 import { TopBar } from "@/components/TopBar";
 import { cairo, inter } from "@/utils/fonts";
+import { useClinicaStore } from "@/context/clinica";
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
 import { toast } from "sonner"
@@ -21,6 +22,7 @@ export default function EditarPaciente() {
     const router = useRouter();
     const params = useParams();
     const pacienteId = params.id as string;
+    const { clinica } = useClinicaStore();
 
     const [loading, setLoading] = useState(true);
 
@@ -83,7 +85,10 @@ export default function EditarPaciente() {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify(data)
+                body: JSON.stringify({
+                    ...data,
+                    clinicaId: clinica.id
+                })
             });
 
             if (response.status === 200) {

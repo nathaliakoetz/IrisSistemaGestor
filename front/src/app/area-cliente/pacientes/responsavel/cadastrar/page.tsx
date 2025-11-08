@@ -121,7 +121,8 @@ function CadastrarResponsavelContent() {
                     genero: data.genero,
                     estadoCivil: data.estadoCivil,
                     dataNascimento: data.dataNascimento,
-                    enderecoId: endereco.id
+                    enderecoId: endereco.id,
+                    clinicaId: clinica.id
                 })
             });
 

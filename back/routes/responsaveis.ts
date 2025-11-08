@@ -33,19 +33,23 @@ router.get("/", async (req, res) => {
 })
 
 router.post("/", async (req, res) => {
-    const { nome, email, cpf, telefone1, telefone2, enderecoId, genero, estadoCivil, dataNascimento } = req.body
+    const { nome, email, cpf, telefone1, telefone2, enderecoId, genero, estadoCivil, dataNascimento, clinicaId } = req.body
 
-    if (!nome || !email || !cpf || !telefone1 || !enderecoId || !genero || !estadoCivil || !dataNascimento) {
+    if (!nome || !email || !cpf || !telefone1 || !enderecoId || !genero || !estadoCivil || !dataNascimento || !clinicaId) {
         res.status(400).json({ erro: "Por favor, preencha todos os campos obrigatórios" })
         return
     }
 
     try {
-        // Verificar se já existe um responsável com o mesmo email
         const responsavelExistenteEmail = await prisma.responsavel.findFirst({
             where: {
                 email: email,
-                deletedAt: null
+                deletedAt: null,
+                ResponsavelClinica: {
+                    some: {
+                        clinicaId: clinicaId
+                    }
+                }
             }
         })
 
@@ -54,11 +58,15 @@ router.post("/", async (req, res) => {
             return
         }
 
-        // Verificar se já existe um responsável com o mesmo CPF
         const responsavelExistenteCpf = await prisma.responsavel.findFirst({
             where: {
                 cpf: cpf,
-                deletedAt: null
+                deletedAt: null,
+                ResponsavelClinica: {
+                    some: {
+                        clinicaId: clinicaId
+                    }
+                }
             }
         })
 
@@ -152,7 +160,7 @@ router.delete("/:id", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
     const { id } = req.params
-    const { nome, email, cpf, telefone1, telefone2, genero, estadoCivil, dataNascimento, endereco } = req.body
+    const { nome, email, cpf, telefone1, telefone2, genero, estadoCivil, dataNascimento, endereco, clinicaId } = req.body
 
     try {
         const responsavelExistente = await prisma.responsavel.findUnique({
@@ -165,14 +173,18 @@ router.put("/:id", async (req, res) => {
             return
         }
 
-        // Se estiver atualizando o email, verificar se já existe outro responsável com o mesmo email
-        if (email) {
+        if (email && clinicaId) {
             const responsavelExistenteEmail = await prisma.responsavel.findFirst({
                 where: {
                     email: email,
                     deletedAt: null,
                     NOT: {
                         id: id
+                    },
+                    ResponsavelClinica: {
+                        some: {
+                            clinicaId: clinicaId
+                        }
                     }
                 }
             })
@@ -183,14 +195,18 @@ router.put("/:id", async (req, res) => {
             }
         }
 
-        // Se estiver atualizando o CPF, verificar se já existe outro responsável com o mesmo CPF
-        if (cpf) {
+        if (cpf && clinicaId) {
             const responsavelExistenteCpf = await prisma.responsavel.findFirst({
                 where: {
                     cpf: cpf,
                     deletedAt: null,
                     NOT: {
                         id: id
+                    },
+                    ResponsavelClinica: {
+                        some: {
+                            clinicaId: clinicaId
+                        }
                     }
                 }
             })
