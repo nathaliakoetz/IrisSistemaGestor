@@ -183,7 +183,8 @@ export default function RelatoriosMedica() {
         doc.text(`Total de Atendimentos: ${consultas.length}`, 14, 49);
         
         // Tabela de consultas
-        const tableData = consultas.map(consulta => [
+        const tableData = consultas.map((consulta, index) => [
+            (index + 1).toString(),
             formatDateTime(consulta.dataInicio),
             consulta.terapeuta.nome,
             consulta.terapeuta.profissao,
@@ -193,11 +194,14 @@ export default function RelatoriosMedica() {
 
         autoTable(doc, {
             startY: 56,
-            head: [['Data/Hora Início', 'Terapeuta', 'Profissão', 'Data/Hora Fim', 'Status']],
+            head: [['Nº', 'Data/Hora Início', 'Terapeuta', 'Profissão', 'Data/Hora Fim', 'Status']],
             body: tableData,
             theme: 'grid',
             headStyles: { fillColor: [109, 156, 227] },
-            styles: { fontSize: 9 }
+            styles: { fontSize: 9 },
+            columnStyles: {
+                0: { cellWidth: 10, halign: 'center' }
+            }
         });
 
         // Detalhes das consultas (se houver)
@@ -218,8 +222,14 @@ export default function RelatoriosMedica() {
                 }
                 
                 doc.setFontSize(11);
+                doc.setFont('helvetica', 'bold');
                 doc.text(`Atendimento ${index + 1} - ${formatDateTime(consulta.dataInicio)}`, 14, yPosition);
-                yPosition += 7;
+                
+                doc.setFontSize(9);
+                doc.setFont('helvetica', 'normal');
+                const infoAtendimento = `Terapeuta: ${consulta.terapeuta.nome} | Paciente: ${consulta.paciente?.nome || 'Não informado'}`;
+                doc.text(infoAtendimento, 14, yPosition + 5);
+                yPosition += 12;
             }
             
             // Adicionar detalhes

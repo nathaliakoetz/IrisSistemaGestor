@@ -231,7 +231,8 @@ export default function RelatoriosCliente() {
         yPosition += 7;
         
         // Tabela de consultas
-        const tableData = consultas.map(consulta => [
+        const tableData = consultas.map((consulta, index) => [
+            (index + 1).toString(),
             formatDateTime(consulta.dataInicio),
             consulta.paciente?.nome || 'N/A',
             consulta.terapeuta.nome,
@@ -242,11 +243,14 @@ export default function RelatoriosCliente() {
 
         autoTable(doc, {
             startY: yPosition,
-            head: [['Data/Hora Início', 'Paciente', 'Profissional', 'Área', 'Data/Hora Fim', 'Status']],
+            head: [['Nº', 'Data/Hora Início', 'Paciente', 'Profissional', 'Área', 'Data/Hora Fim', 'Status']],
             body: tableData,
             theme: 'grid',
             headStyles: { fillColor: [109, 156, 227] },
-            styles: { fontSize: 8 }
+            styles: { fontSize: 8 },
+            columnStyles: {
+                0: { cellWidth: 10, halign: 'center' }
+            }
         });
 
         // Detalhes das consultas (se houver)
@@ -263,10 +267,15 @@ export default function RelatoriosCliente() {
                 }
                 
                 doc.setFontSize(11);
+                doc.setFont('helvetica', 'bold');
                 doc.text(`Atendimento ${index + 1} - ${formatDateTime(consulta.dataInicio)}`, 14, detalhesYPosition);
-                detalhesYPosition += 7;
                 
                 doc.setFontSize(9);
+                doc.setFont('helvetica', 'normal');
+                const infoAtendimento = `Terapeuta: ${consulta.terapeuta.nome} | Paciente: ${consulta.paciente?.nome || 'Não informado'}`;
+                doc.text(infoAtendimento, 14, detalhesYPosition + 5);
+                detalhesYPosition += 12;
+                
                 const detalhesLines = doc.splitTextToSize(`Detalhes: ${consulta.detalhes}`, 180);
                 doc.text(detalhesLines, 14, detalhesYPosition);
                 detalhesYPosition += (detalhesLines.length * 4) + 5;
