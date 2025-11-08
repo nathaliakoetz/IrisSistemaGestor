@@ -24,6 +24,7 @@ export interface TerapeutaZustandI {
     telefone1: string,
     telefone2: string | null,
     profissao: string,
-    clinicaId: string
+    clinicaId: string,
+    nomeClinica?: string
 }
 

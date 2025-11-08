@@ -45,11 +45,15 @@ export function TopBarMedico() {
                 <p className="w-8 rotate-90 border border-[#252d39]" />
                 <div className="justify-start items-center gap-4 flex">
                     <img className="w-[38px] h-[38px] rounded-full" src='/avatar.png' />
-                    <div className="justify-start items-center gap-1 flex">
+                    <div className="flex flex-col items-start">
                         <h1 className={`text-black text-2xl font-bold ${cairo.className}`}>
                             {isClient && terapeuta?.nome ? terapeuta.nome : 'Funcionário'}
                         </h1>
-                        <div className="w-5 h-5 relative" />
+                        {isClient && terapeuta?.nomeClinica && (
+                            <p className={`text-gray-600 text-sm ${inter.className}`}>
+                                {terapeuta.nomeClinica}
+                            </p>
+                        )}
                     </div>
                 </div>
                 <Link href="/">

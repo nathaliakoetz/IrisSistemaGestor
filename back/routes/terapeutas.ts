@@ -393,7 +393,14 @@ router.post("/login", async (req, res) => {
 
     try {
         const terapeuta = await prisma.terapeuta.findFirst({
-            where: { email }
+            where: { email },
+            include: {
+                clinica: {
+                    include: {
+                        dadosUsuario: true
+                    }
+                }
+            }
         })
 
         if (!terapeuta) {
@@ -419,9 +426,13 @@ router.post("/login", async (req, res) => {
         )
 
         // Retornar os dados do terapeuta (sem a senha) e o token
-        const { senha: _, codigoRecuperacao, ...terapeutaSemSenha } = terapeuta
+        const { senha: _, codigoRecuperacao, clinica, ...terapeutaSemSenha } = terapeuta
 
-        res.status(200).json({ ...terapeutaSemSenha, token })
+        res.status(200).json({ 
+            ...terapeutaSemSenha, 
+            nomeClinica: clinica.dadosUsuario.nome,
+            token 
+        })
     } catch (error) {
         console.error('Erro ao fazer login:', error)
         res.status(400).json({ erro: "Erro ao fazer login. Tente novamente" })
