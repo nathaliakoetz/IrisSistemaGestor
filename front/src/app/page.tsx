@@ -50,7 +50,7 @@ export default function Home() {
             <span className={`text-2xl font-bold text-color-logo ${inter.className}`}>
               Mundo das Emoções: &nbsp;
               <span className={`text-2xl font-normal text-color-logo ${inter.className}`}>
-                Espaço onde a imaginação e o aprendizado se encontram, ajudando as crianças anavegar em suas emoções com confiança e alegria!
+                Espaço onde a imaginação e o aprendizado se encontram, ajudando as crianças a navegar em suas emoções com confiança e alegria!
               </span>
             </span>
           </div>
