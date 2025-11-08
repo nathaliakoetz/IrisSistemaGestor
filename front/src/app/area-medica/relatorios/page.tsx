@@ -106,43 +106,58 @@ export default function RelatoriosMedica() {
     }
 
     async function buscaConsultasPaciente() {
-        if (!pacienteSelecionado) {
-            toast.error("Selecione um paciente");
-            return;
-        }
-
         setLoading(true);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/consultas/paciente/${pacienteSelecionado}`, {
-                method: "GET"
-            });
+            let dados: ConsultaI[] = [];
+            
+            // Buscar por paciente específico
+            if (pacienteSelecionado) {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/consultas/paciente/${pacienteSelecionado}`, {
+                    method: "GET"
+                });
 
-            if (response.status === 200) {
-                let dados: ConsultaI[] = await response.json();
+                if (response.status === 200) {
+                    dados = await response.json();
+                }
+            } 
+            // Buscar todas as consultas do terapeuta logado
+            else {
+                const terapeutaId = terapeuta.id || Cookies.get("authID");
+                const clinicaId = terapeuta.clinicaId || Cookies.get("authClinicaId");
                 
-                // Filtrar por período se datas foram informadas
-                if (dataInicio || dataFim) {
-                    dados = dados.filter(consulta => {
-                        const dataConsulta = new Date(consulta.dataInicio).toISOString().split('T')[0];
-                        
-                        if (dataInicio && dataFim) {
-                            return dataConsulta >= dataInicio && dataConsulta <= dataFim;
-                        } else if (dataInicio) {
-                            return dataConsulta >= dataInicio;
-                        } else if (dataFim) {
-                            return dataConsulta <= dataFim;
-                        }
-                        return true;
+                if (terapeutaId && clinicaId) {
+                    const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/consultas/terapeuta/${terapeutaId}/${clinicaId}`, {
+                        method: "GET"
                     });
-                }
 
-                setConsultas(dados);
-                
-                if (dados.length === 0) {
-                    toast.info("Nenhuma consulta encontrada para este período");
+                    if (response.status === 200) {
+                        dados = await response.json();
+                    }
                 }
+            }
+            
+            // Filtrar por período se datas foram informadas
+            if (dataInicio || dataFim) {
+                dados = dados.filter(consulta => {
+                    const dataConsulta = new Date(consulta.dataInicio).toISOString().split('T')[0];
+                    
+                    if (dataInicio && dataFim) {
+                        return dataConsulta >= dataInicio && dataConsulta <= dataFim;
+                    } else if (dataInicio) {
+                        return dataConsulta >= dataInicio;
+                    } else if (dataFim) {
+                        return dataConsulta <= dataFim;
+                    }
+                    return true;
+                });
+            }
+
+            setConsultas(dados);
+            
+            if (dados.length === 0) {
+                toast.info("Nenhuma consulta encontrada para os filtros selecionados");
             } else {
-                toast.error("Erro ao buscar consultas");
+                toast.success(`${dados.length} atendimento(s) encontrado(s)`);
             }
         } catch (error) {
             console.error('Erro ao buscar consultas:', error);
@@ -330,7 +345,7 @@ export default function RelatoriosMedica() {
                         Relatórios de Atendimentos
                     </h1>
                     <p className={`text-base text-gray-600 mt-1 mb-8 ${inter.className}`}>
-                        Gere relatórios detalhados dos atendimentos realizados
+                        Gere relatórios detalhados filtrando por paciente, período ou combine os filtros
                     </p>
 
                     <div className="bg-white rounded-2xl shadow p-6">
@@ -339,7 +354,7 @@ export default function RelatoriosMedica() {
                             {/* Dropdown de Pacientes com busca integrada */}
                             <div className="relative" ref={dropdownRef}>
                                 <label className={`block text-sm font-medium text-gray-700 mb-2 ${inter.className}`}>
-                                    Selecione o Paciente
+                                    Paciente (Opcional)
                                 </label>
                                 <input
                                     type="text"
