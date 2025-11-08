@@ -94,6 +94,20 @@ export default function MundoEmocoes() {
         return data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
     };
 
+    const calcularIdade = (dataNascimento: string) => {
+        const hoje = new Date();
+        const nascimento = new Date(dataNascimento);
+        let idade = hoje.getFullYear() - nascimento.getFullYear();
+        const mesAtual = hoje.getMonth();
+        const mesNascimento = nascimento.getMonth();
+        
+        if (mesAtual < mesNascimento || (mesAtual === mesNascimento && hoje.getDate() < nascimento.getDate())) {
+            idade--;
+        }
+        
+        return idade;
+    };
+
     const iniciarJogo = (consultaId: number) => {
         // Futuramente será implementado o redirecionamento para o jogo
         console.log("Iniciar jogo para consulta:", consultaId);
@@ -181,9 +195,11 @@ export default function MundoEmocoes() {
                                                                 {consulta.paciente?.nome || "Paciente não informado"}
                                                             </h3>
                                                         </div>
-                                                        {consulta.paciente?.genero && (
+                                                        {(consulta.paciente?.genero || consulta.paciente?.dataNascimento) && (
                                                             <p className={`text-sm text-gray-500 ml-7 ${inter.className}`}>
                                                                 {consulta.paciente.genero}
+                                                                {consulta.paciente.genero && consulta.paciente.dataNascimento && " • "}
+                                                                {consulta.paciente.dataNascimento && `${calcularIdade(consulta.paciente.dataNascimento)} anos`}
                                                             </p>
                                                         )}
                                                     </div>
