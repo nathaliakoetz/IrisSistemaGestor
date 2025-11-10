@@ -302,7 +302,7 @@ export function JogoMemoria({ consultaId, pacienteNome, tempoLimiteMinutos, onCl
                 .sort(([, a], [, b]) => b - a)
                 .map(([emoji, quantidade]) => {
                     const emocao = emocoes.find(e => e.emoji === emoji);
-                    return `${emoji} ${emocao?.name}: ${quantidade} acertos`;
+                    return `${emocao?.name}: ${quantidade} acertos`;
                 });
             
             // Identificar principais confusões
@@ -315,54 +315,59 @@ export function JogoMemoria({ consultaId, pacienteNome, tempoLimiteMinutos, onCl
                     .forEach(([emoji2, quantidade]) => {
                         const emocao2 = emocoes.find(e => e.emoji === emoji2);
                         if (quantidade > 0) {
-                            confusoesTexto.push(`${emoji1} ${emocao1?.name} ↔ ${emoji2} ${emocao2?.name}: ${quantidade}x`);
+                            confusoesTexto.push(`${emocao1?.name} <-> ${emocao2?.name}: ${quantidade}x`);
                         }
                     });
             });
             
-            // Criar texto do relatório formatado
+            // Criar texto do relatório formatado (usando apenas caracteres compatíveis com PDF)
             const novoRelatorio = `
-═══════════════════════════════════════════════════════════════
-🎮 RELATÓRIO DO JOGO DA MEMÓRIA - MUNDO DAS EMOÇÕES
-═══════════════════════════════════════════════════════════════
+===============================================================
+RELATORIO DO JOGO DA MEMORIA - MUNDO DAS EMOCOES
+===============================================================
 
-📅 Data/Hora: ${new Date().toLocaleString('pt-BR')}
-👤 Paciente: ${pacienteNome}
-👨‍⚕️ Terapeuta: ${terapeuta.nome}
-⏱️ Tempo Limite da Sessão: ${tempoLimiteMinutos} minutos
+Data/Hora: ${new Date().toLocaleString('pt-BR')}
+Paciente: ${pacienteNome}
+Terapeuta: ${terapeuta.nome}
+Tempo Limite da Sessao: ${tempoLimiteMinutos} minutos
 
-───────────────────────────────────────────────────────────────
-📊 ESTATÍSTICAS GERAIS
-───────────────────────────────────────────────────────────────
 
-🎯 Quantidade de Partidas: ${totalPartidas}
+---------------------------------------------------------------
+ESTATISTICAS GERAIS
+---------------------------------------------------------------
+
+Quantidade de Partidas: ${totalPartidas}
 
 ${totalPartidas > 0 ? `
-📋 Detalhes por Partida:
-${historicoPartidas.map((p, i) => `
-   Partida ${i + 1}:
-   • Tentativas: ${p.tentativas}
-   • Pares Encontrados: ${p.acertos}
-   • Tempo: ${formatarTempo(p.tempo)}
-   • Taxa de Acerto: ${((p.acertos / p.tentativas) * 100).toFixed(1)}%`).join('\n')}
+Detalhes por Partida:
 
-⏱️ Tempo Médio por Partida: ${formatarTempo(Math.round(tempoMedio))}
+${historicoPartidas.map((p, i) => `   Partida ${i + 1}:
+   - Tentativas: ${p.tentativas}
+   - Pares Encontrados: ${p.acertos}
+   - Tempo: ${formatarTempo(p.tempo)}
+   - Taxa de Acerto: ${((p.acertos / p.tentativas) * 100).toFixed(1)}%
+`).join('\n')}
+Tempo Medio por Partida: ${formatarTempo(Math.round(tempoMedio))}
 
-⚡ Tempo Médio Entre Escolhas: ${tempoMedioEscolhas.toFixed(1)} segundos
+Tempo Medio Entre Escolhas: ${tempoMedioEscolhas.toFixed(1)} segundos
 
-───────────────────────────────────────────────────────────────
-😊 RECONHECIMENTO DE EMOÇÕES
-───────────────────────────────────────────────────────────────
 
-✅ Emoções Acertadas (ordem decrescente):
-${emocoesOrdenadas.length > 0 ? emocoesOrdenadas.map(e => `   • ${e}`).join('\n') : '   (Nenhum acerto registrado)'}
+---------------------------------------------------------------
+RECONHECIMENTO DE EMOCOES
+---------------------------------------------------------------
+
+Emocoes Acertadas (ordem decrescente):
+
+${emocoesOrdenadas.length > 0 ? emocoesOrdenadas.map(e => `   * ${e}`).join('\n') : '   (Nenhum acerto registrado)'}
 
 ${confusoesTexto.length > 0 ? `
-❌ Principais Confusões Observadas:
-${confusoesTexto.map(c => `   • ${c}`).join('\n')}` : ''}
-` : 'Nenhuma partida foi completada nesta sessão.'}
+Principais Confusoes Observadas:
 
-═══════════════════════════════════════════════════════════════
+${confusoesTexto.map(c => `   * ${c}`).join('\n')}
+` : ''}
+` : 'Nenhuma partida foi completada nesta sessao.'}
+
+===============================================================
 `;
 
             // Buscar relatório existente da consulta específica
@@ -376,9 +381,9 @@ ${confusoesTexto.map(c => `   • ${c}`).join('\n')}` : ''}
                 
                 let relatorioCompleto = novoRelatorio;
                 
-                // Se já existe relatório, adicionar separador
+                // Se já existe relatório, adicionar separador com quebra de página
                 if (consultaAtual?.relatorio) {
-                    relatorioCompleto = consultaAtual.relatorio + '\n\n' + novoRelatorio;
+                    relatorioCompleto = consultaAtual.relatorio + '\n\n\n\n\n\n\n\n' + novoRelatorio;
                 }
                 
                 console.log("📝 Salvando relatório para consulta ID:", consultaId);

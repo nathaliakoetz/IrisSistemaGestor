@@ -268,15 +268,22 @@ export default function RelatoriosMedica() {
 
             // Adicionar relatório apenas se o terapeuta logado for o mesmo que realizou a consulta
             if (temRelatorio) {
-                if (yPosition > 270) {
-                    doc.addPage();
-                    yPosition = 20;
+                doc.setFontSize(9);
+                const relatorioLines = doc.splitTextToSize(`Relatorio: ${consulta.relatorio}`, 180);
+                
+                // Adicionar linhas do relatório com verificação de quebra de página
+                for (let i = 0; i < relatorioLines.length; i++) {
+                    // Verifica se precisa adicionar nova página antes de cada linha
+                    if (yPosition > 270) {
+                        doc.addPage();
+                        yPosition = 20;
+                    }
+                    
+                    doc.text(relatorioLines[i], 14, yPosition);
+                    yPosition += 4; // Espaçamento entre linhas
                 }
                 
-                doc.setFontSize(9);
-                const relatorioLines = doc.splitTextToSize(`Relatório: ${consulta.relatorio}`, 180);
-                doc.text(relatorioLines, 14, yPosition);
-                yPosition += (relatorioLines.length * 4) + 5;
+                yPosition += 5; // Espaço extra após o relatório
             }
         });
 
