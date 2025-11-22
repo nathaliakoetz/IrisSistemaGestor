@@ -1,4 +1,4 @@
-export const getApiDocsHTML = (port: number): string => {
+export const getApiDocsHTML = (): string => {
   return `
     <!DOCTYPE html>
     <html lang="pt-BR">
@@ -135,16 +135,15 @@ export const getApiDocsHTML = (port: number): string => {
     <body>
       <div class="container">
         <header>
-          <h1>🌸 API Íris Sistema Gestor</h1>
+          <h1>API Íris Sistema Gestor</h1>
           <p>Documentação de Rotas e Endpoints</p>
-          <p style="font-size: 0.9em; margin-top: 10px;">Servidor rodando na porta ${port}</p>
         </header>
         
         <div class="content">
           <div class="section">
             <h2>📋 Visão Geral</h2>
             <p>Esta API fornece endpoints para gerenciar clínicas, terapeutas, pacientes, consultas e todos os recursos do sistema Íris.</p>
-            <p style="margin-top: 10px;"><strong>Base URL:</strong> <code>http://localhost:${port}</code></p>
+            <p style="margin-top: 10px;"><strong>Base URL:</strong> <code>https://iris-backend-peum.onrender.com/</code></p>
           </div>
 
           <div class="section">
@@ -808,7 +807,7 @@ export const getApiDocsHTML = (port: number): string => {
         </div>
 
         <footer>
-          <p>&copy; 2025 Íris Sistema Gestor | Desenvolvido com 💜</p>
+          <p>&copy; 2025 Íris Sistema Gestor | Desenvolvido por Guilherme Acosta e Nathália Koetz</p>
         </footer>
       </div>
     </body>

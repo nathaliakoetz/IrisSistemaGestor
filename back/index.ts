@@ -38,7 +38,7 @@ app.use("/responsaveisClinicas", responsaveisClinicasRoutes)
 app.use("/responsaveisDependentes", responsaveisDependentesRoutes)
 
 app.get('/', (req, res) => {
-  res.send(getApiDocsHTML(port))
+  res.send(getApiDocsHTML())
 })
 
 app.listen(port, '0.0.0.0', () => {
