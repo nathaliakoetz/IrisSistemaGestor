@@ -12,6 +12,7 @@ import dependentesRoutes from "./routes/dependentes"
 import dependentesClinicasRoutes from "./routes/dependentesClinicas"
 import responsaveisClinicasRoutes from "./routes/responsaveisClinicas"
 import responsaveisDependentesRoutes from "./routes/responsaveisDependentes"
+import { getApiDocsHTML } from "./views/apiDocs"
 
 
 const app = express()
@@ -19,7 +20,7 @@ const port = Number(process.env.PORT) || 3001
 
 app.use(express.json())
 app.use(cors({
-    origin: '*', // Permitir todas as origens (pode especificar domínios específicos depois)
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }))
@@ -37,7 +38,7 @@ app.use("/responsaveisClinicas", responsaveisClinicasRoutes)
 app.use("/responsaveisDependentes", responsaveisDependentesRoutes)
 
 app.get('/', (req, res) => {
-  res.send('API: Íris Sistema Gestor')
+  res.send(getApiDocsHTML(port))
 })
 
 app.listen(port, '0.0.0.0', () => {
